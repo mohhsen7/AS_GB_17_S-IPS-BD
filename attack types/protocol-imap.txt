@@ -1,0 +1,12 @@
+['\n', '\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 143 (msg:"PROTOCOL-IMAP CRAM-MD5 authentication request detected"
+ flow:to_server,established
+ content:"AUTHENTICATE CRAM-MD5"
+ fast_pattern:only
+ flowbits:set,imap.cram_md5
+ flowbits:noalert
+ metadata:policy max-detect-ips alert, service imap
+ reference:url,en.wikipedia.org/wiki/CRAM-MD5
+ classtype:protocol-command-decode
+ sid:11004
+ rev:15
+)\n']

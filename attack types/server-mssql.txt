@@ -1,0 +1,24 @@
+['\n', '\n', 'alert tcp $EXTERNAL_NET any -> $SQL_SERVERS 1024:5000 (msg:"SERVER-MSSQL Microsoft SQL Server transcational replication and showxmlplan enabled remote code execution attempt"
+ flow:to_server
+ content:"sp_replicationdboption"
+ fast_pattern:only
+ content:"SET SHOWPLAN_XML ON"
+ nocase
+ content:"@optname"
+ nocase
+ content:"publish"
+ within:20
+ nocase
+ content:"@value"
+ within:20
+ nocase
+ content:"true"
+ within:20
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-1762
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-058
+ classtype:attempted-user
+ sid:35198
+ rev:4
+)\n']

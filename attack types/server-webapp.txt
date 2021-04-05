@@ -1,0 +1,1795 @@
+['\n', '\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 50000 (msg:"SERVER-WEBAPP SAP ConfigServlet command execution attempt"
+ flow:to_server,established
+ content:"/ctc/servlet/ConfigServlet"
+ http_uri
+ content:"param=com.sap.ctc.util.FileSystemConfig"
+ distance:0
+ http_uri
+ content:"EXECUTE_CMD"
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,erpscan.com/wp-content/uploads/2012/11/Breaking-SAP-Portal-HackerHalted-2012.pdf
+ classtype:attempted-admin
+ sid:26929
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SERVER-WEBAPP JBoss JMXInvokerServlet access attempt"
+ flow:to_server,established
+ content:"/invoker/JMXInvokerServlet"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2007-1036
+ reference:cve,2013-2185
+ reference:url,docs.jboss.org/jbossas/6/Admin_Console_Guide/en-US/pdf/Admin_Console_Guide.pdf
+ classtype:attempted-admin
+ sid:24343
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SERVER-WEBAPP JBoss web console access attempt"
+ flow:to_server,established
+ content:"/web-console/"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2007-1036
+ reference:cve,2013-2185
+ reference:url,docs.jboss.org/jbossas/6/Admin_Console_Guide/en-US/pdf/Admin_Console_Guide.pdf
+ classtype:attempted-recon
+ sid:24342
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SERVER-WEBAPP JBoss admin-console access"
+ flow:to_server,established
+ content:"/admin-console/"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2013-2185
+ reference:url,docs.jboss.org/jbossas/6/Admin_Console_Guide/en-US/pdf/Admin_Console_Guide.pdf
+ classtype:attempted-recon
+ sid:21517
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Oracle GlassFish Server authentication bypass attempt"
+ flow:to_server,established
+ content:"GET"
+ nocase
+ http_method
+ content:"/applications/upload"
+ http_uri
+ pcre:"/^(Frame)?\\.jsf/R"
+ content:!"JSESSIONID="
+ flowbits:set,glassfish_unauth_attempt
+ metadata:service http
+ reference:bugtraq,47438
+ reference:cve,2011-0807
+ classtype:attempted-admin
+ sid:20159
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SERVER-WEBAPP Microsoft Office SharePoint malicious serialized viewstate evaluation attempt"
+ flow:to_server,established
+ content:"/_layouts/viewlists.aspx?"
+ fast_pattern:only
+ http_uri
+ content:"BaseType=0"
+ nocase
+ http_uri
+ content:"__VIEWSTATE="
+ nocase
+ http_uri
+ base64_decode:bytes 150,offset 17,relative
+ base64_data
+ content:"System.IO.FileInfo|02 00 00 00 0C|OriginalPath|08|FullPath"
+ nocase
+ content:"|5C 5C|"
+ distance:0
+ nocase
+ content:"|5C 5C|"
+ distance:0
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2013-1330
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS13-067
+ classtype:attempted-admin
+ sid:27823
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Sophos Web Protection Appliance sblistpack arbitrary command execution attempt"
+ flow:to_server,established
+ content:"c=blocked"
+ fast_pattern:only
+ http_uri
+ content:"action=continue"
+ nocase
+ http_uri
+ content:"domain="
+ nocase
+ http_client_body
+ pcre:"/domain=[^&]*?([\\x3b\\x60]|\\x24\\x28|%3b|%60|%24%28)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62263
+ reference:bugtraq,62265
+ reference:cve,2013-4983
+ reference:cve,2013-4984
+ reference:url,osvdb.org/show/osvdb/97028
+ reference:url,osvdb.org/show/osvdb/97029
+ reference:url,www.sophos.com/en-us/support/knowledgebase/119773.aspx
+ classtype:attempted-admin
+ sid:27942
+ rev:1
+)\n', 'alert udp $HOME_NET any -> $HOME_NET 7329 (msg:"SERVER-WEBAPP Tenda W302R iwpriv remote code execution attempt"
+ flow:to_server
+ content:"w302r_mfg|00|1"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:url,osvdb.org/show/osvdb/98689
+ reference:url,www.medialinkproducts.com/wirelessRouter.php
+ classtype:attempted-admin
+ sid:28290
+ rev:1
+)\n', 'alert udp $HOME_NET any -> $HOME_NET 7329 (msg:"SERVER-WEBAPP Tenda W302R root remote code execution attempt"
+ flow:to_server
+ content:"w302r_mfg|00|x"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:url,osvdb.org/show/osvdb/98689
+ reference:url,www.medialinkproducts.com/wirelessRouter.php
+ classtype:attempted-admin
+ sid:28289
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SERVER-WEBAPP WebTester install2.php arbitrary command execution attempt"
+ flow:to_server,established
+ content:"/webtester5/install2.php"
+ fast_pattern:only
+ http_uri
+ content:"cpanel=yes"
+ nocase
+ http_client_body
+ content:"createdb=yes"
+ nocase
+ http_client_body
+ pcre:"/(^|&)(db(username|password|)|cp(username|password|domain))=[^&]*?(\\x27|%27)[^&]*?([\\x3b\\x60]|\\x24\\x28|%3b|%60|%24%28)/Pmi"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,sourceforge.net/p/webtesteronline/bugs/3/
+ classtype:attempted-admin
+ sid:28288
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Red Hat CloudForms agent controller filename directory traversal attempt"
+ flow:to_server,established
+ content:"/agent/"
+ depth:7
+ fast_pattern
+ nocase
+ http_uri
+ content:"data="
+ nocase
+ http_uri
+ content:"filename="
+ nocase
+ http_uri
+ content:"../"
+ distance:0
+ http_uri
+ pcre:"/[?&]filename=[^&]*?\\x2e\\x2e\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62745
+ reference:cve,2013-2068
+ reference:url,osvdb.org/show/osvdb/96960
+ reference:url,osvdb.org/show/osvdb/96961
+ reference:url,osvdb.org/show/osvdb/96962
+ reference:url,rhn.redhat.com/errata/RHSA-2013-1206.html
+ classtype:attempted-admin
+ sid:29297
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Red Hat CloudForms agent controller filename directory traversal attempt"
+ flow:to_server,established
+ content:"/agent/"
+ depth:7
+ fast_pattern
+ nocase
+ http_uri
+ content:"data="
+ nocase
+ http_client_body
+ content:"filename="
+ nocase
+ http_client_body
+ pcre:"/(^|&)filename=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pmi"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62745
+ reference:cve,2013-2068
+ reference:url,osvdb.org/show/osvdb/96960
+ reference:url,osvdb.org/show/osvdb/96961
+ reference:url,osvdb.org/show/osvdb/96962
+ reference:url,rhn.redhat.com/errata/RHSA-2013-1206.html
+ classtype:attempted-admin
+ sid:29296
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Synology DiskStation Manager SLICEUPLOAD remote command execution attempt"
+ flow:to_server,established
+ content:"/webman/imageSelector.cgi"
+ fast_pattern:only
+ http_uri
+ content:"X-TYPE-NAME|3A|"
+ nocase
+ http_header
+ content:"SLICEUPLOAD"
+ distance:0
+ nocase
+ http_header
+ content:"X-TMP-FILE|3A|"
+ nocase
+ http_header
+ content:".cgi"
+ distance:0
+ nocase
+ http_header
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64516
+ reference:cve,2013-6955
+ reference:url,osvdb.org/show/osvdb/101247
+ classtype:attempted-admin
+ sid:29387
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Netgear DGN1000B setup.cgi parameter code execution attempt"
+ flow:to_server,established
+ content:"/setup.cgi"
+ nocase
+ http_uri
+ content:"TimeToLive="
+ fast_pattern:only
+ http_client_body
+ pcre:"/TimeToLive=[^&]*?(%60|\\x60)/iP"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,57836
+ classtype:attempted-user
+ sid:29402
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Netgear DGN1000B setup.cgi parameter code execution attempt"
+ flow:to_server,established
+ content:"/setup.cgi"
+ nocase
+ http_uri
+ content:"TimeToLive="
+ fast_pattern:only
+ http_uri
+ pcre:"/\\/setup.cgi.*?TimeToLive=[^&]*?(%60|\\x60)/iU"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,57836
+ classtype:attempted-user
+ sid:29401
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Airlive IP Camera information leak attempt"
+ flow:to_server,established
+ content:"/cgi-bin/operator/param?action=list&group=General.UserID"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60550
+ reference:cve,2013-3686
+ classtype:attempted-user
+ sid:29594
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HNAP remote code execution attempt"
+ flow:established,to_server
+ content:"POST"
+ http_method
+ content:"/tmUnblock.cgi"
+ fast_pattern:only
+ http_uri
+ content:"Authorization: Basic YWRtaW46"
+ http_header
+ content:"tmp"
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,isc.sans.edu/diary/Linksys+Worm+%28%22TheMoon%22%29+Captured/17630
+ classtype:attempted-admin
+ sid:29831
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HNAP remote code execution attempt"
+ flow:established,to_server
+ content:"POST"
+ http_method
+ content:"/tmUnblock.cgi"
+ fast_pattern:only
+ http_uri
+ content:"Authorization: Basic YWRtaW46"
+ http_header
+ content:"%74%6d%70"
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,isc.sans.edu/diary/Linksys+Worm+%28%22TheMoon%22%29+Captured/17630
+ classtype:attempted-admin
+ sid:29830
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HNAP remote code execution attempt"
+ flow:established,to_server
+ urilen:6
+ content:"/HNAP1"
+ fast_pattern:only
+ http_uri
+ content:"Authorization: Basic YWRtaW46"
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,isc.sans.edu/diary/Linksys+Worm+%22TheMoon%22+Summary%3A+What+we+know+so+far/17633
+ classtype:attempted-admin
+ sid:29829
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SERVER-WEBAPP Embedded php in Exif data upload attempt"
+ flow:to_server,established
+ content:"|FF D8 FF E0|"
+ http_client_body
+ content:"|FF E1|"
+ distance:0
+ http_client_body
+ byte_extract:2,0,exifLen,relative
+ content:"eval|28|base64_decode|28|"
+ within:exifLen
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/ab85eb33605f3013989f4e8a9bfd5e89dd82d1f80231d4e4a2ceb82744bf287c/analysis/1381324711/
+ classtype:attempted-admin
+ sid:30249
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP LifeSize UVC remote code execution attempt"
+ flow:to_server,established
+ content:"/server-admin/operations/diagnose/ping"
+ fast_pattern:only
+ http_uri
+ content:"destination_ip="
+ nocase
+ http_client_body
+ pcre:"/(^|&)destination_ip=[^&]*?(\\x60|\\x24\\x28|%60|%24%28)/Pmi"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.exploit-db.com/exploits/32437
+ classtype:attempted-admin
+ sid:30274
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Web Terria remote command execution attempt"
+ flow:to_server, established
+ content:"books.cgi?"
+ fast_pattern:only
+ http_uri
+ content:"file="
+ nocase
+ http_uri
+ pcre:"/file=[\\x7c\\x27]/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.exploit-db.com/exploits/33494
+ classtype:attempted-admin
+ sid:31094
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Supermicro Intelligent Management Controller close_window.cgi buffer overflow attempt"
+ flow:to_server,established
+ content:"/cgi/close_window.cgi"
+ fast_pattern:only
+ http_uri
+ content:"sess_sid="
+ nocase
+ http_client_body
+ isdataat:20,relative
+ content:!"&"
+ within:20
+ http_client_body
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,63775
+ reference:cve,2013-3623
+ reference:url,osvdb.org/show/osvdb/99598
+ classtype:attempted-admin
+ sid:31211
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Supermicro Intelligent Management Controller close_window.cgi buffer overflow attempt"
+ flow:to_server,established
+ content:"/cgi/close_window.cgi"
+ fast_pattern:only
+ http_uri
+ content:"ACT="
+ nocase
+ http_client_body
+ isdataat:20,relative
+ content:!"&"
+ within:20
+ http_client_body
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,63775
+ reference:cve,2013-3623
+ reference:url,osvdb.org/show/osvdb/99598
+ classtype:attempted-admin
+ sid:31210
+ rev:1
+)\n', 'alert tcp $HOME_NET $FILE_DATA_PORTS -> $EXTERNAL_NET any (msg:"SERVER-WEBAPP /etc/passwd file access attempt"
+ flow:to_client, established
+ file_data
+ content:"root:x:0:0:root:/root:/"
+ fast_pattern:only
+ content:!"html"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,www.tldp.org/LDP/lame/LAME/linux-admin-made-easy/shadow-file-formats.html
+ classtype:attempted-admin
+ sid:31289
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP AlienVault OSSIM av-centerd update_system_info_debian_package command injection attempt"
+ flow:to_server,established
+ content:"AV/CC/Util"
+ nocase
+ http_client_body
+ content:"<update_system_info_debian_package"
+ nocase
+ http_client_body
+ content:"xsd:string"
+ distance:0
+ nocase
+ http_client_body
+ content:"&amp|3B|&amp|3B|"
+ distance:0
+ nocase
+ http_client_body
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,67312
+ reference:cve,2014-3804
+ reference:url,forums.alienvault.com/discussion/2690/security-advisories-v4-6-1-and-lower
+ reference:url,osvdb.org/show/osvdb/108006
+ classtype:attempted-admin
+ sid:31330
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Wordpress timthumb.php webshot source attack attempt"
+ flow:to_server,established
+ content:"webshot=1"
+ fast_pattern:only
+ http_uri
+ content:"src=http"
+ nocase
+ http_uri
+ pcre:"/src=https?\\x3a\\x2f[^\\x26\\x20]*?(\\x24\\x28|%24%28)/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,cxsecurity.com/issue/WLB-2014060134
+ classtype:web-application-attack
+ sid:31356
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP AlienVault OSSIM av-centerd get_log_line command injection attempt"
+ flow:to_server,established
+ content:"AV/CC/Util"
+ nocase
+ http_client_body
+ content:"<get_log_line"
+ fast_pattern
+ nocase
+ http_client_body
+ content:"xsd:string"
+ distance:0
+ nocase
+ http_client_body
+ pcre:"/xsd\\x3astring[^>]*?>[^<]*?([\\x3b\\x7c\\x26]|\\x24\\x28|%3b|%7c|%26|%24%28)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,67998
+ reference:cve,2014-3805
+ reference:url,forums.alienvault.com/discussion/2690/security-advisories-v4-6-1-and-lower
+ reference:url,osvdb.org/show/osvdb/107993
+ classtype:attempted-admin
+ sid:31506
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP AlienVault OSSIM av-centerd get_license command injection attempt"
+ flow:to_server,established
+ content:"AV/CC/Util"
+ nocase
+ http_client_body
+ content:"<get_license"
+ fast_pattern
+ nocase
+ http_client_body
+ content:"xsd:string"
+ distance:0
+ nocase
+ http_client_body
+ pcre:"/xsd\\x3astring[^>]*?>[^<]*?([\\x3b\\x7c\\x26]|\\x24\\x28|%3b|%7c|%26|%24%28)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,67998
+ reference:cve,2014-3805
+ reference:url,forums.alienvault.com/discussion/2690/security-advisories-v4-6-1-and-lower
+ reference:url,osvdb.org/show/osvdb/108008
+ classtype:attempted-admin
+ sid:31505
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP AlienVault OSSIM remote_task command injection attempt"
+ flow:to_server,established
+ content:"AV/CC/Util"
+ nocase
+ http_client_body
+ content:"<remote_task"
+ fast_pattern
+ nocase
+ http_client_body
+ content:"xsd:string"
+ distance:0
+ nocase
+ http_client_body
+ pcre:"/xsd\\x3astring[^>]*?>[^<]*?([\\x3b\\x7c\\x26\\x60]|\\x24\\x28)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,69239
+ reference:cve,2014-5210
+ reference:url,forums.alienvault.com/discussion/2690/security-advisory-alienvault-v4-7-0-addresses-several-vulnerabilities
+ reference:url,osvdb.org/show/osvdb/109581
+ classtype:attempted-admin
+ sid:31823
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Centreon displayServiceStatus.php command injection attempt"
+ flow:to_server,established
+ content:"/centreon/"
+ nocase
+ http_uri
+ content:"displayServiceStatus.php"
+ fast_pattern:only
+ http_uri
+ pcre:"/[?&](template_id|session_id|index)=[^&]*?[\\x27\\x3b]/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,70648
+ reference:bugtraq,70649
+ reference:cve,2014-3828
+ reference:cve,2014-3829
+ reference:url,osvdb.org/show/osvdb/113499
+ reference:url,osvdb.org/show/osvdb/113504
+ classtype:attempted-admin
+ sid:32352
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP FreePBX Framework Asterisk recording interface PHP unserialize code execution attempt"
+ flow:to_server,established
+ content:"/recordings/index.php"
+ nocase
+ http_uri
+ content:"ari_auth"
+ nocase
+ http_cookie
+ content:"%3BO%3A6%3A%22Backup%22"
+ fast_pattern:only
+ content:"%3BO%3A6%3A%22Backup%22"
+ nocase
+ http_cookie
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,70188
+ reference:cve,2014-7235
+ reference:url,osvdb.org/show/osvdb/112437
+ classtype:attempted-admin
+ sid:32753
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Arris VAP2500 tools_command.php command execution attempt"
+ flow:to_server,established
+ content:"/tools_command.php"
+ fast_pattern:only
+ http_uri
+ content:"cmb_header="
+ nocase
+ http_client_body
+ content:"txt_command="
+ nocase
+ http_client_body
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,71299
+ reference:cve,2014-8423
+ reference:url,osvdb.org/show/osvdb/115045
+ classtype:attempted-admin
+ sid:32742
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP WordPress pingback gethostbyname heap buffer overflow attempt"
+ flow:to_server,established
+ content:"/xmlrpc.php"
+ fast_pattern:only
+ http_uri
+ content:"pingback.ping"
+ nocase
+ http_client_body
+ content:"://"
+ http_client_body
+ isdataat:500,relative
+ content:!"/"
+ within:500
+ http_client_body
+ pcre:"/\\x3a\\x2f\\x2f\\d[\\d\\x2e]{500}/P"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,72325
+ reference:cve,2015-0235
+ reference:url,openwall.com/lists/oss-security/2015/01/27/9
+ classtype:web-application-attack
+ sid:33275
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Seagate NAS remote code execution attempt"
+ flow:to_server,established
+ content:"/index.php/mv_system/set_general_setup"
+ fast_pattern:only
+ http_uri
+ content:"ci_session"
+ nocase
+ http_cookie
+ content:"description"
+ nocase
+ http_client_body
+ content:"%26lt%3b%3f"
+ distance:0
+ nocase
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,72831
+ reference:cve,2014-8687
+ reference:url,osvdb.org/show/osvdb/118925
+ reference:url,osvdb.org/show/osvdb/118927
+ classtype:attempted-admin
+ sid:33812
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP RevSlider information disclosure attempt"
+ flow:to_server,established
+ content:"/admin-ajax.php?"
+ nocase
+ http_uri
+ content:"action=revslider_show_image"
+ fast_pattern:only
+ http_uri
+ content:"img="
+ nocase
+ http_uri
+ content:".."
+ within:20
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2014-9734
+ reference:url,www.exploit-db.com/exploits/36554/
+ classtype:web-application-attack
+ sid:34194
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP D-Link multiple products HNAP SOAPAction header command injection attempt"
+ flow:to_server,established
+ content:"/HNAP1"
+ nocase
+ http_uri
+ content:"SOAPAction"
+ nocase
+ http_header
+ content:"http|3A|//purenetworks.com/HNAP1/GetDeviceSettings"
+ fast_pattern:only
+ http_header
+ pcre:"/^SOAPAction[^\\n]*([\\x60\\x3b\\x7c\\x26]|\\x24\\x28)/Hmi"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2015-2051
+ reference:url,osvdb.org/show/osvdb/118413
+ classtype:attempted-admin
+ sid:34300
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Symantec Critical System Protection directory traversal attempt"
+ flow:to_server,established
+ content:"/sis-agent/bulk-log"
+ fast_pattern:only
+ http_uri
+ content:"file.name"
+ nocase
+ http_client_body
+ content:".."
+ distance:0
+ http_client_body
+ pcre:"/file\\.name\\s*=\\s*[^\\r\\n]*?\\x2e\\x2e[\\x2f\\x5c]/Pi"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,72091
+ reference:cve,2014-3440
+ reference:url,osvdb.org/show/osvdb/117358
+ classtype:attempted-admin
+ sid:34471
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP EMC Connectrix Manager ManualBootImageUpload directory traversal attempt"
+ flow:to_server,established
+ content:"/inmservlets/ManualBootImageUpload"
+ fast_pattern:only
+ http_uri
+ content:"type="
+ nocase
+ http_uri
+ content:"../"
+ distance:0
+ http_uri
+ pcre:"/[?&][hs]wtype=[^&]*?\\x2e\\x2e\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64242
+ reference:cve,2013-6810
+ reference:url,osvdb.org/show/osvdb/100899
+ classtype:attempted-admin
+ sid:29488
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP EMC Connectrix Manager ManualBootImageUpload directory traversal attempt"
+ flow:to_server,established
+ content:"/inmservlets/ManualBootImageUpload"
+ fast_pattern:only
+ http_uri
+ content:"type="
+ nocase
+ http_client_body
+ pcre:"/(^|&)[hs]wtype=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pmi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64242
+ reference:cve,2013-6810
+ reference:url,osvdb.org/show/osvdb/100899
+ classtype:attempted-admin
+ sid:29487
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP EMC Connectrix Manager ManualBootImageUpload directory traversal attempt"
+ flow:to_server,established
+ content:"/inmservlets/ManualBootImageUpload"
+ fast_pattern:only
+ http_uri
+ content:"file="
+ nocase
+ http_uri
+ content:"../"
+ distance:0
+ http_uri
+ pcre:"/[?&]file=[^&]*?\\x2e\\x2e\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64242
+ reference:cve,2013-6810
+ reference:url,osvdb.org/show/osvdb/100899
+ classtype:attempted-admin
+ sid:29486
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP EMC Connectrix Manager ManualBootImageUpload directory traversal attempt"
+ flow:to_server,established
+ content:"/inmservlets/ManualBootImageUpload"
+ fast_pattern:only
+ http_uri
+ content:"file="
+ nocase
+ http_client_body
+ pcre:"/(^|&)file=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pmi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64242
+ reference:cve,2013-6810
+ reference:url,osvdb.org/show/osvdb/100899
+ classtype:attempted-admin
+ sid:29485
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP EMC Connectrix Manager FileUploadController directory traversal attempt"
+ flow:to_server,established
+ content:"/FileUploadController"
+ fast_pattern:only
+ http_uri
+ content:"multipart/form-data"
+ http_header
+ content:"filename"
+ nocase
+ http_client_body
+ pcre:"/filename\\s*?=\\s*?[\\x22\\x27]?[^\\r\\n]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64242
+ reference:cve,2013-6810
+ reference:url,osvdb.org/show/osvdb/101195
+ classtype:attempted-admin
+ sid:29392
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP EMC Connectrix Manager FileUploadController directory traversal attempt"
+ flow:to_server,established
+ content:"/FileUploadController"
+ fast_pattern:only
+ http_uri
+ content:"form-urlencoded"
+ http_header
+ content:"filename="
+ nocase
+ http_client_body
+ pcre:"/filename=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64242
+ reference:cve,2013-6810
+ reference:url,osvdb.org/show/osvdb/101195
+ classtype:attempted-admin
+ sid:29391
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP EMC Connectrix Manager FileUploadController directory traversal attempt"
+ flow:to_server,established
+ content:"/HttpFileUpload/FileUploadController.do"
+ fast_pattern:only
+ http_uri
+ content:"driverFolderName|3A|"
+ nocase
+ http_header
+ pcre:"/^driverFolderName\\x3a[^\\r\\n]*?\\x2e\\x2e[\\x2f\\x5c]/Hmi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64242
+ reference:cve,2013-6810
+ reference:url,osvdb.org/show/osvdb/101195
+ classtype:attempted-admin
+ sid:29390
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Cisco Prime Data Center Network Manager FileUploadServlet arbitrary file upload attempt"
+ flow:to_server,established
+ content:"/fileUpload"
+ depth:11
+ nocase
+ http_uri
+ content:"multipart/form-data"
+ http_header
+ content:"file_system"
+ fast_pattern:only
+ http_client_body
+ content:"uploadDir"
+ nocase
+ http_client_body
+ pcre:"/name\\s*?=\\s*?[\\x22\\x27]?uploadDir[^\\x3b]+?(?:(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)|C(\\x3a|%3a)(\\x5c|%5c))/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62484
+ reference:cve,2013-5486
+ reference:url,osvdb.org/show/osvdb/97425
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20130918-dcnm
+ classtype:attempted-admin
+ sid:29142
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Cisco Prime Data Center Network Manager FileUploadServlet arbitrary file upload attempt"
+ flow:to_server,established
+ content:"/fileUpload"
+ depth:11
+ nocase
+ http_uri
+ content:"action=file_system"
+ fast_pattern:only
+ http_client_body
+ content:"task=upload"
+ nocase
+ http_client_body
+ content:"uploadDir="
+ nocase
+ http_client_body
+ pcre:"/(^|&)uploadDir=[^&]*?(?:(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)|C(\\x3a|%3a)(\\x5c|%5c))/Pmi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62484
+ reference:cve,2013-5486
+ reference:url,osvdb.org/show/osvdb/97425
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20130918-dcnm
+ classtype:attempted-admin
+ sid:29141
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Cisco Prime Data Center Network Manager processImageSave.jsp directory traversal attempt"
+ flow:to_server,established
+ content:"/cues_utility/charts/processImageSave.jsp"
+ fast_pattern:only
+ http_uri
+ content:"chartid="
+ nocase
+ http_uri
+ content:"../"
+ distance:0
+ nocase
+ http_uri
+ pcre:"/[?&]chartid=[^&]*?\\x2e\\x2e\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62484
+ reference:cve,2013-5486
+ reference:url,osvdb.org/show/osvdb/97426
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20130918-dcnm
+ classtype:attempted-admin
+ sid:29042
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Cisco Prime Data Center Network Manager processImageSave.jsp directory traversal attempt"
+ flow:to_server,established
+ content:"/cues_utility/charts/processImageSave.jsp"
+ fast_pattern:only
+ http_uri
+ content:"chartid="
+ nocase
+ http_client_body
+ pcre:"/(^|&)chartid=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62484
+ reference:cve,2013-5486
+ reference:url,osvdb.org/show/osvdb/97426
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20130918-dcnm
+ classtype:attempted-admin
+ sid:29041
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 7071 (msg:"SERVER-WEBAPP Zimbra remote code execution attempt"
+ flow:to_server,established
+ content:"/res/I18nMsg,AjxMsg,ZMsg,ZmMsg,AjxKeys,ZmKeys,ZdMsg,Ajx%20TemplateMsg.js.zgz?v=091214175450&skin=../../../../../../../../../opt/zimbra/conf/localconfig.xml"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:url,www.exploit-db.com/exploits/30085/
+ classtype:attempted-admin
+ sid:29027
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HP LoadRunner Virtual User Generator EmulationAdmin directory traversal attempt"
+ flow:to_server,established
+ content:"/ServiceEmulation/services/EmulationAdmin"
+ fast_pattern:only
+ http_uri
+ content:"FilePath"
+ nocase
+ http_client_body
+ pcre:"/<FilePath[^>]*?>[^<]*?(\\x2e|%2e){2}([\\x5c\\x2f]|%5c|%2f)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,63476
+ reference:cve,2013-4838
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03969437
+ reference:url,osvdb.org/show/osvdb/99232
+ classtype:attempted-admin
+ sid:29019
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HP LoadRunner Virtual User Generator EmulationAdmin directory traversal attempt"
+ flow:to_server,established
+ content:"/ServiceEmulation/services/EmulationAdmin"
+ fast_pattern:only
+ http_uri
+ content:"|3A|string"
+ nocase
+ http_client_body
+ pcre:"/\\x3astring[^>]*?>[^<]*?(\\x2e|%2e){2}([\\x5c\\x2f]|%5c|%2f)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,63475
+ reference:cve,2013-4837
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03969437
+ reference:url,osvdb.org/show/osvdb/99231
+ classtype:attempted-admin
+ sid:29017
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HP Intelligent Management Center BIMS UploadServlet arbitrary file upload attempt"
+ flow:to_server,established
+ content:"PUT"
+ http_method
+ content:"/upload/upload?"
+ fast_pattern:only
+ http_uri
+ content:"fileName="
+ nocase
+ http_uri
+ pcre:"/[?&]fileName=[^&]*?(\\x2e\\x2e\\x2f|\\x2ejsp)/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62895
+ reference:cve,2013-4822
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c03943425
+ reference:url,osvdb.org/show/osvdb/98247
+ classtype:attempted-admin
+ sid:28407
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HP System Management arbitrary command injection attempt"
+ flow:to_server,established
+ content:"/smhutil/snmpchp/"
+ fast_pattern:only
+ http_uri
+ content:"|3B|"
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60471
+ reference:cve,2013-3576
+ reference:url,osvdb.org/show/osvdb/94191
+ classtype:attempted-admin
+ sid:27105
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HP System Management arbitrary command injection attempt"
+ flow:to_server,established
+ content:"/smhutil/snmpchp/"
+ fast_pattern:only
+ http_uri
+ content:"&&"
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60471
+ reference:cve,2013-3576
+ reference:url,osvdb.org/show/osvdb/94191
+ classtype:attempted-admin
+ sid:27104
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 383 (msg:"SERVER-WEBAPP HP OpenView Operations Agent request attempt"
+ flow:to_server,established
+ content:"/Hewlett-Packard/OpenView/Coda"
+ fast_pattern:only
+ http_uri
+ flowbits:set,hp_openview_coda
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service http
+ reference:cve,2012-2019
+ reference:cve,2012-2020
+ classtype:misc-activity
+ sid:24313
+ rev:10
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SERVER-WEBAPP JBoss JMX console access attempt"
+ flow:to_server,established
+ content:"/jmx-console/"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2007-1036
+ reference:cve,2013-2185
+ reference:url,docs.jboss.org/jbossas/6/Admin_Console_Guide/en-US/pdf/Admin_Console_Guide.pdf
+ classtype:attempted-recon
+ sid:21516
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3128 (msg:"SERVER-WEBAPP Squid authentication headers handling denial of service attempt"
+ flow:to_server,established
+ content:"Proxy-Authorization: NTLM"
+ fast_pattern:only
+ flowbits:set,ntlm_authentication
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service http
+ reference:bugtraq,14977
+ reference:cve,2005-2917
+ classtype:protocol-command-decode
+ sid:17370
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Rocket Servergraph Admin Center userRequest and tsmRequest command execution attempt"
+ flow:to_server,established
+ content:"/SGPAdmin/tsmRequest"
+ fast_pattern:only
+ http_uri
+ content:"cmd="
+ http_client_body
+ content:"source="
+ http_client_body
+ content:"query="
+ http_client_body
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2014-3915
+ reference:url,cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3915
+ classtype:attempted-user
+ sid:34949
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Rocket Servergraph Admin Center userRequest and tsmRequest command execution attempt"
+ flow:to_server,established
+ content:"/SGPAdmin/userRequest"
+ fast_pattern:only
+ http_uri
+ content:"&cmd="
+ http_client_body
+ content:"&source="
+ within:19
+ http_client_body
+ content:"&query=&"
+ within:50
+ http_client_body
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2014-3915
+ reference:url,cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3915
+ classtype:attempted-user
+ sid:34948
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Centreon makeXML_ListMetrics.php SQL injection attempt"
+ flow:to_server,established
+ content:"/centreon/"
+ nocase
+ http_uri
+ content:"makeXML_ListMetrics.php"
+ fast_pattern:only
+ http_uri
+ content:"index_id="
+ nocase
+ http_uri
+ pcre:"/[?&]index_id=[^&]*?[\\x27\\x3b]/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,70648
+ reference:cve,2014-3828
+ reference:url,osvdb.org/show/osvdb/113503
+ classtype:web-application-attack
+ sid:35017
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Centreon cmdGetExample.php SQL injection attempt"
+ flow:to_server,established
+ content:"/centreon/"
+ nocase
+ http_uri
+ content:"cmdGetExample.php"
+ fast_pattern:only
+ http_uri
+ content:"index="
+ nocase
+ http_client_body
+ pcre:"/(^|&)index=[^&]*?([\\x27\\x3b]|%27|%3b)/Pim"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,70648
+ reference:cve,2014-3828
+ reference:url,osvdb.org/show/osvdb/113501
+ classtype:web-application-attack
+ sid:35016
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Centreon GetXmlTree.php SQL injection attempt"
+ flow:to_server,established
+ content:"/centreon/"
+ nocase
+ http_uri
+ content:"GetXmlTree.php"
+ fast_pattern:only
+ http_uri
+ content:"sid="
+ nocase
+ http_uri
+ pcre:"/[?&]sid=[^&]*?[\\x27\\x3b]/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,70648
+ reference:cve,2014-3828
+ reference:url,osvdb.org/show/osvdb/113502
+ classtype:web-application-attack
+ sid:35015
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Centreon GetXMLTrapsForVendor.php SQL injection attempt"
+ flow:to_server,established
+ content:"/centreon/"
+ nocase
+ http_uri
+ content:"GetXMLTrapsForVendor.php"
+ fast_pattern:only
+ http_uri
+ content:"mnftr_id="
+ nocase
+ http_client_body
+ pcre:"/(^|&)mnftr_id=[^&]*?([\\x27\\x3b]|%27|%3b)/Pim"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,70648
+ reference:cve,2014-3828
+ reference:url,osvdb.org/show/osvdb/113500
+ classtype:web-application-attack
+ sid:35014
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP GE MDS PulseNet hidden credentials authentication attempt"
+ flow:to_server,established
+ content:"Pu1seNET"
+ fast_pattern:only
+ http_client_body
+ content:"ge_support"
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,76756
+ reference:cve,2015-6456
+ reference:url,www.gedigitalenergy.com/app/resources.aspx?prod=pulsenet&type=9
+ classtype:attempted-admin
+ sid:36272
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP vBulletin decodeArguments PHP object injection attempt"
+ flow:to_server,established
+ content:"/ajax/api/hook/decodeArguments"
+ fast_pattern:only
+ http_uri
+ content:"arguments="
+ nocase
+ http_uri
+ pcre:"/[?&]arguments=[^&]*?O\\x3a/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2015-7808
+ classtype:attempted-admin
+ sid:36763
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Joomla JDatabaseDriverMysqli unserialize code execution attempt"
+ flow:to_server,established
+ content:"X-Forwarded-For|3A|"
+ nocase
+ http_header
+ content:"|7C|O|3A|"
+ distance:0
+ fast_pattern
+ http_header
+ pcre:"/^X-Forwarded-For\\x3A[^\\r\\n]*?(?-i)\\x7CO\\x3A/Him"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2015-8562
+ reference:url,developer.joomla.org/security-centre/630-20151214-core-remote-code-execution-vulnerability.html
+ classtype:attempted-user
+ sid:37078
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Joomla JDatabaseDriverMysqli unserialize code execution attempt"
+ flow:to_server,established
+ content:"User-Agent|3A|"
+ nocase
+ http_header
+ content:"|7C|O|3A|"
+ distance:0
+ fast_pattern
+ http_header
+ pcre:"/^User-Agent\\x3A[^\\r\\n]*?(?-i)\\x7CO\\x3A/Him"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2015-8562
+ reference:url,developer.joomla.org/security-centre/630-20151214-core-remote-code-execution-vulnerability.html
+ classtype:attempted-user
+ sid:37077
+ rev:3
+)\n', 'alert tcp any any -> any $FILE_DATA_PORTS (msg:"SERVER-WEBAPP Fireeye Java decompiler reflection remote code execution attempt"
+ flow:to_server,established
+ file_data
+ content:"|6D 91 B5 47 A1 F0 1F B8 45 C8 5D 45 3D D6 B0 8E 7C 6A DC 22 E8 8B E3 49|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,googleprojectzero.blogspot.com/2015/12/fireeye-exploitation-project-zeros.html
+ classtype:attempted-user
+ sid:37137
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"SERVER-WEBAPP Fireeye Java decompiler reflection remote code execution attempt"
+ flow:to_server,established
+ file_data
+ content:"|6D 91 B5 47 A1 F0 1F B8 45 C8 5D 45 3D D6 B0 8E 7C 6A DC 22 E8 8B E3 49|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:url,googleprojectzero.blogspot.com/2015/12/fireeye-exploitation-project-zeros.html
+ classtype:attempted-user
+ sid:37136
+ rev:1
+)\n', 'alert tcp any $FILE_DATA_PORTS -> any any (msg:"SERVER-WEBAPP Fireeye Java decompiler reflection remote code execution attempt"
+ flow:to_client,established
+ file_data
+ content:"|6D 91 B5 47 A1 F0 1F B8 45 C8 5D 45 3D D6 B0 8E 7C 6A DC 22 E8 8B E3 49|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,googleprojectzero.blogspot.com/2015/12/fireeye-exploitation-project-zeros.html
+ classtype:attempted-user
+ sid:37135
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP D-Link DCS-900 Series Network Camera arbitrary file upload attempt"
+ flow:to_server,established
+ content:"/setFileUpload"
+ fast_pattern:only
+ http_uri
+ content:"ConfigUploadFile"
+ nocase
+ http_client_body
+ content:"Authorization:"
+ nocase
+ http_header
+ content:"YWRtaW46"
+ distance:0
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2015-2049
+ reference:url,osvdb.org/show/osvdb/118319
+ classtype:attempted-admin
+ sid:37242
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Allen-Bradley Compact Logix cross site scripting attempt"
+ flow:to_server,established
+ content:"/rokform/SysListDetail"
+ fast_pattern:only
+ http_uri
+ pcre:"/[?&](name|comp)=[^&]*?([\\x22\\x27\\x3c\\x3e\\x28\\x29]|script|onload|src)/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:attempted-user
+ sid:37624
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Allen-Bradley Compact Logix cross site scripting attempt"
+ flow:to_server,established
+ content:"/rokform/SysGroupDetail"
+ fast_pattern:only
+ http_uri
+ pcre:"/[?&](name|comp)=[^&]*?([\\x22\\x27\\x3c\\x3e\\x28\\x29]|script|onload|src)/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:attempted-user
+ sid:37623
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Allen-Bradley Compact Logix cross site scripting attempt"
+ flow:to_server,established
+ content:"/rokform/SysDataDetail"
+ fast_pattern:only
+ http_uri
+ pcre:"/[?&](name|comp)=[^&]*?([\\x22\\x27\\x3c\\x3e\\x28\\x29]|script|onload|src)/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:attempted-user
+ sid:37622
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Oracle e-Business Suite HR_UTIL_DISP_WEB SQL injection attempt"
+ flow:to_server,established
+ content:"/HR_UTIL_DISP_WEB.display_fatal_errors?"
+ fast_pattern:only
+ http_uri
+ content:"p_message="
+ nocase
+ http_uri
+ pcre:"/[?&]p_message=[^&]*?\\x27/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0517
+ classtype:web-application-attack
+ sid:37687
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1099,7001,$HTTP_PORTS] (msg:"SERVER-WEBAPP Java Library CommonsCollection unauthorized serialized object attempt"
+ flow:to_server,established
+ content:"|AC ED 00 05|"
+ content:"/runtime/callsite/"
+ distance:0
+ content:"|00 0C|java.io.File"
+ distance:0
+ content:"|70 74 00 07|execute|70 74 00 08|entrySet"
+ within:100
+ content:"java.lang.Override"
+ within:100
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http, service java_rmi
+ reference:cve,2015-3253
+ reference:cve,2015-4852
+ reference:cve,2015-7450
+ reference:cve,2015-8103
+ reference:url,github.com/frohoff/ysoserial
+ classtype:attempted-user
+ sid:37860
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1099,7001,$HTTP_PORTS] (msg:"SERVER-WEBAPP Java Library CommonsCollection unauthorized serialized object attempt"
+ flow:to_server,established
+ content:"|AC ED 00 05|"
+ content:"getRuntime"
+ distance:0
+ content:"Ljava/lang/Runtime|3B|"
+ within:30
+ content:"exec|01 00 27|(Ljava/lang/String|3B|"
+ distance:0
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http, service java_rmi
+ reference:cve,2015-3253
+ reference:cve,2015-4852
+ reference:cve,2015-7450
+ reference:cve,2015-8103
+ reference:url,github.com/frohoff/ysoserial
+ classtype:attempted-user
+ sid:37859
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [8088,8089] (msg:"SERVER-WEBAPP Oracle application testing suite DownloadServlet directory traversal attempt"
+ flow:to_server,established
+ content:"/otm/download"
+ fast_pattern:only
+ http_uri
+ content:"downloadType=OTMReport"
+ nocase
+ http_client_body
+ content:"reportName"
+ nocase
+ http_client_body
+ content:"Content-Disposition"
+ nocase
+ http_client_body
+ pcre:"/name\\s*=\\s*[\\x22\\x27]?reportName((?!^--).)*?\\x2e\\x2e[\\x2f\\x5c]/Psim"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0485
+ classtype:web-application-attack
+ sid:38791
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [8088,8089] (msg:"SERVER-WEBAPP Oracle application testing suite DownloadServlet directory traversal attempt"
+ flow:to_server,established
+ content:"/otm/download"
+ fast_pattern:only
+ http_uri
+ content:"downloadType=OTMReport"
+ nocase
+ http_client_body
+ content:"reportName="
+ nocase
+ http_client_body
+ pcre:"/(^|&)reportName=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pim"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0485
+ classtype:web-application-attack
+ sid:38790
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [8088,8089] (msg:"SERVER-WEBAPP Oracle application testing suite DownloadServlet directory traversal attempt"
+ flow:to_server,established
+ content:"/otm/download"
+ fast_pattern:only
+ http_uri
+ content:"downloadType=OTMReport"
+ http_uri
+ content:"reportName="
+ nocase
+ http_uri
+ content:"../"
+ http_uri
+ pcre:"/[?&]reportName=[^&]*?\\x2e\\x2e\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0485
+ classtype:web-application-attack
+ sid:38789
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [8088,8089] (msg:"SERVER-WEBAPP Oracle Application Testing Suite actionservlet directory traversal attempt"
+ flow:to_server,established
+ content:"/otm/"
+ depth:5
+ fast_pattern
+ nocase
+ http_uri
+ content:"../"
+ offset:5
+ http_raw_uri
+ content:".do"
+ distance:0
+ http_raw_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0487
+ classtype:attempted-user
+ sid:38934
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Jenkins CI Server insecure deserialization command execution attempt"
+ flow:to_server,established
+ content:"/create"
+ nocase
+ http_uri
+ content:"groovy.runtime.MethodClosure"
+ fast_pattern:only
+ http_client_body
+ content:"java.lang"
+ nocase
+ http_client_body
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0792
+ reference:url,wiki.jenkins-ci.org/display/SECURITY/Jenkins+Security+Advisory+2016-02-24
+ classtype:attempted-admin
+ sid:38894
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HP Enterprise Vertica validateAdminConfig command injection attempt"
+ flow:to_server,established
+ content:"/webui/systemConfig/validateAdminConfig"
+ fast_pattern:only
+ http_uri
+ content:"mcPort="
+ nocase
+ http_uri
+ pcre:"/[?&]mcPort=[^&]*?([\\x60\\x3b\\x7c]|[\\x3c\\x3e\\x24]\\x28)/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-2002
+ reference:url,h20564.www2.hpe.com/hpsc/doc/public/display?docId=emr_na-c05085303
+ classtype:web-application-attack
+ sid:38880
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP HP Enterprise Vertica validateAdminConfig command injection attempt"
+ flow:to_server,established
+ content:"/webui/systemConfig/validateAdminConfig"
+ fast_pattern:only
+ http_uri
+ content:"mcPort="
+ nocase
+ http_raw_uri
+ content:"%26"
+ distance:0
+ http_raw_uri
+ pcre:"/[?&]mcPort=[^&]*?%26/Ii"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-2002
+ reference:url,h20564.www2.hpe.com/hpsc/doc/public/display?docId=emr_na-c05085303
+ classtype:web-application-attack
+ sid:38879
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [8088,8089] (msg:"SERVER-WEBAPP Oracle Application Testing Suite directory traversal attempt"
+ flow:to_server,established
+ content:"/olt/download"
+ fast_pattern:only
+ http_uri
+ content:"downloadType=report"
+ nocase
+ http_client_body
+ content:"reportName"
+ nocase
+ http_client_body
+ content:"Content-Disposition"
+ nocase
+ http_client_body
+ pcre:"/name\\s*=\\s*[\\x22\\x27]?reportName((?!^--).)*?\\x2e\\x2e[\\x2f\\x5c]/Psim"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0476
+ classtype:web-application-attack
+ sid:38970
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [8088,8089] (msg:"SERVER-WEBAPP Oracle Application Testing Suite directory traversal attempt"
+ flow:to_server,established
+ content:"/olt/download"
+ fast_pattern:only
+ http_uri
+ content:"downloadType=report"
+ nocase
+ http_client_body
+ content:"reportName="
+ nocase
+ http_client_body
+ pcre:"/(^|&)reportName=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pim"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0476
+ classtype:web-application-attack
+ sid:38969
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [8088,8089] (msg:"SERVER-WEBAPP Oracle Application Testing Suite directory traversal attempt"
+ flow:to_server,established
+ content:"/olt/download"
+ fast_pattern:only
+ http_uri
+ content:"downloadType=report"
+ nocase
+ http_uri
+ content:"reportName="
+ nocase
+ http_uri
+ content:"../"
+ http_uri
+ pcre:"/[?&]reportName=[^&]*?\\x2e\\x2e\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0476
+ classtype:web-application-attack
+ sid:38968
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Dlink local file disclosure attempt"
+ flow:to_server,established
+ content:"/model/__show_info.php"
+ fast_pattern:only
+ http_uri
+ content:"REQUIRE_FILE="
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,64043
+ classtype:web-application-attack
+ sid:39070
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"SERVER-WEBAPP D-Link router unauthorised DNS change attempt"
+ flow:to_server,established
+ content:"/Forms/dns_1"
+ fast_pattern:only
+ http_uri
+ content:"Enable_DNSFollowing="
+ nocase
+ http_uri
+ content:"dnsPrimary="
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,theregister.co.uk/2015/02/02/dns_hijack_d_link/
+ classtype:attempted-admin
+ sid:39192
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler WindowsEventLogsServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/WindowsEventLogsServlet"
+ fast_pattern:only
+ http_uri
+ content:"winEvent"
+ nocase
+ http_uri
+ pcre:"/[?&]winEvent(Source|Id|Log)=[^&]*?\\x27/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39340
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler WindowsEventLogsServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/WindowsEventLogsServlet"
+ fast_pattern:only
+ http_uri
+ content:"winEvent"
+ nocase
+ http_client_body
+ pcre:"/(^|&)winEvent(Source|Id|Log)=[^&]*?(\\x27|%27)/Pim"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39339
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler ScriptServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/ScriptServlet"
+ fast_pattern:only
+ http_uri
+ content:"ScriptSchedule="
+ nocase
+ http_client_body
+ pcre:"/(^|&)ScriptSchedule=[^&]*?(\\x27|%27)/Pim"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39338
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler BexDriveUsageSummaryServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/BexDriveUsageSummaryServlet"
+ fast_pattern:only
+ http_uri
+ content:"sort"
+ nocase
+ http_uri
+ pcre:"/[?&]sort(Field|Direction)=[^&]*?\\x27/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39337
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler BexDriveUsageSummaryServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/BexDriveUsageSummaryServlet"
+ fast_pattern:only
+ http_uri
+ content:"sort"
+ nocase
+ http_client_body
+ pcre:"/(^|&)sort(Field|Direction)=[^&]*?(\\x27|%27)/Pim"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39336
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler ScriptServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/ScriptServlet"
+ fast_pattern:only
+ http_uri
+ content:"ScriptSchedule="
+ nocase
+ http_uri
+ pcre:"/[?&]ScriptSchedule=[^&]*?\\x27/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39335
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler DuplicateFilesServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/DuplicateFilesServlet"
+ fast_pattern:only
+ http_uri
+ pcre:"/[?&](sortField|sortDirection|fileName)=[^&]*?\\x27/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39334
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler DuplicateFilesServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/DuplicateFilesServlet"
+ fast_pattern:only
+ http_uri
+ pcre:"/(^|&)(sortField|sortDirection|fileName)=[^&]*?(\\x27|%27)/Pim"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39333
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler BackupExceptionsServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/BackupExceptionsServlet"
+ fast_pattern:only
+ http_uri
+ pcre:"/[?&](group|groupName|clientName)=[^&]*?\\x27/Ui"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39332
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP SolarWinds SRM Profiler BackupExceptionsServlet SQL injection attempt"
+ flow:to_server,established
+ content:"/BackupExceptionsServlet"
+ fast_pattern:only
+ http_uri
+ pcre:"/(^|&)(group|groupName|clientName)=[^&]*?(\\x27|%27)/Pim"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4350
+ classtype:web-application-attack
+ sid:39331
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Wordpress Mobile Detector Plugin remote file upload attempt"
+ flow:to_server,established
+ content:"/wp-content/plugins/wp-mobile-detector"
+ fast_pattern:only
+ http_uri
+ content:"src="
+ nocase
+ http_uri
+ content:"|3A|/"
+ http_uri
+ pcre:"/[?&]src=[^&]*?(http|ftp)/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,wordpress.org/plugins/wp-mobile-detector/changelog
+ classtype:web-application-attack
+ sid:39350
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Wordpress Mobile Detector Plugin remote file upload attempt"
+ flow:to_server,established
+ content:"/wp-content/plugins/wp-mobile-detector"
+ fast_pattern:only
+ http_uri
+ content:"src="
+ nocase
+ http_client_body
+ pcre:"/(^|&)src=[^&]*?(http|ftp)/Pim"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,wordpress.org/plugins/wp-mobile-detector/changelog
+ classtype:web-application-attack
+ sid:39349
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"SERVER-WEBAPP Symantec Decomposer Engine Dec2LHA buffer overflow attempt"
+ flow:to_server,established
+ file_data
+ content:"|69 5D E6 5A 5D EE 11 91 C9 06 7D 3D 30 A3 68 B5 79 5A A4 B1 6D 2A B5 0B 69 6B 15 12 4C 30 64 E1|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-2210
+ classtype:attempted-user
+ sid:39401
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"SERVER-WEBAPP Symantec Decomposer Engine Dec2LHA buffer overflow attempt"
+ flow:to_client,established
+ file_data
+ content:"|69 5D E6 5A 5D EE 11 91 C9 06 7D 3D 30 A3 68 B5 79 5A A4 B1 6D 2A B5 0B 69 6B 15 12 4C 30 64 E1|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-2210
+ classtype:attempted-user
+ sid:39400
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 8445 (msg:"SERVER-WEBAPP Symantec SEPM management console cross site scripting attempt"
+ flow:to_server,established
+ content:"/Reporting/Admin/notificationpopup.php"
+ fast_pattern:only
+ content:"height="
+ nocase
+ pcre:"/[?&]height=[^&]*?([\\x22\\x27\\x3c\\x3e\\x28\\x29]|%22|%27|%3c|%3e|%28|%29|script|onload|src)/i"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,91444
+ reference:cve,2016-3652
+ classtype:attempted-user
+ sid:39398
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Drupal Coder Module insecure remote file deserialization attempt"
+ flow:to_server,established
+ content:"/coder_upgrade.run.php"
+ fast_pattern:only
+ http_uri
+ content:"file="
+ nocase
+ http_uri
+ content:"|3A|/"
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.drupal.org/node/2765575
+ classtype:web-application-attack
+ sid:39645
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Drupal RESTWS restws_page_callback command injection attempt"
+ flow:to_server,established
+ content:"taxonomy_"
+ fast_pattern:only
+ http_uri
+ pcre:"/taxonomy_(term|vocabulary)\\x2f[^\\n]*?(eval|exec|passthru|proc_open|shell_exec|system)\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.drupal.org/node/2765567
+ classtype:attempted-admin
+ sid:39726
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Drupal RESTWS restws_page_callback command injection attempt"
+ flow:to_server,established
+ content:"file/"
+ fast_pattern:only
+ http_uri
+ pcre:"/file\\x2f[^\\n]*?(eval|exec|passthru|proc_open|shell_exec|system)\\x2f/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.drupal.org/node/2765567
+ classtype:attempted-admin
+ sid:39725
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Siemens IP-Camera credential disclosure attempt"
+ flow:to_server,established
+ content:"/cgi-bin/readfile.cgi"
+ fast_pattern:only
+ http_uri
+ content:"query=ADMINID"
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.exploit-db.com/exploits/40260/
+ classtype:attempted-admin
+ sid:39930
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP WordPress pingback gethostbyname heap buffer overflow attempt"
+ flow:to_server,established
+ content:"/xml-rpc.php"
+ fast_pattern:only
+ http_uri
+ content:"pingback.ping"
+ nocase
+ http_client_body
+ content:"://"
+ http_client_body
+ isdataat:500,relative
+ content:!"/"
+ within:500
+ http_client_body
+ pcre:"/\\x3a\\x2f\\x2f\\d[\\d\\x2e]{500}/P"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,72325
+ reference:cve,2015-0235
+ reference:url,openwall.com/lists/oss-security/2015/01/27/9
+ classtype:web-application-attack
+ sid:39925
+ rev:1
+)\n', 'alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-WEBAPP Belkin F9K1122 webpage buffer overflow attempt"
+ flow:to_server,established
+ content:"/goform/formSetLanguage"
+ fast_pattern:only
+ http_uri
+ content:"webpage="
+ http_client_body
+ isdataat:64,relative
+ content:!"&"
+ within:64
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.exploit-db.com/exploits/40332/
+ classtype:attempted-user
+ sid:40047
+ rev:1
+)\n']

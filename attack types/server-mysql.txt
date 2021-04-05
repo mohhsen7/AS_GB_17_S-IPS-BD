@@ -1,0 +1,12 @@
+['\n', '\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3306 (msg:"SERVER-MYSQL Oracle MySQL Server XPath memory Corruption attempt"
+ flow:to_server,established
+ content:"substring("
+ nocase
+ content:",.."
+ within:7
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop
+ reference:cve,2014-0384
+ classtype:denial-of-service
+ sid:32533
+ rev:1
+)\n']

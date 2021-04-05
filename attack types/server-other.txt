@@ -1,0 +1,2728 @@
+['\n', '\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Apache Struts2 skillName remote code execution attempt"
+ flow:to_server,established
+ content:"edit.action?"
+ http_uri
+ content:"skillName=|7B 28 23|"
+ fast_pattern:only
+ http_uri
+ pcre:"/skillName\\x3D\\x7B\\x28\\x23/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60082
+ reference:cve,2013-1965
+ classtype:attempted-admin
+ sid:26772
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [$HTTP_PORTS,5555] (msg:"SERVER-OTHER MiniUPnPd ExecuteSoapAction buffer overflow attempt"
+ flow:to_server,established
+ content:"SOAPAction|3A|"
+ fast_pattern:only
+ http_header
+ pcre:"/SOAPAction\\x3A\\s*?\\x22[^\\x22\\x23]+?\\x23([^\\x22]{2048}|[^\\x22]+$)/Hsi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:cve,2013-0230
+ reference:cve,2013-1462
+ classtype:attempted-admin
+ sid:25780
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3000 (msg:"SERVER-OTHER EMC AlphaStor Device Manager command injection attempt"
+ flow:to_server,established
+ content:"|75|"
+ depth:1
+ content:"nsrmm"
+ distance:0
+ pcre:"/nsrmm[^\\x00]*?([\\x3b\\x7c\\x26\\x60]|\\x24\\x28)/"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,57472
+ reference:cve,2013-0928
+ reference:url,osvdb.org/show/osvdb/89436
+ classtype:attempted-admin
+ sid:25585
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3000 (msg:"SERVER-OTHER EMC AlphaStor Device Manager command injection attempt"
+ flow:to_server,established
+ content:"|75|"
+ depth:1
+ content:"mmpool"
+ distance:0
+ pcre:"/mmpool[^\\x00]*?([\\x3b\\x7c\\x26\\x60]|\\x24\\x28)/"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,57472
+ reference:cve,2013-0928
+ reference:url,osvdb.org/show/osvdb/89436
+ classtype:attempted-admin
+ sid:25584
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3000 (msg:"SERVER-OTHER EMC AlphaStor Device Manager command injection attempt"
+ flow:to_server,established
+ content:"|75|"
+ depth:1
+ content:"mmlocate"
+ distance:0
+ pcre:"/mmlocate[^\\x00]*?([\\x3b\\x7c\\x26\\x60]|\\x24\\x28)/"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,57472
+ reference:cve,2013-0928
+ reference:url,osvdb.org/show/osvdb/89436
+ classtype:attempted-admin
+ sid:25583
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3000 (msg:"SERVER-OTHER EMC AlphaStor Device Manager command injection attempt"
+ flow:to_server,established
+ content:"|75|"
+ depth:1
+ content:"nsrjb"
+ distance:0
+ pcre:"/nsrjb[^\\x00]*?([\\x3b\\x7c\\x26\\x60]|\\x24\\x28)/"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,57472
+ reference:cve,2013-0928
+ reference:url,osvdb.org/show/osvdb/89436
+ classtype:attempted-admin
+ sid:25581
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 2400 (msg:"SERVER-OTHER Novell ZENworks Handheld Management ZfHIPCND.exe buffer overflow attempt"
+ flow:to_server,established
+ content:"|02 00 00 00 01 00 01 00|"
+ fast_pattern:only
+ flowbits:set,zenworks_opcode
+ flowbits:noalert
+ reference:bugtraq,46024
+ reference:cve,2011-0742
+ classtype:attempted-admin
+ sid:19323
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 13724 (msg:"SERVER-OTHER VERITAS NetBackup vnetd connection attempt"
+ flow:to_server,established
+ content:"6|00|bpspsserver|00|"
+ flowbits:set,vnetd.bpspsserver.connection
+ flowbits:noalert
+ metadata:policy max-detect-ips alert
+ classtype:protocol-command-decode
+ sid:6010
+ rev:7
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 623 (msg:"SERVER-OTHER IPMI RAKP cipher zero remote authentication bypass attempt"
+ flow:to_server
+ content:"|06 00 FF 07 06 10 00 00 00 00 00 00 00 00|"
+ depth:14
+ content:"|00 00 00 00|"
+ within:4
+ distance:2
+ content:"|00 00 00 08 00|"
+ within:5
+ distance:4
+ fast_pattern
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2013-4782
+ reference:cve,2013-4783
+ reference:cve,2013-4784
+ reference:url,osvdb.org/show/osvdb/93038
+ reference:url,osvdb.org/show/osvdb/93039
+ reference:url,osvdb.org/show/osvdb/93040
+ reference:url,www.fish2.com/ipmi/cipherzero.html
+ reference:url,www.intel.com/content/dam/www/public/us/en/documents/product-briefs/second-gen-interface-spec-v2.pdf
+ classtype:attempted-admin
+ sid:27210
+ rev:3
+)\n', 'alert tcp $HOME_NET 8575 -> $EXTERNAL_NET any (msg:"SERVER-OTHER Adobe ColdFusion websocket invoke method access"
+ flow:to_client,established
+ content:"|22|ns|22 3A 22|coldfusion.websocket"
+ nocase
+ content:"|22|reqType|22 3A 22|invoke|22|"
+ distance:0
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,61042
+ reference:cve,2013-3350
+ reference:url,osvdb.org/show/osvdb/94992
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-19.html
+ classtype:policy-violation
+ sid:27224
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [13838] (msg:"SERVER-OTHER HP LeftHand Virtual SAN hydra login request buffer overflow attempt"
+ flow:to_server,established
+ content:"login:"
+ depth:6
+ offset:32
+ content:"/"
+ distance:0
+ isdataat:500,relative
+ content:!"/"
+ within:500
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:bugtraq,60884
+ reference:cve,2013-2343
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03661318
+ reference:url,osvdb.org/show/osvdb/94701
+ classtype:attempted-admin
+ sid:27646
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 2400 (msg:"SERVER-OTHER Novell ZENworks Handheld Management ZfHIPCND.exe buffer overflow attempt"
+ flow:to_server,established
+ content:"|01 00 00 00 01 00 01 00|"
+ fast_pattern:only
+ flowbits:set,zenworks_opcode
+ flowbits:noalert
+ reference:bugtraq,46024
+ reference:cve,2011-0742
+ classtype:attempted-admin
+ sid:29607
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [19985,19988] (msg:"SERVER-OTHER HP AIO Archive Query Server stack buffer overflow attempt"
+ flow:to_server,established
+ content:"GIOP|01 01|"
+ depth:6
+ fast_pattern
+ content:"|00|"
+ within:1
+ distance:1
+ content:"|00 00 00|"
+ within:3
+ distance:13
+ byte_jump:4,0,relative
+ byte_jump:4,2,relative
+ byte_jump:4,0,relative
+ content:"|0D|"
+ within:1
+ distance:6
+ byte_test:1,>,9,0,relative
+ byte_test:1,>,0x11,1,relative
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:bugtraq,64557
+ reference:cve,2013-6189
+ reference:url,osvdb.org/show/osvdb/101564
+ classtype:attempted-admin
+ sid:30207
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [19985,19988] (msg:"SERVER-OTHER HP AIO Archive Query Server stack buffer overflow attempt"
+ flow:to_server,established
+ content:"GIOP|01 01|"
+ depth:6
+ fast_pattern
+ content:"|00|"
+ within:1
+ distance:1
+ content:"|00 00 00|"
+ within:3
+ distance:13
+ byte_jump:4,0,relative
+ byte_jump:4,2,relative
+ byte_jump:4,0,relative
+ content:"|0D|"
+ within:1
+ distance:6
+ byte_test:1,<,2,0,relative
+ byte_test:1,>,0x11,1,relative
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:bugtraq,64557
+ reference:cve,2013-6189
+ reference:url,osvdb.org/show/osvdb/101564
+ classtype:attempted-admin
+ sid:30206
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [19985,19988] (msg:"SERVER-OTHER HP AIO Archive Query Server stack buffer overflow attempt"
+ flow:to_server,established
+ content:"GIOP|01 01|"
+ depth:6
+ fast_pattern
+ content:"|00|"
+ within:1
+ distance:1
+ content:"|00 00 00|"
+ within:3
+ distance:13
+ byte_jump:4,0,relative
+ byte_jump:4,2,relative
+ byte_jump:4,0,relative
+ content:"|0D 06|"
+ within:2
+ distance:6
+ byte_test:1,>,0x11,0,relative
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:bugtraq,64557
+ reference:cve,2013-6189
+ reference:url,osvdb.org/show/osvdb/101564
+ classtype:attempted-admin
+ sid:30205
+ rev:1
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 03|"
+ depth:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30517
+ rev:8
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 02|"
+ depth:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30516
+ rev:8
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 01|"
+ depth:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30515
+ rev:8
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 00|"
+ depth:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30514
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1.2 heartbeat read overrun attempt"
+ flow:to_server,established
+ content:"|18 03 03|"
+ depth:3
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30513
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1.1 heartbeat read overrun attempt"
+ flow:to_server,established
+ content:"|18 03 02|"
+ depth:3
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30512
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1 heartbeat read overrun attempt"
+ flow:to_server,established
+ content:"|18 03 01|"
+ depth:3
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30511
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL SSLv3 heartbeat read overrun attempt"
+ flow:to_server,established
+ content:"|18 03 00|"
+ depth:3
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30510
+ rev:6
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1.2 heartbeat read overrun attempt - vulnerable client response"
+ flow:to_server,established,only_stream
+ content:"|18 03 03|"
+ depth:3
+ byte_test:2,>,128,3
+ detection_filter:track by_dst, count 2, seconds 5
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30523
+ rev:8
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1.1 heartbeat read overrun attempt - vulnerable client response"
+ flow:to_server,established,only_stream
+ content:"|18 03 02|"
+ depth:3
+ byte_test:2,>,128,3
+ detection_filter:track by_dst, count 2, seconds 5
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30522
+ rev:8
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1 heartbeat read overrun attempt - vulnerable client response"
+ flow:to_server,established,only_stream
+ content:"|18 03 01|"
+ depth:3
+ byte_test:2,>,128,3
+ detection_filter:track by_dst, count 2, seconds 5
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30521
+ rev:8
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL SSLv3 heartbeat read overrun attempt - vulnerable client response"
+ flow:to_server,established,only_stream
+ content:"|18 03 00|"
+ depth:3
+ byte_test:2,>,128,3
+ detection_filter:track by_dst, count 2, seconds 5
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30520
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1.2 heartbeat read overrun attempt"
+ flow:to_server,established
+ dsize:69
+ content:"|18 03 03 00 40|"
+ depth:5
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30525
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [21,25,443,465,636,992,993,995,2484] (msg:"SERVER-OTHER OpenSSL TLSv1.1 heartbeat read overrun attempt"
+ flow:to_server,established
+ dsize:8
+ content:"|18 03 02 00 03 01 40 00|"
+ depth:8
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30524
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"SERVER-OTHER OpenSSL Heartbleed masscan access exploitation attempt"
+ flow:to_server,established
+ content:"[masscan/1.0]"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30549
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Wordpress linenity theme LFI attempt"
+ flow:to_server, established
+ content:"/wp-content/themes/linenity/functions/download.php"
+ http_uri
+ content:"imgurl="
+ distance:0
+ http_uri
+ content:"../"
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,66921
+ classtype:attempted-admin
+ sid:30769
+ rev:1
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 03|"
+ byte_jump:2,0,relative
+ content:"|18 03 03|"
+ within:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30788
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 02|"
+ byte_jump:2,0,relative
+ content:"|18 03 02|"
+ within:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30787
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 01|"
+ byte_jump:2,0,relative
+ content:"|18 03 01|"
+ within:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30786
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|18 03 00|"
+ byte_jump:2,0,relative
+ content:"|18 03 00|"
+ within:3
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30785
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|17 03 03|"
+ byte_jump:2,0,relative
+ content:"|18 03 03|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30784
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|16 03 03|"
+ byte_jump:2,0,relative
+ content:"|18 03 03|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30783
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|17 03 02|"
+ byte_jump:2,0,relative
+ content:"|18 03 02|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30782
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|16 03 02|"
+ byte_jump:2,0,relative
+ content:"|18 03 02|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30781
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|17 03 01|"
+ byte_jump:2,0,relative
+ content:"|18 03 01|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30780
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|16 03 01|"
+ byte_jump:2,0,relative
+ content:"|18 03 01|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30779
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|17 03 00|"
+ byte_jump:2,0,relative
+ content:"|18 03 00|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30778
+ rev:3
+)\n', 'alert tcp $HOME_NET [21,25,443,465,636,992,993,995,2484] -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client,established
+ content:"|16 03 00|"
+ byte_jump:2,0,relative
+ content:"|18 03 00|"
+ within:3
+ fast_pattern
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ssl
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30777
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER SAP NetWeaver dir content listing attempt"
+ flow:to_server, established
+ content:"/sap/bc/soap/rfc"
+ fast_pattern:only
+ http_uri
+ content:"SOAPAction: urn:sap-com:document:sap:rfc:functions"
+ http_header
+ content:"RZL_READ_DIR_LOCAL"
+ http_client_body
+ content:"<FILE_TBL>"
+ http_client_body
+ content:"<NAME>"
+ distance:0
+ http_client_body
+ content:"/"
+ within:100
+ http_client_body
+ content:"</NAME>"
+ within:100
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,osvdb.org/show/osvdb/92732
+ classtype:attempted-admin
+ sid:30928
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER CMSimple remote file inclusion attempt"
+ flow:to_server, established
+ content:"plugins/filebrowser/classes/required_classes.php"
+ fast_pattern
+ http_uri
+ content:"=http"
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.exploit-db.com/download/32930
+ classtype:attempted-admin
+ sid:30996
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER AuraCMS LFI attempt"
+ flow:to_server, established
+ content:"filemanager.php"
+ http_uri
+ content:"viewdir="
+ distance:0
+ http_uri
+ content:"../"
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.exploit-db.com/exploits/33555
+ classtype:attempted-admin
+ sid:31161
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Xerox DocuShare SQL injection attempt"
+ flow:to_server,established
+ content:"/docushare/dsweb/ResultBackgroundJobMultiple/"
+ fast_pattern:only
+ http_uri
+ pcre:"/\\/docushare\\/dsweb\\/ResultBackgroundJobMultiple\\/\\d*[^\\d]/U"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,66922
+ reference:url,osvdb.org/show/osvdb/105972
+ classtype:attempted-admin
+ sid:31300
+ rev:1
+)\n', 'alert tcp any any -> $HTTP_SERVERS 443 (msg:"SERVER-OTHER OpenSSL TLSv1.2 ChangeCipherSpec man-in-the-middle exploitation attempt"
+ flow:to_server,established
+ content:"|16 03 01|"
+ depth:3
+ content:"|01|"
+ within:1
+ distance:2
+ content:"|03 03|"
+ within:2
+ distance:3
+ byte_test:2,!=,0,33,relative
+ flowbits:set,tlsv1.2_handshake
+ flowbits:noalert
+ metadata:service ssl
+ reference:bugtraq,67899
+ reference:cve,2014-0224
+ reference:url,www.openssl.org/news/secadv_20140605.txt
+ classtype:attempted-dos
+ sid:31484
+ rev:1
+)\n', 'alert tcp any any -> $HTTP_SERVERS 443 (msg:"SERVER-OTHER OpenSSL TLSv1.1 ChangeCipherSpec man-in-the-middle exploitation attempt"
+ flow:to_server,established
+ content:"|16 03 01|"
+ depth:3
+ content:"|01|"
+ within:1
+ distance:2
+ content:"|03 02|"
+ within:2
+ distance:3
+ byte_test:2,!=,0,33,relative
+ flowbits:set,tlsv1.1_handshake
+ flowbits:noalert
+ metadata:service ssl
+ reference:bugtraq,67899
+ reference:cve,2014-0224
+ reference:url,www.openssl.org/news/secadv_20140605.txt
+ classtype:attempted-dos
+ sid:31483
+ rev:1
+)\n', 'alert tcp any any -> $HTTP_SERVERS 443 (msg:"SERVER-OTHER OpenSSL TLSv1.0 ChangeCipherSpec man-in-the-middle exploitation attempt"
+ flow:to_server,established
+ content:"|16 03 01|"
+ depth:3
+ content:"|01|"
+ within:1
+ distance:2
+ content:"|03 01|"
+ within:2
+ distance:3
+ byte_test:2,!=,0,33,relative
+ flowbits:set,tlsv1.0_handshake
+ flowbits:noalert
+ metadata:service ssl
+ reference:bugtraq,67899
+ reference:cve,2014-0224
+ reference:url,www.openssl.org/news/secadv_20140605.txt
+ classtype:attempted-dos
+ sid:31482
+ rev:1
+)\n', 'alert tcp any any -> $HTTP_SERVERS 443 (msg:"SERVER-OTHER OpenSSL SSL ChangeCipherSpec man-in-the-middle exploitation attempt"
+ flow:to_server,established
+ content:"|16 03 00|"
+ depth:3
+ content:"|01|"
+ within:1
+ distance:2
+ content:"|03 00|"
+ within:2
+ distance:3
+ byte_test:2,!=,0,33,relative
+ flowbits:set,ssl_handshake
+ flowbits:noalert
+ metadata:service ssl
+ reference:bugtraq,67899
+ reference:cve,2014-0224
+ reference:url,www.openssl.org/news/secadv_20140605.txt
+ classtype:attempted-dos
+ sid:31481
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER D-Link Multiple Products HNAP request buffer overflow attempt"
+ flow:to_server,established
+ urilen:6<>7,norm
+ content:"/HNAP1"
+ fast_pattern:only
+ http_uri
+ content:"POST"
+ http_method
+ content:"Content-Length|3A|"
+ http_raw_header
+ byte_test:10,>,10000,0,relative,string,dec
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,67651
+ reference:cve,2014-3936
+ reference:url,osvdb.org/show/osvdb/107049
+ classtype:attempted-admin
+ sid:31529
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER HP AutoPass License Server CommunicationServlet directory traversal attempt"
+ flow:to_server,established
+ content:"/autopass/cs/pdfupload"
+ fast_pattern:only
+ http_uri
+ content:"multipart"
+ http_header
+ content:"filename"
+ nocase
+ http_client_body
+ pcre:"/filename\\s*?=\\s*?[\\x22\\x27]?[^\\r\\n]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,67989
+ reference:cve,2013-6221
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04333125
+ reference:url,osvdb.org/show/osvdb/107943
+ classtype:attempted-admin
+ sid:31526
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER HP AutoPass License Server CommunicationServlet directory traversal attempt"
+ flow:to_server,established
+ content:"/autopass/cs/pdfupload"
+ fast_pattern:only
+ http_uri
+ content:"urlencoded"
+ http_header
+ content:"filename="
+ nocase
+ http_client_body
+ pcre:"/filename=[^&]*?(\\x2e|%2e){2}([\\x2f\\x5c]|%2f|%5c)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,67989
+ reference:cve,2013-6221
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04333125
+ reference:url,osvdb.org/show/osvdb/107943
+ classtype:attempted-admin
+ sid:31525
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Multi-Router Looking Glass remote command injection attempt"
+ flow:to_server, established
+ content:"lg.cgi"
+ http_uri
+ content:"router="
+ depth:7
+ http_client_body
+ content:"arg="
+ distance:0
+ http_client_body
+ pcre:"/^router=.*?arg=[a-z\\d\\.]*[^a-z\\d\\.&]/iP"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2014-3927
+ reference:url,www.s3.eurecom.fr/cve/CVE-2014-3927.txt
+ classtype:attempted-admin
+ sid:31741
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [696,7426] (msg:"SERVER-OTHER HP Network Node Manager ovopi.dll buffer overflow attempt"
+ flow:stateless
+ content:"|A9 02 00 00|-S"
+ depth:6
+ isdataat:20,relative
+ content:!"|3B|"
+ within:20
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2014-2624
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04378450
+ reference:url,osvdb.org/show/osvdb/111292
+ classtype:attempted-admin
+ sid:32085
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [696,7426] (msg:"SERVER-OTHER HP Network Node Manager ovopi.dll buffer overflow attempt"
+ flow:stateless
+ content:"|A9 02 00 00|-S"
+ depth:6
+ content:"|3B|"
+ distance:0
+ isdataat:256,relative
+ content:!"|3B|"
+ within:256
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2014-2624
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04378450
+ reference:url,osvdb.org/show/osvdb/111292
+ classtype:attempted-admin
+ sid:32084
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 40003 (msg:"SERVER-OTHER AlienVault OSSIM framework backup_restore action command injection attempt"
+ flow:to_server,established
+ content:"action=|22|backup_restore|22|"
+ fast_pattern:only
+ content:"bbdd"
+ nocase
+ pcre:"/bbdd(host|user|passwd)=\\x22[^\\s]*?([\\x60\\x3b\\x7c]|\\x24\\x28)/i"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,68998
+ reference:cve,2014-5158
+ reference:url,osvdb.org/show/osvdb/109579
+ reference:url,www.alienvault.com/forums/discussion/2559/security-advisory-multiple-vulnerabilities
+ classtype:attempted-admin
+ sid:32342
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [696,7426] (msg:"SERVER-OTHER HP Network Node Manager ovopi.dll buffer overflow attempt"
+ flow:stateless
+ content:"|A9 02 00 00|-L"
+ depth:6
+ isdataat:278,relative
+ content:!"|00|"
+ within:278
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2014-2624
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04378450
+ reference:url,osvdb.org/show/osvdb/111292
+ classtype:attempted-admin
+ sid:32371
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [696,7426] (msg:"SERVER-OTHER HP Network Node Manager ovopi.dll buffer overflow attempt"
+ flow:stateless
+ content:"|A9 02 00 00|-T"
+ depth:6
+ isdataat:276,relative
+ content:!"|00|"
+ within:276
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2014-2624
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04378450
+ reference:url,osvdb.org/show/osvdb/111292
+ classtype:attempted-admin
+ sid:32403
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [696,7426] (msg:"SERVER-OTHER HP Network Node Manager ovopi.dll buffer overflow attempt"
+ flow:stateless
+ content:"|A9 02 00 00|-D"
+ depth:6
+ isdataat:270,relative
+ content:!"|00|"
+ within:270
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2014-2624
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04378450
+ reference:url,osvdb.org/show/osvdb/111292
+ classtype:attempted-admin
+ sid:32530
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [696,7426] (msg:"SERVER-OTHER HP Network Node Manager ovopi.dll buffer overflow attempt"
+ flow:stateless
+ content:"|A9 02 00 00|-p"
+ depth:6
+ isdataat:285,relative
+ content:!"|00|"
+ within:283
+ distance:2
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2014-2624
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c04378450
+ reference:url,osvdb.org/show/osvdb/111292
+ classtype:attempted-admin
+ sid:32628
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [$HTTP_PORTS,443] (msg:"SERVER-OTHER IBM Tivoli Endpoint Manager Mobile Device Management remote code execution attempt"
+ flow:to_server,established
+ urilen:1
+ content:"/"
+ http_uri
+ content:"_mdm_session"
+ fast_pattern:only
+ content:"_mdm_session"
+ nocase
+ http_cookie
+ content:!"|0D 0A|"
+ within:550
+ http_cookie
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,71424
+ reference:cve,2014-6140
+ reference:url,osvdb.org/show/osvdb/115222
+ classtype:attempted-user
+ sid:33169
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [$HTTP_PORTS,443] (msg:"SERVER-OTHER IBM Tivoli Endpoint Manager Mobile Device Management remote code execution attempt"
+ flow:to_server,established
+ urilen:<6
+ content:"/tsp"
+ nocase
+ http_uri
+ content:"_trusted-services-provider_session"
+ fast_pattern:only
+ content:"_trusted-services-provider_session"
+ nocase
+ http_cookie
+ content:!"|0D 0A|"
+ within:550
+ http_cookie
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,71424
+ reference:cve,2014-6140
+ reference:url,osvdb.org/show/osvdb/115222
+ classtype:attempted-user
+ sid:33168
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [$HTTP_PORTS,443] (msg:"SERVER-OTHER IBM Tivoli Endpoint Manager Mobile Device Management remote code execution attempt"
+ flow:to_server,established
+ urilen:<6
+ content:"/ssp"
+ nocase
+ http_uri
+ content:"_self-service-portal_session"
+ fast_pattern:only
+ content:"_self-service-portal_session"
+ nocase
+ http_cookie
+ content:!"|0D 0A|"
+ within:550
+ http_cookie
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,71424
+ reference:cve,2014-6140
+ reference:url,osvdb.org/show/osvdb/115222
+ classtype:attempted-user
+ sid:33167
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [$HTTP_PORTS,443] (msg:"SERVER-OTHER IBM Tivoli Endpoint Manager Mobile Device Management remote code execution attempt"
+ flow:to_server,established
+ urilen:<5
+ content:"/ap"
+ nocase
+ http_uri
+ content:"_admin-portal_session"
+ fast_pattern:only
+ content:"_admin-portal_session"
+ nocase
+ http_cookie
+ content:!"|0D 0A|"
+ within:550
+ http_cookie
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,71424
+ reference:cve,2014-6140
+ reference:url,osvdb.org/show/osvdb/115222
+ classtype:attempted-user
+ sid:33166
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3465 (msg:"SERVER-OTHER HP Client Automation command injection attempt"
+ flow:to_server,established
+ content:"|00|"
+ content:"|00|hide hide"
+ distance:0
+ content:"|09|"
+ within:2
+ pcre:"/\\x00hide hide[\\x22\\x09]+([a-z0-9\\x5c\\x2e\\x3a]+\\x2eexe|sh)/"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,72612
+ reference:cve,2015-1497
+ reference:url,osvdb.org/show/osvdb/118382
+ classtype:attempted-admin
+ sid:33665
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector - initiate connection"
+ flow:to_server,established
+ content:"HP OpenView OmniBack"
+ fast_pattern:only
+ flowbits:set,hp_openview_sdp
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ classtype:protocol-command-decode
+ sid:32345
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector opcode 42 directory traversal attempt"
+ flow:to_server,established
+ content:"|FF FE 32 00 00 00 20 00|"
+ depth:8
+ offset:4
+ content:"|34 00 32 00 00 00 20 00|"
+ distance:0
+ content:"|5C 00 2E 00 2E 00 5C 00|"
+ distance:0
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,64647
+ reference:cve,2013-6194
+ reference:url,h20564.www2.hp.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c03822422
+ reference:url,osvdb.org/show/osvdb/101630
+ classtype:attempted-admin
+ sid:30268
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector opcode 42 directory traversal attempt"
+ flow:to_server,established
+ content:"|FF FE 32 00 00 00 20 00|"
+ depth:8
+ offset:4
+ content:"|34 00 32 00 00 00 20 00|"
+ distance:0
+ content:"|2F 00 2E 00 2E 00 2F 00|"
+ distance:0
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,64647
+ reference:cve,2013-6194
+ reference:url,h20564.www2.hp.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c03822422
+ reference:url,osvdb.org/show/osvdb/101630
+ classtype:attempted-admin
+ sid:30267
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector opcode 42 directory traversal attempt"
+ flow:to_server,established
+ content:"|FE FF 00 32 00 00 00 20|"
+ depth:8
+ offset:4
+ content:"|00 34 00 32 00 00 00 20|"
+ distance:0
+ content:"|00 5C 00 2E 00 2E 00 5C|"
+ distance:0
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,64647
+ reference:cve,2013-6194
+ reference:url,h20564.www2.hp.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c03822422
+ reference:url,osvdb.org/show/osvdb/101630
+ classtype:attempted-admin
+ sid:30266
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector opcode 42 directory traversal attempt"
+ flow:to_server,established
+ content:"|FE FF 00 32 00 00 00 20|"
+ depth:8
+ offset:4
+ content:"|00 34 00 32 00 00 00 20|"
+ distance:0
+ content:"|00 2F 00 2E 00 2E 00 2F|"
+ distance:0
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,64647
+ reference:cve,2013-6194
+ reference:url,h20564.www2.hp.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c03822422
+ reference:url,osvdb.org/show/osvdb/101630
+ classtype:attempted-admin
+ sid:30265
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector opcode 42 directory traversal attempt"
+ flow:to_server,established
+ content:"|32 00|"
+ depth:2
+ offset:4
+ content:"|00|42|00|"
+ distance:0
+ content:"|00 2E 2E 5C 2E 2E 5C|"
+ distance:0
+ fast_pattern
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,64647
+ reference:cve,2013-6194
+ reference:url,h20564.www2.hp.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c03822422
+ reference:url,osvdb.org/show/osvdb/101630
+ classtype:attempted-admin
+ sid:30264
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector opcode 42 directory traversal attempt"
+ flow:to_server,established
+ content:"|32 00|"
+ depth:2
+ offset:4
+ content:"|00|42|00|"
+ distance:0
+ content:"|00 2E 2E 2F 2E 2E 2F|"
+ distance:0
+ fast_pattern
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,64647
+ reference:cve,2013-6194
+ reference:url,h20564.www2.hp.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c03822422
+ reference:url,osvdb.org/show/osvdb/101630
+ classtype:attempted-admin
+ sid:30263
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER JBoss JMXInvokerServlet remote code execution attempt"
+ flow:to_server,established
+ content:"POST"
+ http_method
+ content:"/invoker/JMXInvokerServlet"
+ nocase
+ http_uri
+ content:"application/x-java-serialized-object|3B| class=org.jboss.invocation.Marshalled"
+ fast_pattern:only
+ http_header
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62347
+ reference:cve,2013-4810
+ classtype:misc-attack
+ sid:29909
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector arbitrary command execution attempt"
+ flow:to_server,established
+ content:"|FE FF 00 32 00 00|"
+ depth:6
+ offset:4
+ content:"|00|e|00|x|00|e"
+ distance:0
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:cve,2011-0922
+ reference:cve,2013-2347
+ reference:cve,2014-2623
+ classtype:attempted-admin
+ sid:29801
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector arbitrary command execution attempt"
+ flow:to_server,established
+ content:"|FF FE 32 00 00 00|"
+ depth:6
+ offset:4
+ content:"|00|e|00|x|00|e"
+ distance:0
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:cve,2011-0922
+ reference:cve,2013-2347
+ reference:cve,2014-2623
+ classtype:attempted-admin
+ sid:29518
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER JBoss EJBInvokerServlet remote code execution attempt"
+ flow:to_server,established
+ content:"POST"
+ http_method
+ content:"/invoker/EJBInvokerServlet"
+ nocase
+ http_uri
+ content:"application/x-java-serialized-object|3B| class=org.jboss.invocation.MarshalledInvocation"
+ fast_pattern:only
+ http_header
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62347
+ reference:cve,2013-4810
+ classtype:misc-attack
+ sid:28851
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 211 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|1|00|1|00 00 00 20 00|"
+ depth:10
+ offset:6
+ content:"|20 00|"
+ distance:0
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60309
+ reference:cve,2013-2333
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93867
+ classtype:attempted-admin
+ sid:28227
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER HP ProCurve Manager SNAC UpdateDomainControllerServlet directory traversal attempt"
+ flow:to_server,established
+ content:"/RegWeb/UpdateDomainControllerServlet"
+ fast_pattern:only
+ http_uri
+ content:"adCert"
+ nocase
+ http_client_body
+ content:"filename"
+ distance:0
+ nocase
+ http_client_body
+ pcre:"/filename\\s*?=\\s*?[\\x22\\x27][^\\x22\\x27]*?(\\x2e\\x2e|%2e%2e)([\\x5c\\x2f]|%5c|%2f)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62349
+ reference:cve,2013-4811
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c03897409
+ reference:url,osvdb.org/show/osvdb/97154
+ classtype:attempted-admin
+ sid:27941
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER HP ProCurve Manager SNAC UpdateCertificatesServlet directory traversal attempt"
+ flow:to_server,established
+ content:"/RegWeb/"
+ fast_pattern
+ nocase
+ http_uri
+ content:"/update"
+ distance:0
+ nocase
+ http_uri
+ content:"filename"
+ nocase
+ http_client_body
+ pcre:"/filename\\s*?=\\s*?[\\x22\\x27][^\\x22\\x27]*?(\\x2e\\x2e|%2e%2e)([\\x5c\\x2f]|%5c|%2f)/Pi"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,62348
+ reference:cve,2013-4812
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c03897409
+ reference:url,osvdb.org/show/osvdb/97155
+ classtype:attempted-admin
+ sid:27937
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 265 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|6|00|5|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60299
+ reference:cve,2013-2324
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93858
+ classtype:attempted-admin
+ sid:27773
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 243 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|4|00|3|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60299
+ reference:cve,2013-2324
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93858
+ classtype:attempted-admin
+ sid:27772
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 236 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|3|00|6|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60299
+ reference:cve,2013-2324
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93858
+ classtype:attempted-admin
+ sid:27771
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 210 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|1|00|0|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60299
+ reference:cve,2013-2324
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93858
+ classtype:attempted-admin
+ sid:27770
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 207 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|0|00|7|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60299
+ reference:cve,2013-2324
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93858
+ classtype:attempted-admin
+ sid:27769
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 264 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|6|00|4|00 00 00 20 00|"
+ depth:10
+ offset:6
+ content:"|20 00|"
+ distance:0
+ isdataat:1300,relative
+ content:!"|00 00|"
+ within:1300
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60302
+ reference:cve,2013-2327
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93861
+ classtype:attempted-admin
+ sid:27617
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 235 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|3|00|5|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60300
+ reference:cve,2013-2325
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93859
+ classtype:attempted-admin
+ sid:27571
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 234 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|3|00|4|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60301
+ reference:cve,2013-2326
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93860
+ classtype:attempted-admin
+ sid:27539
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 227 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|2|00|7|00 00 00 20 00|"
+ depth:10
+ offset:6
+ content:"|20 00|"
+ distance:0
+ isdataat:1300,relative
+ content:!"|00 00|"
+ within:1300
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60311
+ reference:cve,2013-2335
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93869
+ classtype:attempted-admin
+ sid:27264
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 260 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|6|00|0|00 00 00 20 00|"
+ depth:10
+ offset:6
+ content:"|20 00|"
+ distance:0
+ isdataat:1300,relative
+ content:!"|00 00|"
+ within:1300
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60308
+ reference:cve,2013-2332
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93866
+ classtype:attempted-admin
+ sid:27217
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 1091 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"1|00|0|00|9|00|1|00 00 00 20 00|"
+ depth:12
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60310
+ reference:cve,2013-2334
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93868
+ classtype:attempted-admin
+ sid:27170
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 211 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|1|00|1|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60309
+ reference:cve,2013-2333
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93867
+ classtype:attempted-admin
+ sid:27125
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 1092 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"1|00|0|00|9|00|2|00 00 00 20 00|"
+ depth:12
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60307
+ reference:cve,2013-2331
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93865
+ classtype:attempted-admin
+ sid:27124
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 259 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"2|00|5|00|9|00 00 00 20 00|"
+ depth:10
+ offset:6
+ content:"|20 00|"
+ distance:0
+ isdataat:1300,relative
+ content:!"|00 00|"
+ within:1300
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60304
+ reference:cve,2013-2329
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93863
+ classtype:attempted-admin
+ sid:27123
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector CRS opcode 305 buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,hp_openview_sdp
+ content:"3|00|0|00|5|00 00 00 20 00|"
+ depth:10
+ offset:6
+ isdataat:1400,relative
+ content:!"|00 00|"
+ within:1400
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,60306
+ reference:cve,2013-2330
+ reference:url,h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c03781657
+ reference:url,osvdb.org/show/osvdb/93864
+ classtype:attempted-admin
+ sid:27122
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1024:] (msg:"SERVER-OTHER HP OpenView Storage Data Protector - initiate connection"
+ flow:to_server,established
+ content:"H|00|P|00| |00|O|00|p|00|e|00|n|00|V|00|i|00|e|00|w|00| |00|O|00|m|00|n|00|i|00|B|00|a|00|c|00|k"
+ fast_pattern:only
+ flowbits:set,hp_openview_sdp
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ classtype:protocol-command-decode
+ sid:27121
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Apache Struts allowStaticMethodAccess invocation attempt"
+ flow:to_server,established
+ content:".do?"
+ nocase
+ http_uri
+ content:"allowStaticMethodAccess"
+ distance:0
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60166
+ reference:cve,2013-1966
+ reference:cve,2013-2115
+ reference:url,struts.apache.org/development/2.x/docs/s2-014.html
+ classtype:attempted-admin
+ sid:26825
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Apache Struts allowStaticMethodAccess invocation attempt"
+ flow:to_server,established
+ content:".action"
+ nocase
+ http_uri
+ content:"allowStaticMethodAccess"
+ nocase
+ http_client_body
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60166
+ reference:cve,2013-1966
+ reference:cve,2013-2115
+ reference:url,struts.apache.org/development/2.x/docs/s2-014.html
+ classtype:attempted-admin
+ sid:26824
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3000 (msg:"SERVER-OTHER EMC AlphaStor Device Manager command injection attempt"
+ flow:to_server,established
+ content:"|75|"
+ depth:1
+ content:"mminfo"
+ distance:0
+ pcre:"/mminfo[^\\x00]*?([\\x3b\\x7c\\x26\\x60]|\\x24\\x28)/"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,57472
+ reference:cve,2013-0928
+ reference:url,osvdb.org/show/osvdb/89436
+ classtype:attempted-admin
+ sid:25582
+ rev:8
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET 8300 (msg:"SERVER-OTHER Novell Groupwise HTTP login request"
+ flow:to_server,established
+ content:"NM_A_PARM1"
+ fast_pattern:only
+ flowbits:set,groupwise.request
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service http
+ classtype:misc-activity
+ sid:21916
+ rev:7
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET 8300 (msg:"SERVER-OTHER Novell Groupwise HTTP login request"
+ flow:to_server,established
+ content:"NM_A_SZ_TRANSACTION_ID"
+ fast_pattern:only
+ flowbits:set,groupwise.request
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service http
+ classtype:misc-activity
+ sid:21915
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1500 (msg:"SERVER-OTHER IBM Tivoli Storage Manager Express Backup initialization packet"
+ flow:to_server,established
+ content:"|00 04 1D A5|"
+ depth:4
+ flowbits:set,tivoli.backup
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ classtype:protocol-command-decode
+ sid:20874
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET 41523 -> $HOME_NET any (msg:"SERVER-OTHER Products Discovery Service Buffer Overflow"
+ flow:to_client,established
+ flowbits:isnotset,CA.response
+ flowbits:set,CA.response
+ content:"TESTTESTTESTTESTTESTTESTTEST"
+ fast_pattern:only
+ isdataat:990
+ metadata:policy max-detect-ips drop
+ reference:bugtraq,20364
+ reference:cve,2006-5143
+ classtype:attempted-user
+ sid:17620
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 50000 (msg:"SERVER-OTHER IBM DB2 Universal Database accsec command without rdbnam"
+ flow:to_server,established
+ content:"|D0|"
+ content:"|10 6D|"
+ within:2
+ distance:5
+ content:!"|21 10|"
+ flowbits:set,ibmdb2.accsec
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service drda
+ reference:bugtraq,19586
+ reference:cve,2006-4257
+ classtype:attempted-dos
+ sid:17598
+ rev:10
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 631 (msg:"SERVER-OTHER IPP Application Content"
+ flow:to_server,established
+ content:"Content-Type|3A|"
+ nocase
+ content:"application/ipp"
+ distance:1
+ nocase
+ flowbits:set,ipp.application
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service http
+ classtype:protocol-command-decode
+ sid:17534
+ rev:12
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET [5800,5900:5999] (msg:"SERVER-OTHER VNC client authentication response"
+ flow:to_server,established
+ content:"RFB 0"
+ depth:5
+ content:".0"
+ depth:2
+ offset:7
+ flowbits:set,vnc.auth
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service vnc-server
+ classtype:protocol-command-decode
+ sid:17396
+ rev:12
+)\n', 'alert tcp $HOME_NET [5800,5900:5999] -> $EXTERNAL_NET any (msg:"SERVER-OTHER RealVNC authentication types without None type sent attempt"
+ flow:to_client,established
+ flowbits:isset,vnc.handshake.client
+ flowbits:unset,vnc.handshake.client
+ pcre:"/^[^\\x00][^\\x00\\x01]+$/"
+ flowbits:set,vnc.server.auth.types
+ flowbits:noalert
+ metadata:policy max-detect-ips alert, service vnc-server
+ classtype:protocol-command-decode
+ sid:6470
+ rev:11
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [5800,5900:5999] (msg:"SERVER-OTHER RealVNC connection attempt"
+ flow:to_server,established
+ dsize:12
+ content:"RFB 003.00"
+ depth:10
+ content:!"3"
+ within:1
+ flowbits:set,vnc.handshake.client
+ flowbits:set,vnc.traffic
+ flowbits:noalert
+ metadata:policy max-detect-ips alert, service vnc-server
+ classtype:protocol-command-decode
+ sid:6469
+ rev:11
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 13701 (msg:"SERVER-OTHER Veritas NetBackup Volume Manager connection attempt"
+ flow:to_server,established
+ byte_test:1,>,3,10,dec,string
+ byte_test:1,<,11,10,dec,string
+ flowbits:set,veritas.vmd.connect
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ classtype:protocol-command-decode
+ sid:6404
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 515 (msg:"SERVER-OTHER lpd receive printer job cascade adaptor protocol request"
+ flow:to_server,established
+ content:"|02|"
+ depth:1
+ pcre:"/\\x02[^\\x0a]+\\x3a[^\\x0a]+\\x0a/"
+ flowbits:set,lp.cascade
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service ldp
+ classtype:protocol-command-decode
+ sid:4143
+ rev:9
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:9
+ content:"|18 03 03|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30742
+ rev:1
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:37
+ content:"|18 03 03|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30741
+ rev:2
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:9
+ content:"|18 03 02|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30740
+ rev:1
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:37
+ content:"|18 03 02|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30739
+ rev:2
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:9
+ content:"|18 03 01|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30738
+ rev:1
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:37
+ content:"|18 03 01|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30737
+ rev:2
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:9
+ content:"|18 03 00|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30736
+ rev:1
+)\n', 'alert udp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|01|"
+ depth:1
+ offset:37
+ content:"|18 03 00|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30735
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:9
+ content:"|18 03 03|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30734
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:37
+ content:"|18 03 03|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30733
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:9
+ content:"|18 03 02|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30732
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:37
+ content:"|18 03 02|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30731
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:9
+ content:"|18 03 01|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30730
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:37
+ content:"|18 03 01|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30729
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:9
+ content:"|18 03 00|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30728
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,0
+ byte_test:1,<=,0x27,0
+ content:"|00|"
+ depth:1
+ offset:37
+ content:"|18 03 00|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30727
+ rev:2
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:39
+ content:"|18 03 03|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30726
+ rev:2
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:11
+ content:"|18 03 03|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30725
+ rev:1
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:39
+ content:"|18 03 02|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30724
+ rev:2
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:11
+ content:"|18 03 02|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30723
+ rev:1
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:39
+ content:"|18 03 01|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30722
+ rev:2
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:11
+ content:"|18 03 01|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30721
+ rev:1
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:39
+ content:"|18 03 00|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30720
+ rev:2
+)\n', 'alert tcp $HOME_NET 1194 -> $EXTERNAL_NET any (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 large heartbeat response - possible ssl heartbleed attempt"
+ flow:to_client
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|01|"
+ depth:1
+ offset:11
+ content:"|18 03 00|"
+ within:3
+ distance:16
+ byte_test:2,>,128,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30719
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:39
+ content:"|18 03 03|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30718
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.2 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:11
+ content:"|18 03 03|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30717
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:39
+ content:"|18 03 02|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30716
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1.1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:11
+ content:"|18 03 02|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30715
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:39
+ content:"|18 03 01|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30714
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL TLSv1 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:11
+ content:"|18 03 01|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30713
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:39
+ content:"|18 03 00|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30712
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 1194 (msg:"SERVER-OTHER OpenVPN OpenSSL SSLv3 heartbeat read overrun attempt"
+ flow:to_server
+ byte_test:1,>=,0x20,2
+ byte_test:1,<=,0x27,2
+ content:"|00|"
+ depth:1
+ offset:11
+ content:"|18 03 00|"
+ within:3
+ distance:4
+ detection_filter:track by_src, count 3, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service openvpn
+ reference:cve,2014-0160
+ classtype:attempted-recon
+ sid:30711
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 8045 (msg:"SERVER-OTHER EMC AutoStart ftagent SQL injection attempt"
+ flow:to_server,established
+ content:"|31 00 00 00|"
+ depth:4
+ content:"|00 00 00 00 00 00 00 55 00 00 00 21|"
+ within:12
+ distance:4
+ pcre:"/\\x00{7}\\x55\\x00{3}\\x21.{4}[^\\x00]*?[\\x22\\x27\\x29\\x3b]/"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,74426
+ reference:cve,2015-0538
+ reference:url,osvdb.org/show/osvdb/121800
+ classtype:attempted-admin
+ sid:35541
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 8045 (msg:"SERVER-OTHER EMC AutoStart ftagent SQL injection attempt"
+ flow:to_server,established
+ content:"|31 00 00 00|"
+ depth:4
+ content:"|00 00 00 00 00 00 00 53 00 00 00 16|"
+ within:12
+ distance:4
+ pcre:"/\\x00{7}\\x53\\x00{3}\\x16.{8}[^\\x00]*?[\\x22\\x27\\x29\\x3b]/"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,74426
+ reference:cve,2015-0538
+ classtype:attempted-admin
+ sid:35540
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 51000 (msg:"SERVER-OTHER EMC Documentum Content Server privilege escalation attempt"
+ flow:to_server,established
+ content:"object_name"
+ nocase
+ content:"dm_user"
+ distance:0
+ fast_pattern
+ nocase
+ content:"FOR_UPDATE"
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-4532
+ reference:url,security-tracker.debian.org/tracker/CVE-2015-4532
+ classtype:attempted-admin
+ sid:35850
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector arbitrary command execution attempt"
+ flow:to_server,established
+ content:"2|00|"
+ depth:2
+ offset:4
+ content:"28|00|"
+ distance:0
+ content:".exe"
+ distance:0
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:cve,2011-0922
+ reference:cve,2013-2347
+ reference:cve,2014-2623
+ classtype:attempted-admin
+ sid:36159
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5555 (msg:"SERVER-OTHER HP OpenView Storage Data Protector arbitrary command execution attempt"
+ flow:to_server,established
+ content:"2|00|"
+ depth:2
+ offset:4
+ content:"11|00|"
+ distance:0
+ content:".exe"
+ distance:0
+ nocase
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:cve,2011-0922
+ reference:cve,2013-2347
+ reference:cve,2014-2623
+ classtype:attempted-admin
+ sid:36158
+ rev:3
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"SERVER-OTHER MIT Kerberos 5 IAKERB outbound token detected"
+ flow:to_client,established
+ file_data
+ flowbits:isset,file.spnego
+ content:"|06 06 2B 06 01 05 02 05 A2|"
+ content:"|05 01|"
+ within:10
+ flowbits:set,file.iakerb
+ flowbits:noalert
+ metadata:service kerberos
+ reference:cve,2014-4344
+ classtype:protocol-command-decode
+ sid:36816
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SERVER-OTHER MIT Kerberos 5 SPNEGO incoming token detected"
+ flow:to_server,established
+ file_data
+ content:"|06 06 2B 06 01 05 05 02 A0|"
+ content:"|06 06 2B 06 01 05 02 05 A2|"
+ within:10
+ distance:11
+ content:"|06 06 2B 06 01 05 02 05 05 01|"
+ within:11
+ distance:11
+ flowbits:set,file.spnego
+ flowbits:noalert
+ metadata:service kerberos
+ reference:cve,2014-4344
+ classtype:protocol-command-decode
+ sid:36815
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1099,7001,$HTTP_PORTS] (msg:"SERVER-OTHER Java Library CommonsCollection unauthorized serialized object attempt"
+ flow:to_server,established
+ content:"|AC ED 00 05|"
+ content:"getRuntime"
+ distance:0
+ content:"java.lang.Class"
+ within:50
+ content:"invoke"
+ distance:90
+ content:"exec"
+ distance:90
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http, service java_rmi
+ reference:cve,2015-3253
+ reference:cve,2015-4852
+ reference:cve,2015-7450
+ reference:cve,2015-8103
+ reference:cve,2016-3642
+ reference:url,github.com/frohoff/ysoserial
+ classtype:attempted-user
+ sid:36826
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [22,23] (msg:"SERVER-OTHER Juniper ScreenOS unauthorized backdoor access attempt"
+ flow:to_server,established
+ content:"<<< %s(un=|27|%s|27|) = %u"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service telnet
+ reference:cve,2015-7755
+ reference:url,kb.juniper.net/InfoCenter/index?page=content&id=JSA10713&cat=SIRT_1&actp=LIST
+ classtype:attempted-admin
+ sid:37146
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 25 (msg:"SERVER-OTHER Trend Micro local node.js http command execution attempt"
+ flow:to_server,established
+ file_data
+ content:":49155/api/"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:url,code.google.com/p/google-security-research/issues/detail?id=693
+ classtype:attempted-user
+ sid:37292
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 25 (msg:"SERVER-OTHER Trend Micro local node.js http command execution attempt"
+ flow:to_server,established
+ file_data
+ content:"/api/showSB"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:url,code.google.com/p/google-security-research/issues/detail?id=693
+ classtype:attempted-user
+ sid:37290
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 25 (msg:"SERVER-OTHER Trend Micro local node.js http command execution attempt"
+ flow:to_server,established
+ file_data
+ content:"/api/openUrlInDefaultBrowser"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:url,code.google.com/p/google-security-research/issues/detail?id=693
+ classtype:attempted-user
+ sid:37289
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"SERVER-OTHER Trend Micro local node.js http command execution attempt"
+ flow:to_client,established
+ file_data
+ content:"/api/openUrlInDefaultBrowser"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,code.google.com/p/google-security-research/issues/detail?id=693
+ classtype:attempted-user
+ sid:37287
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"SERVER-OTHER Trend Micro local node.js http command execution attempt"
+ flow:to_client,established
+ file_data
+ content:":49155/api/"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,code.google.com/p/google-security-research/issues/detail?id=693
+ classtype:attempted-user
+ sid:37286
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"SERVER-OTHER Trend Micro local node.js http command execution attempt"
+ flow:to_client,established
+ file_data
+ content:"/api/showSB"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,code.google.com/p/google-security-research/issues/detail?id=693
+ classtype:attempted-user
+ sid:37285
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET 22 -> $HOME_NET any (msg:"SERVER-OTHER OpenSSH insecure roaming key exchange attempt"
+ flow:to_client,established
+ content:"resume@appgate.com"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssh
+ reference:cve,2016-0777
+ reference:cve,2016-0778
+ reference:url,www.openssh.com/txt/release-7.1p2
+ classtype:attempted-user
+ sid:37371
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 123 (msg:"SERVER-OTHER NTP arbitrary pidfile and driftfile overwrite attempt"
+ flow:to_server
+ content:"pidfile"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ntp
+ reference:bugtraq,77278
+ reference:cve,2015-7703
+ reference:url,support.ntp.org/bin/view/Main/NtpBug2902
+ classtype:policy-violation
+ sid:37526
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 123 (msg:"SERVER-OTHER NTP arbitrary pidfile and driftfile overwrite attempt"
+ flow:to_server
+ content:"driftfile"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ntp
+ reference:bugtraq,77278
+ reference:cve,2015-7703
+ reference:url,support.ntp.org/bin/view/Main/NtpBug2902
+ classtype:policy-violation
+ sid:37525
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 13701 (msg:"SERVER-OTHER Veritas NetBackup Volume Manager connection attempt"
+ flow:to_server,established
+ byte_test:1,>,3,14,dec,string
+ byte_test:1,<,11,14,dec,string
+ flowbits:set,veritas.vmd.connect
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ classtype:protocol-command-decode
+ sid:37546
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 500 (msg:"SERVER-OTHER Cisco ASA IKEv2 invalid fragment length heap buffer overflow attempt"
+ flow:to_server
+ content:"|84 20|"
+ depth:2
+ offset:16
+ byte_test:2,<,8,12,relative
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2016-1287
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20160210-asa-ike
+ classtype:attempted-admin
+ sid:36903
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 500 (msg:"SERVER-OTHER Cisco ASA IKEv1 invalid fragment length heap buffer overflow attempt"
+ flow:to_server
+ content:"|84 10|"
+ depth:2
+ offset:16
+ byte_test:2,<,8,12,relative
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2016-1287
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20160210-asa-ike
+ classtype:attempted-admin
+ sid:37674
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Joomla com_maqmahelpdesk task parameter local file inclusion attempt"
+ flow:to_server,established
+ content:"option=com_maqmahelpdesk"
+ fast_pattern:only
+ http_uri
+ pcre:"/task=[^\\x26]*\\.\\./Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:attempted-user
+ sid:23182
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5054 (msg:"SERVER-OTHER Reprise License Server licfile command buffer overflow attempt"
+ flow:to_server,established
+ content:"/service_setup_doit?"
+ fast_pattern:only
+ content:"licfile="
+ nocase
+ isdataat:1000,relative
+ pcre:"/licfile\\x3D[^\\x26\\x3F\\x3B\\x0D\\x0A]{1000}/i"
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-6946
+ classtype:attempted-admin
+ sid:38288
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5054 (msg:"SERVER-OTHER Reprise License Server akey command buffer overflow attempt"
+ flow:to_server,established
+ content:"/activate_doit?"
+ fast_pattern:only
+ content:"akey="
+ nocase
+ isdataat:1000,relative
+ pcre:"/akey\\x3D[^\\x26\\x3F\\x3B\\x0D\\x0A]{1000}/i"
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-6946
+ classtype:attempted-admin
+ sid:38287
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 5054 (msg:"SERVER-OTHER Reprise License Server actserver command buffer overflow attempt"
+ flow:to_server,established
+ content:"/activate_doit?"
+ fast_pattern:only
+ content:"actserver="
+ nocase
+ isdataat:1000,relative
+ pcre:"/actserver\\x3D[^\\x26\\x3F\\x3B\\x0D\\x0A]{1000}/i"
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-6946
+ classtype:attempted-admin
+ sid:38286
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 6379 (msg:"SERVER-OTHER Redis lua script integer overflow attempt"
+ flow:to_server,established
+ content:"struct.pack("
+ fast_pattern
+ nocase
+ content:">i"
+ within:5
+ nocase
+ byte_test:10,>,2147483647,0,relative,string,dec
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-8080
+ classtype:attempted-user
+ sid:38313
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 6379 (msg:"SERVER-OTHER Redis lua script integer overflow attempt"
+ flow:to_server,established
+ content:"struct.pack("
+ fast_pattern
+ nocase
+ content:"<i"
+ within:5
+ nocase
+ byte_test:10,>,2147483647,0,relative,string,dec
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-8080
+ classtype:attempted-user
+ sid:38312
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3128 (msg:"SERVER-OTHER Squid Proxy range header denial of service attempt"
+ flow:established,to_server
+ content:"range"
+ nocase
+ http_header
+ content:": bytes="
+ within:10
+ http_header
+ content:"--"
+ within:5
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2014-3609
+ classtype:denial-of-service
+ sid:38731
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Mediabridge Medialink MWN-WAPR300N and Tenda N3 Wireless N150 inbound admin attempt"
+ flow:to_server,established
+ content:"language-en|3B| admin|3A|language-en"
+ fast_pattern:only
+ content:"language-en|3B| admin|3A|language-en"
+ http_cookie
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2015-5995
+ classtype:attempted-admin
+ sid:38729
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Magento unauthenticated arbitrary file write attempt"
+ flow:to_server,established
+ content:"/rest/default/V1/guest-carts/"
+ http_uri
+ content:"shipping-information"
+ distance:0
+ http_uri
+ content:"new Credis_Client"
+ http_client_body
+ content:"serialize"
+ http_client_body
+ content:"new Magento_Framework_DB_Transaction"
+ fast_pattern:only
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-4010
+ reference:url,netanelrub.in/2016/05/17/magento-unauthenticated-remote-code-execution/
+ classtype:attempted-admin
+ sid:39066
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"SERVER-OTHER Symantec Endpoint Protection Manager cross site request forgery attempt"
+ flow:to_server,established
+ file_data
+ content:"<form"
+ nocase
+ content:"/Reporting/Reports/sr-save.php"
+ within:100
+ nocase
+ content:".submit"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3653
+ reference:url,hyp3rlinx.altervista.org/advisories/SYMANTEC-SEPM-MULTIPLE-VULNS.txt
+ classtype:attempted-user
+ sid:39405
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"SERVER-OTHER Symantec Endpoint Protection Manager cross site request forgery attempt"
+ flow:to_client,established
+ file_data
+ content:"<form"
+ nocase
+ content:"/Reporting/Reports/sr-save.php"
+ within:100
+ nocase
+ content:".submit"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3653
+ reference:url,hyp3rlinx.altervista.org/advisories/SYMANTEC-SEPM-MULTIPLE-VULNS.txt
+ classtype:attempted-user
+ sid:39404
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 11460 (msg:"SERVER-OTHER IBM Tivoli Storage Manager FastBack command injection attempt"
+ flow:to_server,established
+ content:"|32 05 00 00|"
+ depth:4
+ offset:16
+ content:"SourceFile|3A 20|"
+ distance:0
+ content:"|22|"
+ distance:0
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2015-1949
+ reference:url,ibm.com/support/docview.wss?uid=swg21959398
+ classtype:attempted-admin
+ sid:39924
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [500,848,4500,4848] (msg:"SERVER-OTHER Cisco IOS Group-Prime SHA memory disclosure attempt"
+ flow:to_server
+ dsize:>2000
+ content:"|00 00 00 00 00 00 00 00|"
+ depth:8
+ offset:8
+ content:"|00 00 00 01 00 00 00 01|"
+ depth:8
+ offset:32
+ content:"|01 01 04 01|"
+ within:4
+ distance:4
+ content:"|80 02 00 02 80 04 00 01 00 06|"
+ distance:0
+ fast_pattern
+ byte_test:2,>,2000,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community
+ reference:cve,2016-6415
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20160916-ikev1
+ classtype:attempted-recon
+ sid:40222
+ rev:4
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET [500,848,4500,4848] (msg:"SERVER-OTHER Cisco IOS Group-Prime MD5 memory disclosure attempt"
+ flow:to_server
+ dsize:>2000
+ content:"|00 00 00 00 00 00 00 00|"
+ depth:8
+ offset:8
+ content:"|00 00 00 01 00 00 00 01|"
+ depth:8
+ offset:32
+ content:"|01 01 04 01|"
+ within:4
+ distance:4
+ content:"|80 02 00 01 80 04 00 01 00 06|"
+ distance:0
+ fast_pattern
+ byte_test:2,>,2000,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community
+ reference:cve,2016-6415
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20160916-ikev1
+ classtype:attempted-recon
+ sid:40221
+ rev:4
+)\n', 'alert udp $HOME_NET [500,848,4500,4848] -> $EXTERNAL_NET any (msg:"SERVER-OTHER Cisco IOS Group-Prime memory disclosure exfiltration attempt"
+ flow:to_client
+ dsize:>2000
+ content:"|0B 10 05 00|"
+ depth:8
+ offset:16
+ byte_test:4,>,2000,4,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community
+ reference:cve,2016-6415
+ reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20160916-ikev1
+ classtype:attempted-recon
+ sid:40220
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Adobe ColdFusion RDS admin bypass attempt"
+ flow:to_server,established
+ content:"/CFIDE/adminapi"
+ http_uri
+ content:"adminpassword=&rdsPasswordAllowed=1&method=login"
+ fast_pattern:only
+ http_client_body
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,57330
+ reference:cve,2013-0632
+ reference:url,www.adobe.com/support/security/advisories/apsa13-01.html
+ classtype:attempted-admin
+ sid:40323
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 11460 (msg:"SERVER-OTHER IBM Tivoli Storage Manager FastBack opcode 4115 remote code execution attempt"
+ flow:to_server,established
+ content:"|13 10 00 00|"
+ depth:4
+ offset:16
+ isdataat:182,relative
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop
+ reference:cve,2015-4931
+ reference:url,ibm.com/support/docview.wss?uid=swg21961928
+ classtype:attempted-admin
+ sid:40422
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER OpenSSL OCSP Status Request Extension denial of service attempt"
+ flow:to_server,established
+ content:"Content-Type: application/ocsp-request"
+ fast_pattern:only
+ detection_filter:track by_src, count 100, seconds 10
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-6304
+ reference:url,www.openssl.org/news/secadv/20160922.txt
+ classtype:attempted-dos
+ sid:40360
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 11460 (msg:"SERVER-OTHER IBM Tivoli Storage Manager FastBack opcode 1301 remote code execution attempt"
+ flow:to_server,established
+ content:"|15 05 00 00|"
+ depth:4
+ offset:16
+ content:"%"
+ distance:32
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2015-1986
+ reference:url,ibm.com/support/docview.wss?uid=swg21959398
+ classtype:attempted-admin
+ sid:40358
+ rev:1
+)\n']

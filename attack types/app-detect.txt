@@ -1,0 +1,22 @@
+['alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"APP-DETECT Acunetix web vulnerability scan attempt"
+ flow:to_server,established
+ flowbits:set,acunetix-scan
+ content:"Acunetix-"
+ fast_pattern:only
+ http_header
+ metadata:service http
+ reference:url,www.acunetix.com
+ classtype:web-application-attack
+ sid:25358
+ rev:3
+)\n', 'alert tcp $HOME_NET any -> any 3689 (msg:"APP-DETECT Apple iTunes client request for server info"
+ flow:to_server,established
+ content:"/server-info"
+ flowbits:set,itunes.serverinfo.request
+ flowbits:noalert
+ metadata:service http
+ reference:url,www.apple.com/itunes/
+ classtype:misc-activity
+ sid:13898
+ rev:8
+)\n']

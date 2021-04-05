@@ -1,0 +1,29 @@
+['alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"OS-MOBILE Android Andr.Trojan.Waller information disclosure attempt"
+ flow:to_server,established
+ content:"/farm.php?imei="
+ fast_pattern:only
+ http_uri
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,virustotal.com/en/file/8ea8ce79404dc6ba06fae16add7bc7859f23c70dbea601cad178dd4180e83299/analysis/
+ classtype:trojan-activity
+ sid:30880
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 25 (msg:"OS-MOBILE iOS lockdownd plist object buffer overflow attempt"
+ flow:to_server, established
+ file_data
+ content:"|C7 04 24 D4 74 0E 33 E8 16 FB FF FF 89 45 D4 8B 45 D4 01 45 DC 8B 45 DC 89 44 24 04 C7 04 24 43 43 43 43|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ classtype:attempted-admin
+ sid:35091
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-MOBILE iOS lockdownd plist object buffer overflow attempt"
+ flow:to_client, established
+ file_data
+ content:"|C7 04 24 D4 74 0E 33 E8 16 FB FF FF 89 45 D4 8B 45 D4 01 45 DC 8B 45 DC 89 44 24 04 C7 04 24 43 43 43 43|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ classtype:attempted-admin
+ sid:35090
+ rev:1
+)\n']

@@ -1,0 +1,16 @@
+['alert udp any any -> $HOME_NET 53 (msg:"PROTOCOL-DNS ISC BIND isc__buffer_add assertion failure denial of service attempt"
+ flow:to_server
+ dsize:>512
+ byte_test:1,!&,0xFE,2
+ content:!"|00 00|"
+ depth:2
+ offset:10
+ content:"|00 FA 00 FF|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service dns
+ reference:cve,2016-2776
+ reference:url,kb.isc.org/article/AA-01419/74/CVE-2016-2776
+ classtype:attempted-dos
+ sid:40344
+ rev:1
+)\n']

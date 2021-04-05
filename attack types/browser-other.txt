@@ -1,0 +1,50 @@
+['alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-OTHER Novell Messenger Client nim URI handler buffer overflow attempt"
+ flow:to_server,established
+ file_data
+ content:"nim:import?"
+ fast_pattern
+ nocase
+ content:"filename="
+ distance:0
+ nocase
+ isdataat:486,relative
+ content:!">"
+ within:486
+ pcre:"/nim:import\\?[^\\x22\\x27>\\s]*?filename=[^\\x22\\x27>\\s]{485}/i"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-1085
+ reference:url,www.novell.com/support/kb/doc.php?id=7011935
+ classtype:attempted-user
+ sid:26490
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-OTHER Novell Messenger Client nim URI handler buffer overflow attempt"
+ flow:to_client,established
+ file_data
+ content:"nim:import?"
+ fast_pattern
+ nocase
+ content:"filename="
+ distance:0
+ nocase
+ isdataat:486,relative
+ content:!">"
+ within:486
+ pcre:"/nim:import\\?[^\\x22\\x27>\\s]*?filename=[^\\x22\\x27>\\s]{485}/i"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-1085
+ reference:url,www.novell.com/support/kb/doc.php?id=7011935
+ classtype:attempted-user
+ sid:26489
+ rev:4
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"BROWSER-OTHER FreeBSD tnftp client detected"
+ flow:to_server,established
+ content:"User-Agent|3A| tnftp/"
+ fast_pattern:only
+ http_header
+ flowbits:set,tnftp
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service http
+ classtype:protocol-command-decode
+ sid:32525
+ rev:2
+)\n']

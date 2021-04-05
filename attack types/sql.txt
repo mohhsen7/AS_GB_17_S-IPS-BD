@@ -1,0 +1,185 @@
+['\n', '\n', 'alert tcp $SQL_SERVERS 1433 -> $EXTERNAL_NET any (msg:"SQL sa login failed"
+ flow:to_client,established
+ content:"Login failed for user \'sa\'"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, ruleset community
+ reference:bugtraq,4797
+ reference:cve,2000-1209
+ reference:nessus,10673
+ classtype:unsuccessful-user
+ sid:688
+ rev:16
+)\n', 'alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SQL generic sql with comments injection attempt - GET parameter"
+ flow:to_server,established
+ content:"/*"
+ http_uri
+ content:"*/"
+ http_uri
+ pcre:"/(update|exec|insert|union)[^\\/\\\\]*\\/\\*.*\\*\\//Uis"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.securiteam.com/securityreviews/5DP0N1P76E.html
+ classtype:web-application-attack
+ sid:16431
+ rev:5
+)\n', 'alert tcp any any -> $SQL_SERVERS 1433 (msg:"SQL WinCC DB default password security bypass attempt"
+ flow:to_server,established
+ content:"WinCCConnect"
+ content:"2WSXcder"
+ distance:0
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2010-2772
+ reference:url,support.automation.siemens.com/WW/view/en/43876783
+ classtype:attempted-user
+ sid:17044
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SQL 1 = 0 - possible sql injection attempt"
+ flow:to_server,established
+ content:"1=0"
+ fast_pattern:only
+ http_uri
+ pcre:"/(and|or)[\\s\\x2F\\x2A]+1=0/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,ferruh.mavituna.com/sql-injection-cheatsheet-oku/
+ classtype:web-application-attack
+ sid:19440
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SQL 1 = 1 - possible sql injection attempt"
+ flow:to_server,established
+ content:"1=1"
+ fast_pattern:only
+ http_uri
+ pcre:"/(and|or)[\\s\\x2f\\x2A]+1=1/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,ferruh.mavituna.com/sql-injection-cheatsheet-oku/
+ classtype:web-application-attack
+ sid:19439
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SQL 1 = 1 - possible sql injection attempt"
+ flow:to_server,established
+ content:"|27|1|27|=|27|1"
+ fast_pattern:only
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,ferruh.mavituna.com/sql-injection-cheatsheet-oku/
+ classtype:web-application-attack
+ sid:27288
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SQL 1 = 1 - possible sql injection attempt"
+ flow:to_server,established
+ content:"1=1"
+ fast_pattern:only
+ http_client_body
+ pcre:"/or[\\s\\x2f\\x2A]+1=1/Pi"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,ferruh.mavituna.com/sql-injection-cheatsheet-oku/
+ classtype:web-application-attack
+ sid:27287
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SQL 1 = 1 - possible sql injection attempt"
+ flow:to_server,established
+ content:"%271%27%3D%271"
+ fast_pattern:only
+ http_client_body
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,ferruh.mavituna.com/sql-injection-cheatsheet-oku/
+ classtype:web-application-attack
+ sid:30041
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SQL 1 = 1 - possible sql injection attempt"
+ flow:to_server,established
+ content:"1%3D1"
+ fast_pattern:only
+ http_client_body
+ pcre:"/or\\++1%3D1/Pi"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,ferruh.mavituna.com/sql-injection-cheatsheet-oku/
+ classtype:web-application-attack
+ sid:30040
+ rev:2
+)\n', 'alert tcp $SQL_SERVERS [1315,2315] -> $EXTERNAL_NET any (msg:"SQL IBM SolidDB initial banner"
+ flow:to_client,established
+ content:"IBM solidDB"
+ fast_pattern:only
+ flowbits:set,soliddb
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ classtype:misc-activity
+ sid:23393
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SQL url ending in comment characters - possible sql injection attempt"
+ flow:to_server,established
+ content:"--"
+ fast_pattern:only
+ http_uri
+ pcre:"/(SELECT|UPDATE|INSERT)\\x20+[^\\r\\n\\x26]+--$/Ui"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2012-2998
+ reference:url,ferruh.mavituna.com/sql-injection-cheatsheet-oku/
+ classtype:web-application-attack
+ sid:19438
+ rev:13
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 50000 (msg:"SQL IBM DB2 DATABASE SERVER SQL REPEAT Buffer Overflow"
+ flow:to_server, established
+ content:" REPEAT|28|"
+ nocase
+ content:","
+ distance:0
+ byte_test:10,>,1000,0,relative,string
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service drda
+ reference:bugtraq,37976
+ reference:cve,2010-0462
+ classtype:attempted-admin
+ sid:17209
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 50000 (msg:"SQL IBM DB2 Universal Database xmlquery buffer overflow attempt"
+ flow:to_server,established
+ content:"xmlquery"
+ fast_pattern:only
+ content:"select "
+ nocase
+ pcre:"/select\\s+xmlquery\\s*\\x28\\s*(\\x27|\\x22)[^\\x27\\x22]{512}/smi"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service drda, service mysql
+ reference:bugtraq,29601
+ reference:cve,2008-3854
+ classtype:attempted-user
+ sid:14991
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $SQL_SERVERS 7210 (msg:"SQL SAP MaxDB shell command injection attempt"
+ flow:to_server,established
+ content:"exec_sdbinfo"
+ fast_pattern:only
+ pcre:"/exec_sdbinfo\\s+[\\x26\\x3b\\x7c\\x3e\\x3c]/i"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,27206
+ reference:cve,2008-0244
+ classtype:attempted-admin
+ sid:13356
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 21064 (msg:"SQL Ingres Database uuid_from_char buffer overflow attempt"
+ flow:to_server,established
+ content:"uuid_from_char"
+ fast_pattern:only
+ pcre:"/uuid_from_char\\s*?\\(\\s*?[\\x22\\x27][^\\x22\\x27]{37}/smi"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:bugtraq,24585
+ reference:cve,2007-3338
+ reference:url,supportconnectw.ca.com/public/ca_common_docs/ingresvuln_letter.asp
+ reference:url,www.ngssoftware.com/advisories/high-risk-vulnerability-in-ingres-stack-overflow
+ classtype:attempted-admin
+ sid:12027
+ rev:11
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"SQL use of sleep function in HTTP header - likely SQL injection attempt"
+ flow:established,to_server
+ content:"User-Agent|3A| "
+ http_header
+ content:"sleep("
+ within:200
+ fast_pattern
+ http_header
+ pcre:"/User-Agent\\x3A\\x20[^\\r\\n]*sleep\\x28/H"
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,blog.cloudflare.com/the-sleepy-user-agent/
+ classtype:web-application-attack
+ sid:38993
+ rev:4
+)\n']

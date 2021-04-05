@@ -1,0 +1,205 @@
+['alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-FIREFOX Mozilla Firefox 17 onreadystatechange memory corruption attempt"
+ flow:to_server,established
+ file_data
+ content:"readystatechange"
+ fast_pattern:only
+ content:"addEventListener"
+ content:"ArrayBuffer("
+ content:"Int32Array"
+ content:"window.stop"
+ content:!"ArrayBufferView"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-1690
+ reference:url,pastebin.mozilla.org/2777139
+ classtype:attempted-user
+ sid:33090
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-FIREFOX Mozilla Firefox 17 onreadystatechange memory corruption attempt"
+ flow:to_server,established
+ file_data
+ content:"document.onreadystatechange"
+ content:"window.parent.frames[0].frameElement.ownerDocument.write("
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-1690
+ reference:url,pastebin.mozilla.org/2777139
+ classtype:attempted-user
+ sid:33089
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox 17 onreadystatechange memory corruption attempt"
+ flow:to_client,established
+ file_data
+ content:"document.onreadystatechange"
+ content:"window.parent.frames[0].frameElement.ownerDocument.write("
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-1690
+ reference:url,pastebin.mozilla.org/2777139
+ classtype:attempted-user
+ sid:33088
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox 17 onreadystatechange memory corruption attempt"
+ flow:to_client,established
+ file_data
+ content:"readystatechange"
+ fast_pattern:only
+ content:"addEventListener"
+ content:"ArrayBuffer("
+ content:"Int32Array"
+ content:"window.stop"
+ content:!"ArrayBufferView"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-1690
+ reference:url,pastebin.mozilla.org/2777139
+ classtype:attempted-user
+ sid:27568
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox IDL fragment privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"mozRTCPeerConnection|28 29|"
+ content:"createOffer|28|"
+ within:60
+ content:"window.open|28 28|function"
+ within:200
+ nocase
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-1510
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-29.html
+ classtype:attempted-user
+ sid:35052
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox IDL fragment privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"mozRTCPeerConnection|28 29|"
+ content:"createOffer|28|"
+ within:40
+ content:"window.open|28 27|chrome|3A|//browser/content/browser.xul"
+ within:200
+ nocase
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-1510
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-29.html
+ classtype:attempted-user
+ sid:35051
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-FIREFOX Mozilla Firefox DOMSVGLength initialize use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"<script"
+ content:"animVal"
+ distance:0
+ fast_pattern
+ content:"initialize"
+ content:"animVal"
+ within:350
+ content:"<svg"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-1563
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-68.html
+ classtype:attempted-user
+ sid:35075
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-FIREFOX Mozilla Firefox DOMSVGLength replaceItem use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"<script"
+ content:"animVal"
+ distance:0
+ fast_pattern
+ content:"replaceItem"
+ content:"animVal"
+ within:350
+ content:"<svg"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-1563
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-68.html
+ classtype:attempted-user
+ sid:35074
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-FIREFOX Mozilla Firefox DOMSVGLength insertItemBefore use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"<script"
+ content:"animVal"
+ distance:0
+ fast_pattern
+ content:"insertItemBefore"
+ content:"animVal"
+ within:350
+ content:"<svg"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-1563
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-68.html
+ classtype:attempted-user
+ sid:35073
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox DOMSVGLength initialize use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"<script"
+ content:"animVal"
+ distance:0
+ fast_pattern
+ content:"initialize"
+ content:"animVal"
+ within:350
+ content:"<svg"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-1563
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-68.html
+ classtype:attempted-user
+ sid:35072
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox DOMSVGLength replaceItem use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"<script"
+ content:"animVal"
+ distance:0
+ fast_pattern
+ content:"replaceItem"
+ content:"animVal"
+ within:350
+ content:"<svg"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-1563
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-68.html
+ classtype:attempted-user
+ sid:35071
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox DOMSVGLength insertItemBefore use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"<script"
+ content:"animVal"
+ distance:0
+ fast_pattern
+ content:"insertItemBefore"
+ content:"animVal"
+ within:350
+ content:"<svg"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-1563
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-68.html
+ classtype:attempted-user
+ sid:35070
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-FIREFOX Mozilla Firefox IDL fragment privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"window"
+ content:"mozRTC"
+ within:120
+ content:"PeerConnection"
+ within:400
+ content:"createOffer"
+ within:20
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-1510
+ reference:url,mozilla.org/security/announce/2014/mfsa2014-29.html
+ classtype:attempted-user
+ sid:37626
+ rev:2
+)\n']

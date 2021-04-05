@@ -1,0 +1,101 @@
+['alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-LINUX Linux Kernel keyring object exploit download attempt"
+ flow:to_server,established
+ flowbits:isset,file.elf
+ file_data
+ content:"libkeyutils"
+ content:"keyctl"
+ within:200
+ content:"|B8 FC FF FF FF 48 39 45 E8|"
+ content:"|BA 88 00 00 00|"
+ content:"|48 83 7D E8 3F|"
+ within:100
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0728
+ classtype:attempted-admin
+ sid:37438
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-LINUX Linux Kernel keyring object exploit download attempt"
+ flow:to_server,established
+ flowbits:isset,file.elf
+ file_data
+ content:"libkeyutils"
+ content:"keyctl"
+ within:200
+ content:"|83 7D E4 FC|"
+ content:"|68 88 00 00 00|"
+ content:"|83 7D E4 3F|"
+ within:100
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0728
+ classtype:attempted-admin
+ sid:37437
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-LINUX Linux Kernel keyring object exploit download attempt"
+ flow:to_client,established
+ flowbits:isset,file.elf
+ file_data
+ content:"libkeyutils"
+ content:"keyctl"
+ within:200
+ content:"|B8 FC FF FF FF 48 39 45 E8|"
+ content:"|BA 88 00 00 00|"
+ content:"|48 83 7D E8 3F|"
+ within:100
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0728
+ classtype:attempted-admin
+ sid:37436
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-LINUX Linux Kernel keyring object exploit download attempt"
+ flow:to_client,established
+ flowbits:isset,file.elf
+ file_data
+ content:"libkeyutils"
+ content:"keyctl"
+ within:200
+ content:"|83 7D E4 FC|"
+ content:"|68 88 00 00 00|"
+ content:"|83 7D E4 3F|"
+ within:100
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0728
+ classtype:attempted-admin
+ sid:37435
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET 3240 -> $HOME_NET any (msg:"OS-LINUX Linux Kernel USBIP out of bounds write attempt"
+ flow:to_client,established
+ file_data
+ content:"|00 00 00 03|"
+ depth:4
+ content:"|00 00 00 01|"
+ within:4
+ distance:8
+ content:"|00 00 00 00|"
+ within:4
+ distance:4
+ byte_test:4,>,0x78,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2016-3955
+ reference:url,kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.5.3
+ classtype:attempted-dos
+ sid:39894
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET 3240 -> $HOME_NET any (msg:"OS-LINUX Linux Kernel USBIP out of bounds write attempt"
+ flow:to_client,established
+ file_data
+ content:"|00 00 00 02|"
+ depth:4
+ content:"|00 00 00 01|"
+ within:4
+ distance:8
+ content:"|00 00 00 00|"
+ within:4
+ distance:4
+ byte_test:4,>,0x78,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2016-3955
+ reference:url,kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.5.3
+ classtype:attempted-dos
+ sid:39893
+ rev:1
+)\n']

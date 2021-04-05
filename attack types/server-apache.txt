@@ -1,0 +1,298 @@
+['alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts remote code execution attempt - POST parameter"
+ flow:to_server,established
+ content:".action"
+ fast_pattern:only
+ http_uri
+ content:"new"
+ nocase
+ http_client_body
+ pcre:"/new(\\s|%20)+(java|org)/iP"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2012-0391
+ reference:cve,2016-3081
+ reference:url,issues.apache.org/jira/browse/WW-3668
+ reference:url,struts.apache.org/docs/s2-032.html
+ classtype:attempted-admin
+ sid:23631
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts remote code execution attempt - GET parameter"
+ flow:to_server,established
+ content:".action?"
+ nocase
+ http_uri
+ content:"@java.lang."
+ distance:0
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2012-0391
+ reference:cve,2016-3081
+ reference:url,issues.apache.org/jira/browse/WW-3668
+ reference:url,struts.apache.org/docs/s2-032.html
+ classtype:attempted-admin
+ sid:21656
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts remote code execution attempt - DebuggingInterceptor"
+ flow:to_server,established
+ content:".action?"
+ nocase
+ http_uri
+ content:"debug=command"
+ distance:0
+ nocase
+ http_uri
+ content:"expression="
+ distance:0
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2012-0394
+ reference:url,issues.apache.org/jira/browse/WW-3668
+ classtype:attempted-admin
+ sid:21075
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts2 blacklisted method redirect"
+ flow:to_server,established
+ content:".action?redirect|3A|"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2013-2248
+ reference:cve,2013-2251
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-016.html
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-017.html
+ classtype:web-application-attack
+ sid:27244
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts2 blacklisted method redirectAction"
+ flow:to_server,established
+ content:".action?redirectAction|3A|"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2013-2248
+ reference:cve,2013-2251
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-016.html
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-017.html
+ classtype:web-application-attack
+ sid:27243
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts arbitrary OGNL remote code execution attempt"
+ flow:to_server,established
+ content:".action?"
+ nocase
+ http_uri
+ content:"=${{"
+ distance:0
+ http_uri
+ content:"=$%7B%25%7B"
+ nocase
+ http_raw_uri
+ pcre:"/\\.action\\?[^\\x2f]+?=\\x24\\{\\{[^\\x2f{}]+?\\}\\}$/miU"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60345
+ reference:cve,2013-2135
+ reference:url,cwiki.apache.org/confluence/display/WW/S2-015
+ reference:url,osvdb.org/show/osvdb/93969
+ classtype:attempted-admin
+ sid:27575
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts OGNL getRuntime.exec static method access attempt"
+ flow:to_server,established
+ content:"(@java.lang.Runtime@getRuntime()).exec("
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60345
+ reference:bugtraq,60346
+ reference:cve,2013-2134
+ reference:cve,2013-2135
+ reference:url,cwiki.apache.org/confluence/display/WW/S2-015
+ reference:url,osvdb.org/show/osvdb/93969
+ classtype:attempted-admin
+ sid:27574
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts wildcard matching OGNL remote code execution attempt"
+ flow:to_server,established
+ content:"/{#"
+ http_uri
+ content:"}"
+ distance:0
+ http_uri
+ content:"/%25%7B"
+ nocase
+ http_raw_uri
+ pcre:"/\\x2f\\{\\x23[^\\x2f{}]+?\\}(\\.action)?\\x2f?$/miU"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60346
+ reference:cve,2013-2134
+ reference:url,cwiki.apache.org/confluence/display/WW/S2-015
+ reference:url,osvdb.org/show/osvdb/93969
+ classtype:attempted-admin
+ sid:27573
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts wildcard matching OGNL remote code execution attempt"
+ flow:to_server,established
+ content:"/${#"
+ http_uri
+ content:"}"
+ distance:0
+ http_uri
+ pcre:"/\\x2f\\x24\\{\\x23[^\\x2f{}]+?\\}(\\.action)?\\x2f?$/miU"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60346
+ reference:cve,2013-2134
+ reference:url,cwiki.apache.org/confluence/display/WW/S2-015
+ reference:url,osvdb.org/show/osvdb/93969
+ classtype:attempted-admin
+ sid:27572
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts allowStaticMethodAccess invocation attempt"
+ flow:to_server,established
+ content:".do"
+ nocase
+ http_uri
+ content:"allowStaticMethodAccess"
+ nocase
+ http_client_body
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,60166
+ reference:cve,2013-1966
+ reference:cve,2013-2115
+ reference:url,struts.apache.org/development/2.x/docs/s2-014.html
+ classtype:attempted-admin
+ sid:29859
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts2 blacklisted method redirect"
+ flow:to_server,established
+ content:".do?redirect|3A|"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2013-2248
+ reference:cve,2013-2251
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-016.html
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-017.html
+ classtype:web-application-attack
+ sid:29748
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts2 blacklisted method redirect"
+ flow:to_server,established
+ content:".do?redirectAction|3A|"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2013-2248
+ reference:cve,2013-2251
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-016.html
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-017.html
+ classtype:web-application-attack
+ sid:29747
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts2 remote code execution attempt"
+ flow:to_server,established
+ content:".action?action|3A 7B|"
+ nocase
+ http_uri
+ content:".start|28 29|"
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2013-2251
+ reference:url,struts.apache.org/release/2.3.x/docs/s2-016.html
+ classtype:web-application-attack
+ sid:27245
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts remote code execution attempt - CookieInterceptor"
+ flow:to_server,established
+ content:".action"
+ fast_pattern:only
+ http_uri
+ content:"Cookie|3A|"
+ http_header
+ pcre:"/^[\\x28\\x5b][^\\x3D]+?[\\x29\\x5d][^\\x3D]*?\\x3D/Cm"
+ metadata:policy balanced-ips alert, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:bugtraq,51257
+ reference:cve,2012-0392
+ reference:url,issues.apache.org/jira/browse/WW-3668
+ classtype:attempted-admin
+ sid:21074
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts allowStaticMethodAccess invocation attempt"
+ flow:to_server,established
+ content:".action?"
+ nocase
+ http_uri
+ content:"allowStaticMethodAccess"
+ distance:0
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2012-0391
+ reference:url,issues.apache.org/jira/browse/WW-3668
+ classtype:attempted-admin
+ sid:21073
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts remote code execution attempt - GET parameter"
+ flow:to_server,established
+ content:".action?"
+ nocase
+ http_uri
+ content:"new "
+ distance:0
+ nocase
+ http_uri
+ pcre:"/new\\s+(java|org)/Ui"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2012-0391
+ reference:cve,2012-0393
+ reference:cve,2016-3081
+ reference:url,issues.apache.org/jira/browse/WW-3668
+ reference:url,struts.apache.org/docs/s2-032.html
+ classtype:attempted-admin
+ sid:21072
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts remote code execution attempt"
+ flow:to_server,established
+ content:"|23|_memberAccess"
+ fast_pattern:only
+ http_uri
+ content:"new "
+ nocase
+ http_uri
+ pcre:"/new\\s+(java|org|sun)/Ui"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-3087
+ reference:url,struts.apache.org/docs/s2-033.html
+ classtype:attempted-admin
+ sid:39191
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts remote code execution attempt"
+ flow:to_server,established
+ content:"|23|_memberAccess"
+ fast_pattern:only
+ http_uri
+ content:"@java.lang."
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-3087
+ reference:url,struts.apache.org/docs/s2-033.html
+ classtype:attempted-admin
+ sid:39190
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-APACHE Apache Struts xslt.location local file inclusion attempt"
+ flow:to_server,established
+ content:"/XSLAction.action"
+ fast_pattern:only
+ http_uri
+ content:"xslt.location="
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-3082
+ reference:url,struts.apache.org/docs/s2-031.html
+ classtype:attempted-admin
+ sid:40359
+ rev:1
+)\n']

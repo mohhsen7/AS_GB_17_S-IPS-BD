@@ -1,0 +1,11 @@
+['\n', '\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET 110 (msg:"PROTOCOL-POP STAT command"
+ flow:to_server, established
+ content:"STAT"
+ nocase
+ flowbits:set,pop3.stat
+ flowbits:noalert
+ metadata:policy max-detect-ips alert, service pop3
+ classtype:protocol-command-decode
+ sid:16594
+ rev:7
+)\n']

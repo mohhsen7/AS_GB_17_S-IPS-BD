@@ -1,0 +1,426 @@
+['alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Java Applet sql.DriverManager exploit attempt"
+ flow:to_server,established
+ flowbits:isset,file.jar
+ file_data
+ content:"META-INF/services/java.sql.Driver"
+ fast_pattern:only
+ pcre:"/META-INF.*?[a-zA-Z]{7}\\.class/smi"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:bugtraq,58504
+ reference:cve,2013-1488
+ reference:url,osvdb.org/show/osvdb/91472
+ classtype:attempted-user
+ sid:26900
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Java Applet sql.DriverManager fakedriver exploit attempt"
+ flow:to_server,established
+ flowbits:isset,file.jar
+ file_data
+ content:"META-INF/services/java.sql.Driver"
+ fast_pattern:only
+ content:"Fakedriver"
+ nocase
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:bugtraq,58504
+ reference:cve,2013-1488
+ reference:url,osvdb.org/show/osvdb/91472
+ classtype:attempted-user
+ sid:26899
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Java Applet sql.DriverManager fakedriver exploit attempt"
+ flow:to_client,established
+ flowbits:isset,file.jar
+ file_data
+ content:"META-INF/services/java.sql.Driver"
+ fast_pattern:only
+ content:"Fakedriver"
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:bugtraq,58504
+ reference:cve,2013-1488
+ reference:url,osvdb.org/show/osvdb/91472
+ classtype:attempted-user
+ sid:26898
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Oracle Java Security Slider feature bypass attempt"
+ flow:to_client,established
+ file_data
+ content:"<applet id=|22|app|22| object=|22|Poc|22| width=|22|240|22| height=|22|160|22|></applet>"
+ fast_pattern:only
+ metadata:policy balanced-ips alert, policy connectivity-ips alert, policy security-ips alert, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-1489
+ reference:url,www.oracle.com/technetwork/topics/security/javacpufeb2013-1841061.html
+ classtype:attempted-user
+ sid:27766
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Microsoft Internet Explorer Adobe Reader Extension race condition attempt"
+ flow:to_server,established
+ file_data
+ content:"CA8A9780-280D-11CF-A24D-444553540000"
+ fast_pattern:only
+ content:".messageHandler"
+ content:".postMessage"
+ within:50
+ content:".onError"
+ content:".onMessage"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-0527
+ reference:url,helpx.adobe.com/security/products/reader/apsb14-15.html
+ classtype:attempted-user
+ sid:31018
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Microsoft Internet Explorer Adobe Reader Extension race condition attempt"
+ flow:to_client,established
+ file_data
+ content:"CA8A9780-280D-11CF-A24D-444553540000"
+ fast_pattern:only
+ content:".messageHandler"
+ content:".postMessage"
+ within:50
+ content:".onError"
+ content:".onMessage"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-0527
+ reference:url,helpx.adobe.com/security/products/reader/apsb14-15.html
+ classtype:attempted-user
+ sid:31017
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Adobe Reader 11 messageHandler ActiveX access attempt"
+ flow:to_server, established
+ file_data
+ content:"AcroPDF.PDF"
+ fast_pattern:only
+ content:".messageHandler"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-0527
+ reference:url,helpx.adobe.com/security/products/flash-player/apsb14-16.html
+ classtype:attempted-user
+ sid:31410
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Adobe Reader 11 messageHandler ActiveX access attempt"
+ flow:to_client, established
+ file_data
+ content:"AcroPDF.PDF"
+ fast_pattern:only
+ content:".messageHandler"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-0527
+ reference:url,helpx.adobe.com/security/products/flash-player/apsb14-16.html
+ classtype:attempted-user
+ sid:31409
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Adobe Reader 11 messageHandler ActiveX access attempt"
+ flow:to_server, established
+ file_data
+ content:"CA8A9780-280D-11CF-A24D-444553540000"
+ fast_pattern:only
+ content:".messageHandler"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-0527
+ reference:url,helpx.adobe.com/security/products/flash-player/apsb14-16.html
+ classtype:attempted-user
+ sid:31408
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Adobe Reader 11 messageHandler ActiveX access attempt"
+ flow:to_client, established
+ file_data
+ content:"CA8A9780-280D-11CF-A24D-444553540000"
+ fast_pattern:only
+ content:".messageHandler"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-0527
+ reference:url,helpx.adobe.com/security/products/flash-player/apsb14-16.html
+ classtype:attempted-user
+ sid:31407
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Microsoft Silverlight ScriptObject untrusted pointer dereference attempt"
+ flow:to_server,established
+ flowbits:isset,file.zip&file.silverlight
+ file_data
+ content:".dll|ED 7B 0B 78 1C 57 95 E6 A9 EA EE EA EA 6E 3D DC 92 AD 87 F5 6A C9 76 DC B2|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:bugtraq,58327
+ reference:cve,2013-0074
+ reference:url,osvdb.org/show/osvdb/91147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-022
+ classtype:attempted-user
+ sid:28584
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Microsoft Silverlight ScriptObject untrusted pointer dereference attempt"
+ flow:to_server,established
+ flowbits:isset,file.zip&file.silverlight
+ file_data
+ content:".dll|ED 59 7D 6C 1C C7 75 7F BB 77 B7 A4 28 F3 6A 52 92 49 C9 8A B4 A4 64 85 52|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:bugtraq,58327
+ reference:cve,2013-0074
+ reference:url,osvdb.org/show/osvdb/91147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-022
+ classtype:attempted-user
+ sid:28583
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Microsoft Silverlight ScriptObject untrusted pointer dereference attempt"
+ flow:to_server,established
+ flowbits:isset,file.zip&file.silverlight
+ file_data
+ content:".dll|ED 59 0B 6C 1C D5 15 BD 33 FB 73 9C 64 21 1B 12 3B 60 C8 78 03 64 63 92 F5|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:bugtraq,58327
+ reference:cve,2013-0074
+ reference:url,osvdb.org/show/osvdb/91147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-022
+ classtype:attempted-user
+ sid:28582
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Microsoft Silverlight ScriptObject untrusted pointer dereference attempt"
+ flow:to_client,established
+ flowbits:isset,file.zip&file.silverlight
+ file_data
+ content:".dll|ED 7B 0B 78 1C 57 95 E6 A9 EA EE EA EA 6E 3D DC 92 AD 87 F5 6A C9 76 DC B2|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:bugtraq,58327
+ reference:cve,2013-0074
+ reference:url,osvdb.org/show/osvdb/91147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-022
+ classtype:attempted-user
+ sid:28581
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Microsoft Silverlight ScriptObject untrusted pointer dereference attempt"
+ flow:to_client,established
+ flowbits:isset,file.zip&file.silverlight
+ file_data
+ content:".dll|ED 59 7D 6C 1C C7 75 7F BB 77 B7 A4 28 F3 6A 52 92 49 C9 8A B4 A4 64 85 52|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:bugtraq,58327
+ reference:cve,2013-0074
+ reference:url,osvdb.org/show/osvdb/91147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-022
+ classtype:attempted-user
+ sid:28580
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Microsoft Silverlight ScriptObject untrusted pointer dereference attempt"
+ flow:to_client,established
+ flowbits:isset,file.zip&file.silverlight
+ file_data
+ content:".dll|ED 59 0B 6C 1C D5 15 BD 33 FB 73 9C 64 21 1B 12 3B 60 C8 78 03 64 63 92 F5|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:bugtraq,58327
+ reference:cve,2013-0074
+ reference:url,osvdb.org/show/osvdb/91147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-022
+ classtype:attempted-user
+ sid:28579
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS HP LoadRunner WriteFileString ActiveX function call attempt"
+ flow:to_server,established
+ file_data
+ content:"HP_LR_FileIOService"
+ fast_pattern:only
+ content:".WriteFileString"
+ nocase
+ pcre:"/var\\s+?(?P<obj1>\\w+)\\s*?=\\s*?new\\s+?ActiveXObject\\s*?\\(\\s*?[\\x22\\x27]HP_LR_FileIOService[\\x22\\x27].*?(?P=obj1)\\.WriteFileString\\s*?\\(|(?P<obj2>\\w+)\\.WriteFileString\\s*?\\(.*?var\\s+?(?P=obj2)\\s*?=\\s*?new\\s+?ActiveXObject\\s*?\\(\\s*?[\\x22\\x27]HP_LR_FileIOService/si"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:bugtraq,61443
+ reference:cve,2013-4798
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c03862772
+ reference:url,osvdb.org/show/osvdb/95642
+ classtype:attempted-user
+ sid:27872
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS HP LoadRunner WriteFileString ActiveX function call attempt"
+ flow:to_server,established
+ file_data
+ content:"8d9e2cc7-d94b-4977-8510-fb49c361a139"
+ fast_pattern:only
+ content:".WriteFileString"
+ nocase
+ pcre:"/<object\\s[^>]*?id\\s*?=\\s*?[\\x22\\x27]?(?P<id1>[^\\x22\\x27\\x20>]+?)[\\x22\\x27]?\\s[^>]*?classid\\s*?=\\s*?[\\x22\\x27]?\\s*?clsid\\s*?\\x3a\\s*?{?\\s*?8d9e2cc7-d94b-4977-8510-fb49c361a139.*?(?P=id1)\\s*?\\.\\s*?WriteFileString|<object\\s[^>]*?classid\\s*?=\\s*?[\\x22\\x27]?\\s*?clsid\\s*?\\x3a\\s*?{?\\s*?8d9e2cc7-d94b-4977-8510-fb49c361a139[^>]*?id\\s*?=\\s*?[\\x22\\x27]?(?P<id2>[^\\x22\\x27\\x20>]+?)[\\x22\\x27]?[\\x20\\x2f>].*?(?P=id2)\\s*?\\.\\s*?WriteFileString/si"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:bugtraq,61443
+ reference:cve,2013-4798
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c03862772
+ reference:url,osvdb.org/show/osvdb/95642
+ classtype:attempted-user
+ sid:27871
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS HP LoadRunner WriteFileString ActiveX function call attempt"
+ flow:to_client,established
+ file_data
+ content:"HP_LR_FileIOService"
+ fast_pattern:only
+ content:".WriteFileString"
+ nocase
+ pcre:"/var\\s+?(?P<obj1>\\w+)\\s*?=\\s*?new\\s+?ActiveXObject\\s*?\\(\\s*?[\\x22\\x27]HP_LR_FileIOService[\\x22\\x27].*?(?P=obj1)\\.WriteFileString\\s*?\\(|(?P<obj2>\\w+)\\.WriteFileString\\s*?\\(.*?var\\s+?(?P=obj2)\\s*?=\\s*?new\\s+?ActiveXObject\\s*?\\(\\s*?[\\x22\\x27]HP_LR_FileIOService/si"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:bugtraq,61443
+ reference:cve,2013-4798
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c03862772
+ reference:url,osvdb.org/show/osvdb/95642
+ classtype:attempted-user
+ sid:27870
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS HP LoadRunner WriteFileString ActiveX function call attempt"
+ flow:to_client,established
+ file_data
+ content:"8d9e2cc7-d94b-4977-8510-fb49c361a139"
+ fast_pattern:only
+ content:".WriteFileString"
+ nocase
+ pcre:"/<object\\s[^>]*?id\\s*?=\\s*?[\\x22\\x27]?(?P<id1>[^\\x22\\x27\\x20>]+?)[\\x22\\x27]?\\s[^>]*?classid\\s*?=\\s*?[\\x22\\x27]?\\s*?clsid\\s*?\\x3a\\s*?{?\\s*?8d9e2cc7-d94b-4977-8510-fb49c361a139.*?(?P=id1)\\s*?\\.\\s*?WriteFileString|<object\\s[^>]*?classid\\s*?=\\s*?[\\x22\\x27]?\\s*?clsid\\s*?\\x3a\\s*?{?\\s*?8d9e2cc7-d94b-4977-8510-fb49c361a139[^>]*?id\\s*?=\\s*?[\\x22\\x27]?(?P<id2>[^\\x22\\x27\\x20>]+?)[\\x22\\x27]?[\\x20\\x2f>].*?(?P=id2)\\s*?\\.\\s*?WriteFileString/si"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:bugtraq,61443
+ reference:cve,2013-4798
+ reference:url,h20566.www2.hp.com/portal/site/hpsc/public/kb/docDisplay/?docId=emr_na-c03862772
+ reference:url,osvdb.org/show/osvdb/95642
+ classtype:attempted-user
+ sid:27869
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Advantech WebAccess AspVCObj.AspDataDriven InterfaceFilter ActiveX clsid access"
+ flow:to_server,established
+ file_data
+ content:"AspVCObj.AspDataDriven"
+ fast_pattern:only
+ content:"InterfaceFilter"
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-9208
+ reference:url,ics-cert.us-cert.gov/advisories/ICSA-15-251-01
+ reference:url,seclists.org/fulldisclosure/2015/Sep/20
+ classtype:attempted-user
+ sid:36112
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Advantech WebAccess AspVCObj.AspDataDriven InterfaceFilter ActiveX clsid access"
+ flow:to_server,established
+ file_data
+ content:"89D00354-B2EA-4755-915D-615D3962C7D7"
+ fast_pattern:only
+ content:"InterfaceFilter"
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-9208
+ reference:url,ics-cert.us-cert.gov/advisories/ICSA-15-251-01
+ reference:url,seclists.org/fulldisclosure/2015/Sep/20
+ classtype:attempted-user
+ sid:36111
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Advantech WebAccess AspVCObj.AspDataDriven InterfaceFilter ActiveX clsid access"
+ flow:to_client,established
+ file_data
+ content:"AspVCObj.AspDataDriven"
+ fast_pattern:only
+ content:"InterfaceFilter"
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-9208
+ reference:url,ics-cert.us-cert.gov/advisories/ICSA-15-251-01
+ reference:url,seclists.org/fulldisclosure/2015/Sep/20
+ classtype:attempted-user
+ sid:36110
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Advantech WebAccess AspVCObj.AspDataDriven InterfaceFilter ActiveX clsid access"
+ flow:to_client,established
+ file_data
+ content:"89D00354-B2EA-4755-915D-615D3962C7D7"
+ fast_pattern:only
+ content:"InterfaceFilter"
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-9208
+ reference:url,ics-cert.us-cert.gov/advisories/ICSA-15-251-01
+ reference:url,seclists.org/fulldisclosure/2015/Sep/20
+ classtype:attempted-user
+ sid:36109
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Microsoft Silverlight GetChar out of bounds read attempt"
+ flow:to_server,established
+ file_data
+ content:"|E5 3D 0F 6C 36 58 2C 22 4C D5 43 63 94 D9 82 69 B9 03 6D 79 CF 2B 6E D2|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0034
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-006
+ classtype:attempted-user
+ sid:37268
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Microsoft Silverlight GetChar out of bounds read attempt"
+ flow:to_client,established
+ file_data
+ content:"|E5 3D 0F 6C 36 58 2C 22 4C D5 43 63 94 D9 82 69 B9 03 6D 79 CF 2B 6E D2|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0034
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-006
+ classtype:attempted-user
+ sid:37267
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Microsoft Silverlight ScriptObject untrusted pointer dereference attempt"
+ flow:to_client,established
+ flowbits:isset,file.zip&file.silverlight
+ file_data
+ content:".dll|ED 7B 7B 74 1C E7 75 DF 9D D9 DD D9 17 00 72 01 E2 45 BC 16 A0 28 2E 09 60 F1 24 40 52 24 45|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:bugtraq,58327
+ reference:cve,2013-0074
+ reference:url,osvdb.org/show/osvdb/91147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-022
+ classtype:attempted-user
+ sid:37801
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"BROWSER-PLUGINS Microsoft XML Core Services ActiveX control use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"Msxml2.DOMDocument.3.0"
+ fast_pattern:only
+ content:"loadXML"
+ nocase
+ content:"ELEMENT"
+ content:"ref"
+ within:10
+ content:"EMPTY"
+ within:10
+ content:"DOCTYPE"
+ content:"root"
+ within:10
+ content:"ELEMENT"
+ within:25
+ content:"root"
+ within:10
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-040
+ classtype:attempted-user
+ sid:38464
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"BROWSER-PLUGINS Microsoft XML Core Services ActiveX control use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"Msxml2.DOMDocument.3.0"
+ fast_pattern:only
+ content:"loadXML"
+ nocase
+ content:"ELEMENT"
+ content:"ref"
+ within:10
+ content:"EMPTY"
+ within:10
+ content:"DOCTYPE"
+ content:"root"
+ within:10
+ content:"ELEMENT"
+ within:25
+ content:"root"
+ within:10
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0147
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-040
+ classtype:attempted-user
+ sid:38463
+ rev:1
+)\n']

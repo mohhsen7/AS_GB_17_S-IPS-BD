@@ -1,0 +1,62 @@
+['alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-TOOLBARS Hijacker baidu toolbar runtime detection - updates automatically"
+ flow:to_server,established
+ content:"/update/barcab/"
+ fast_pattern
+ nocase
+ http_uri
+ content:"tn="
+ nocase
+ http_uri
+ content:"baiducb"
+ nocase
+ http_uri
+ content:"id="
+ nocase
+ http_uri
+ content:"version="
+ nocase
+ http_uri
+ pcre:"/update\\/barcab\\/.*?tn=.*id=.*version=/smi"
+ flowbits:set,BaiduToolbar_detection
+ flowbits:noalert
+ metadata:service http
+ classtype:misc-activity
+ sid:13483
+ rev:9
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-TOOLBARS Win.Toolbar.Crossrider variant outbound connection"
+ flow:to_server,established
+ content:".gif?action="
+ http_uri
+ content:"&browser="
+ distance:0
+ http_uri
+ content:"&osbuild="
+ distance:0
+ http_uri
+ content:"&osprod="
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.virustotal.com/en/file/06f3bd3df0326b5c3c5b03070d9d870507b868ee4e1acff62f0d301c43492709/analysis/
+ classtype:trojan-activity
+ sid:33452
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-TOOLBARS Win.Toolbar.Crossrider variant outbound connection"
+ flow:to_server,established
+ content:".gif?report="
+ http_uri
+ content:"&f="
+ distance:0
+ http_uri
+ content:"&n="
+ distance:0
+ http_uri
+ content:"&rnd="
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/77ecc830641bd5a733a7e49bf132aaa8b1090fd2881df13d2e8f1c1fd69ba3ab/analysis/
+ classtype:trojan-activity
+ sid:39189
+ rev:1
+)\n']

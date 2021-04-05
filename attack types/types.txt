@@ -1,0 +1,13 @@
+	attempted-dos
+	web-application-attack
+	exploit-kit
+	indicator-compromise
+	trojan-activity
+	attempted-admin
+	successful-recon-limited
+	network-scan
+	indicator-obfuscation
+	attempted-user
+	malware-backdoor
+	netbios	protocol-command-decode
+	unsuccessful-user

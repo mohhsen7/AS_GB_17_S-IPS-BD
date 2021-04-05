@@ -1,0 +1,390 @@
+['alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - split - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|7D|catch(d21vd12v)"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,malwaremustdie.blogspot.jp/2013/07/proof-of-concept-of-cookiebomb-attack.html
+ classtype:misc-activity
+ sid:27592
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION GIF header followed by PDF header"
+ flow:to_client,established
+ content:"GIF8"
+ depth:4
+ content:"a"
+ within:1
+ distance:1
+ content:!"HTTP"
+ within:500
+ content:"%PDF-"
+ within:1024
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25451
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION DOC header followed by PDF header"
+ flow:to_client,established
+ file_data
+ content:"|D0 CF 11 E0|"
+ depth:4
+ content:"%PDF-"
+ within:1024
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25454
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-OBFUSCATION DOC header followed by PDF header"
+ flow:to_server,established
+ file_data
+ content:"|D0 CF 11 E0|"
+ depth:4
+ content:"%PDF-"
+ within:1024
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25458
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-OBFUSCATION JPEG header followed by PDF header"
+ flow:to_server,established
+ file_data
+ content:"|FF D8 FF E0|"
+ depth:4
+ content:"|FA FF DA 00 0C|"
+ within:800
+ content:"%PDF-"
+ within:224
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25457
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION JPEG header followed by PDF header"
+ flow:to_client,established
+ file_data
+ content:"|FF D8 FF E0|"
+ depth:4
+ content:"|FA FF DA 00 0C|"
+ within:800
+ content:"%PDF-"
+ within:224
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25453
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-OBFUSCATION PNG header followed by PDF header"
+ flow:to_server,established
+ file_data
+ content:"|89|PNG|0D 0A 1A 0A|"
+ depth:8
+ content:"%PDF-"
+ within:1024
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25456
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION PNG header followed by PDF header"
+ flow:to_client,established
+ content:"|89|PNG|0D 0A 1A 0A|"
+ depth:8
+ content:!"HTTP"
+ within:500
+ content:"%PDF-"
+ within:1024
+ nocase
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25452
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-OBFUSCATION GIF header followed by PDF header"
+ flow:to_server,established
+ file_data
+ content:"GIF8"
+ depth:4
+ content:"a"
+ within:1
+ distance:1
+ content:"%PDF-"
+ within:1024
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-0624
+ reference:url,www.adobe.com/support/security/bulletins/apsb13-02.html
+ classtype:misc-activity
+ sid:25455
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION obfuscated document command - used in IFRAMEr tool injection"
+ flow:to_client,established
+ file_data
+ content:"|22|doc|22 2B 22|ument|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:25592
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION fromCharCode seen in exploit kit landing pages"
+ flow:to_client,established
+ file_data
+ content:"|22|f|22|+|22|ro|22|+|22|mCh|22|+|22|arCode|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:26092
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION String.fromCharCode concatenation"
+ flow:to_client,established
+ file_data
+ content:"|22|fro|22|+|22|mC|22|+|22|harCode|22|"
+ fast_pattern:only
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,malware.dontneedcoffee.com/2013/03/hello-neutrino-just-one-more-exploit-kit.html
+ classtype:trojan-activity
+ sid:26101
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION obfuscated portable executable - seen in exploit kits"
+ flow:to_client,established
+ file_data
+ content:"|88 54 68 25 DA 20 70 FE C5 67 72 ED C3 20 63 ED C6 6E 6F F8 88 62 65 AC DA 75 6E AC BF 6E 20 10 E6 53 20 E1 C5 64 65 FA A3 0D 0A E8 A8|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:26352
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Obfuscated javascript/html generated by myobfuscate.com detected"
+ flow:to_client,established
+ file_data
+ content:"<!-- Obfuscated by www.myobfuscate.com -->"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ classtype:bad-unknown
+ sid:26441
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION obfuscated getElementsByTagName string - seen in exploit kits"
+ flow:to_client,established
+ file_data
+ content:"|22|g|22|+|22|e|22|+|22|tEleme|22|+|22|nts|22|+|22|ByTagName|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:27074
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION obfuscated getElementsByTagName string - seen in exploit kits"
+ flow:to_client,established
+ file_data
+ content:"|22|getEl|22|+|22|eme|22|+|22|ntsByTagName"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:27073
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - fromCharCode"
+ flow:to_client,established
+ file_data
+ content:"|22|fro|22|+|22|mC|22|+|22|harC|22|+|22|o|22|+|22|de|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ classtype:attempted-user
+ sid:27272
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - split"
+ flow:to_client,established
+ file_data
+ content:"|22|s|22|+|22|pli|22|+|22|t|22|"
+ fast_pattern:only
+ metadata:service http
+ classtype:attempted-user
+ sid:27593
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - split - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|22|s|22|+|22|p|22|+|22|li|22|+|22|t|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,malwaremustdie.blogspot.jp/2013/07/proof-of-concept-of-cookiebomb-attack.html
+ classtype:misc-activity
+ sid:27736
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - document - seen in IFRAMEr Tool usage"
+ flow:to_client,established
+ file_data
+ content:"|22|d|22|+|22|o|22|+|22|c|22|+|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,malwaremustdie.blogspot.jp/2013/07/proof-of-concept-of-cookiebomb-attack.html
+ classtype:misc-activity
+ sid:27735
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - split - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|22|spl|22|+|22|i|22|+|22|t|22 3B|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,malwaremustdie.blogspot.jp/2013/07/proof-of-concept-of-cookiebomb-attack.html
+ classtype:misc-activity
+ sid:27920
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - split - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|22|S|22|+|22|tr|22|+|22|ing|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:misc-activity
+ sid:28025
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"[ps](|22|,|22|))|3B|ss=String|3B|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:misc-activity
+ sid:28024
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - document - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"ps=|22|s|22|+|22|p|22|+|22|l|22|+|22|i|22|+|22|t|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:28023
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"aq=|22|0x|22 3B|ff=String|3B|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ classtype:trojan-activity
+ sid:28346
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - split - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"ps=|22|split|22 3B|asd=function()"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ classtype:trojan-activity
+ sid:28345
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"+=String.fromCharCode(eval("
+ content:"gif=eval|3B|gif("
+ within:50
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:28422
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - fromCharCode - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|22|fr|22|+|22|omCh|22|+|22|arCo|22|+|22|de|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ classtype:trojan-activity
+ sid:28421
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - createElement - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|22|c|22|+|22|r|22 3A|2+|22|e|22|+|22|a|22|+|22|t|22|+|22|e|22|+|22|E|22|+|22|l|22|+|22|e|22|+|22|m|22|+((f)?|22|e|22|+|22|n|22|+|22|t|22 3A 22 22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ classtype:trojan-activity
+ sid:28420
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|28 22|mCharCode|22 29 3B|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:28812
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"|22|s|22 20 22|p|22 20 22|li|22 20 22|t|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:28811
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - seen in IFRAMEr Tool attack"
+ flow:to_client,established
+ file_data
+ content:"document[|22 5C|x62od|22|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:28941
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION Javascript obfuscation - seen in Nuclear exploit kit"
+ flow:to_client,established
+ file_data
+ content:"s|27|+|27|t|27|+|27|y|27|+|27|l|27|+|27|e|27|+|27|=|27|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:29190
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-OBFUSCATION potential math library debugging"
+ flow:to_client,established
+ file_data
+ content:"Math.atan2|28|0x"
+ content:"Math."
+ distance:0
+ content:"|28|0x"
+ within:8
+ content:"Math."
+ distance:0
+ content:"|28|0x"
+ within:8
+ content:"Math."
+ distance:0
+ content:"|28|0x"
+ within:8
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:url,blog.talosintel.com/2013/10/ie-zero-day-cve-2013-3897-youve-been.html
+ classtype:trojan-activity
+ sid:29213
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-OBFUSCATION Multiple character encodings detected"
+ flow:established,to_server
+ file_data
+ content:"unescape"
+ content:"String.fromCharCode"
+ content:".split"
+ content:").toString"
+ content:".reverse()"
+ content:".join(|22 22|)"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ classtype:attempted-user
+ sid:29510
+ rev:2
+)\n']

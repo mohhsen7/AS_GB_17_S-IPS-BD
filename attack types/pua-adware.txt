@@ -1,0 +1,367 @@
+['alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Trojan.InstantAccess variant outbound connection"
+ flow:to_server,established
+ content:"/?dn="
+ fast_pattern:only
+ http_uri
+ content:"pid="
+ nocase
+ http_uri
+ metadata:service http
+ reference:url,virustotal.com/en/file/c6828c8bcce6786b39427fc5ad9df2f8163d3b8a7b3b5f8a5c5790c4488039f7/analysis/
+ classtype:misc-activity
+ sid:40357
+ rev:3
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Trojan.InstantAccess variant outbound connection"
+ flow:to_server,established
+ content:"/sk-logabpstatus.php"
+ fast_pattern:only
+ http_uri
+ content:"a="
+ nocase
+ http_uri
+ content:"b="
+ nocase
+ http_uri
+ metadata:service http
+ reference:url,virustotal.com/en/file/c6828c8bcce6786b39427fc5ad9df2f8163d3b8a7b3b5f8a5c5790c4488039f7/analysis/
+ classtype:misc-activity
+ sid:40356
+ rev:3
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Lucky Leap Adware outbound connection"
+ flow:to_server,established
+ content:"/gdi?alpha="
+ fast_pattern:only
+ http_uri
+ content:"|0D 0A|Cache-Control: no-store,no-cache|0D 0A|Pragma: no-cache|0D 0A|Connection: Keep-Alive|0D 0A 0D 0A|"
+ content:!"Accept"
+ http_header
+ content:!"User-Agent:"
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.virustotal.com/en/file/43c6fb02baf800b3ab3d8f35167c37dced8ef3244691e70499a7a9243068c016/analysis/1395425759/
+ classtype:trojan-activity
+ sid:30261
+ rev:7
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Lucky Leap Adware outbound connection"
+ flow:to_server,established
+ content:"/gcs?alpha="
+ fast_pattern:only
+ http_uri
+ content:"|0D 0A|Cache-Control: no-store,no-cache|0D 0A|Pragma: no-cache|0D 0A|Connection: Keep-Alive|0D 0A 0D 0A|"
+ content:!"Accept"
+ http_header
+ content:!"User-Agent:"
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.virustotal.com/en/file/43c6fb02baf800b3ab3d8f35167c37dced8ef3244691e70499a7a9243068c016/analysis/1395425759/
+ classtype:trojan-activity
+ sid:30260
+ rev:7
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE IP address disclosure to advertisement sites attempt"
+ flow:to_server,established
+ content:"test?extip="
+ http_uri
+ content:"exip="
+ distance:0
+ http_uri
+ content:"pid="
+ distance:0
+ http_uri
+ content:"gid="
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/file-scan/report.html?id=3d6fa5440c80185d24d007e5836ed4613cca7e552b516c8aca8bce749af14c13-1285313130
+ classtype:policy-violation
+ sid:19998
+ rev:7
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Wajam outbound connection - post install"
+ flow:to_server,established
+ content:"/img/icons/2040254.32.png"
+ http_uri
+ content:"static.updatestar.net"
+ fast_pattern:only
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/30ab3173d48e3c63d89dcd83eca5d0e28d44f76a9acde9c881a1c40d75771d83/analysis/
+ classtype:trojan-activity
+ sid:28280
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Wajam outbound connection - post install"
+ flow:to_server,established
+ content:"/install/valid?v"
+ http_uri
+ content:"&unique_id="
+ within:15
+ http_uri
+ content:"www.wajam.com|0D 0A|"
+ fast_pattern:only
+ http_header
+ content:!"User-Agent|3A|"
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/30ab3173d48e3c63d89dcd83eca5d0e28d44f76a9acde9c881a1c40d75771d83/analysis/
+ classtype:trojan-activity
+ sid:28279
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE FakeAV runtime detection"
+ flow:to_server,established
+ content:"&affid="
+ fast_pattern:only
+ http_uri
+ content:"/api/"
+ nocase
+ http_uri
+ content:"?ts="
+ nocase
+ http_uri
+ content:"&token="
+ nocase
+ http_uri
+ content:"&group="
+ nocase
+ http_uri
+ content:"&nid="
+ nocase
+ http_uri
+ content:"&lid="
+ nocase
+ http_uri
+ content:"&ver="
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ classtype:trojan-activity
+ sid:28324
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE UpdateStar encapsulated installer outbound connection"
+ flow:to_server,established
+ content:"/UpdateStar/?v="
+ fast_pattern:only
+ http_uri
+ content:"updatestarcdn.com|0D 0A|"
+ http_header
+ metadata:policy balanced-ips drop, service http
+ reference:url,www.virustotal.com/en/file/3218fee67b2ea4d1b20a2d06afae6b74c92219a31375b6e8cd8c754a45b10994/analysis/
+ classtype:misc-activity
+ sid:28372
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE UpdateStar CIS file retrieval attempt"
+ flow:to_server,established
+ flowbits:isset,file.cis
+ content:"/ofr/"
+ nocase
+ http_uri
+ content:"updatestarcdn.com|0D 0A|"
+ fast_pattern:only
+ http_header
+ metadata:policy balanced-ips drop, service http
+ reference:url,www.virustotal.com/en/file/3218fee67b2ea4d1b20a2d06afae6b74c92219a31375b6e8cd8c754a45b10994/analysis/
+ classtype:misc-activity
+ sid:28371
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Apponic encapsulated installer outbound connection"
+ flow:to_server,established
+ content:"/Apponic/"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/domain/apponic.com/information/
+ reference:url,www.virustotal.com/en/file/ecb0151cb71a6e331825235de966e8d6c1f5957e21bbb5f24ab690ab973b5e80/analysis/
+ classtype:misc-activity
+ sid:28885
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Apponic encapsulated installer outbound connection"
+ flow:to_server,established
+ content:"/?pcrc="
+ fast_pattern:only
+ http_uri
+ content:"&v="
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/domain/apponic.com/information/
+ reference:url,www.virustotal.com/en/file/ecb0151cb71a6e331825235de966e8d6c1f5957e21bbb5f24ab690ab973b5e80/analysis/
+ classtype:misc-activity
+ sid:28884
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Apponic CIS file retrieval attempt"
+ flow:to_server,established
+ flowbits:isset,file.cis
+ content:"/ofr/"
+ nocase
+ http_uri
+ content:".cis"
+ within:20
+ nocase
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/domain/apponic.com/information/
+ reference:url,www.virustotal.com/en/file/ecb0151cb71a6e331825235de966e8d6c1f5957e21bbb5f24ab690ab973b5e80/analysis/
+ classtype:misc-activity
+ sid:28883
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Amonetize installer outbound connection attempt"
+ flow:to_server,established
+ content:"/script/display.php"
+ nocase
+ http_uri
+ content:"User-Agent: Mozilla/4.0 (compatible|3B| Win32|3B| WinHttp.WinHttpRequest.5)"
+ fast_pattern:only
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/b0288d9d29652597764b1dcc51ac7a2da217ca69dfd10b6ce865ad43337596eb/analysis/
+ classtype:trojan-activity
+ sid:28929
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.Inbox/PCFixSpeed/RebateInformer variant outbound connection"
+ flow:to_server,established
+ content:"/RebateInformerSetup.exe"
+ fast_pattern:only
+ http_uri
+ content:"User-Agent|3A| Inno Setup Downloader"
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/6e598e8ddf7f95542064f41c3a0a4f73b63982948847e40df9dff47186543c46/analysis/
+ classtype:policy-violation
+ sid:31091
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.CloseApp variant outbound connection"
+ flow:to_server,established
+ content:"/get/?q="
+ http_uri
+ content:"User-Agent|3A| win32|0D 0A|"
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/0ec2938841e77e20c5f967bf9b1d7890e18f156ce481568cfe97677d8755ee5d/analysis/
+ classtype:trojan-activity
+ sid:31089
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"PUA-ADWARE SoftPulse variant HTTP response attempt"
+ flow:to_client,established
+ file_data
+ content:",|22|installerBehavior|22|:{|22|hideOnInstall|22|:"
+ fast_pattern:only
+ content:"{|22|time|22|:"
+ content:"|22|country|22|"
+ within:30
+ content:",|22|countryId|22|:"
+ within:20
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service ftp-data, service http, service imap, service pop3
+ reference:url,www.virustotal.com/en/file/7aa774bffa2eb38c691774c1cc59e0adf6186da62afc417baa6333670e1e3011/analysis/1421687954/
+ classtype:trojan-activity
+ sid:33212
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.Gamevance variant outbound connection"
+ flow:to_server,established
+ content:"/aj/"
+ fast_pattern
+ http_uri
+ content:".php?p="
+ distance:0
+ http_uri
+ content:!"Referer|3A|"
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,virustotal.com/en/file/c626804d99195bb0c74e276c49ad48278c8f3723180323c767c60cc8c9f43f7d/analysis/
+ classtype:trojan-activity
+ sid:33304
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.OptimizerPro variant outbound connection"
+ flow:to_server,established
+ content:"/op?sid="
+ http_uri
+ content:"&dt="
+ distance:0
+ http_uri
+ content:"&gid="
+ distance:0
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/b0d4c2769dd0841b95b4bbd9f0cc8e36f8aaaf5fbba056a429b402903bc50740/analysis/
+ classtype:trojan-activity
+ sid:33311
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.InstallMonster variant outbound connection"
+ flow:to_server,established
+ urilen:4,norm
+ content:"POST"
+ http_method
+ content:"/api"
+ http_uri
+ content:"Mozilla/3.0 (compatible|3B| Indy Library)|0D 0A|"
+ fast_pattern:only
+ http_header
+ content:!"Referer|3A|"
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/3069db86885e209e72f4df275dbe34d3ba893ca1a490f121067bfde8d4ec46f9/analysis/
+ classtype:trojan-activity
+ sid:33483
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.Dealply outbound POST attempt"
+ flow:to_server,established
+ content:"POST"
+ http_method
+ content:"/?v="
+ depth:4
+ fast_pattern
+ http_uri
+ content:"&pcrc="
+ http_uri
+ content:!"Referer|3A 20|"
+ http_header
+ content:!"Accept-"
+ http_header
+ pcre:"/^\\/\\?v=[\\d.]+&pcrc=\\d+$/U"
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/fdb0a6182a3fd6cc96a3b5aea946bd22c6e73e8b264200ef6f78d4bfb4fa5e3c/analysis/1454336512/
+ classtype:misc-activity
+ sid:37642
+ rev:2
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.OpenSoftwareUpdater variant outbound connection attempt"
+ flow:to_server,established
+ content:"/info.php?"
+ http_uri
+ content:"quant="
+ fast_pattern:only
+ content:"f="
+ http_uri
+ content:"h="
+ http_uri
+ content:"size="
+ http_uri
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.virustotal.com/en/file/829918eb3edb26deccd2d80c7ac8bc8ad58b4fb76a370c11731884b408a21a73/analysis/1463575824/
+ classtype:trojan-activity
+ sid:38953
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.OpenSoftwareUpdater variant outbound connection attempt"
+ flow:to_server,established
+ content:"/optin.php?"
+ fast_pattern:only
+ http_uri
+ content:"f="
+ content:"quant="
+ http_uri
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.virustotal.com/en/file/829918eb3edb26deccd2d80c7ac8bc8ad58b4fb76a370c11731884b408a21a73/analysis/1463575824/
+ classtype:trojan-activity
+ sid:38952
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"PUA-ADWARE Win.Adware.OpenSoftwareUpdater variant outbound connection attempt"
+ flow:to_server,established
+ content:"/installer.php?"
+ http_uri
+ content:"CODE="
+ fast_pattern:only
+ content:"UID="
+ http_uri
+ content:"action="
+ http_uri
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.virustotal.com/en/file/829918eb3edb26deccd2d80c7ac8bc8ad58b4fb76a370c11731884b408a21a73/analysis/1463575824/
+ classtype:trojan-activity
+ sid:38951
+ rev:1
+)\n']

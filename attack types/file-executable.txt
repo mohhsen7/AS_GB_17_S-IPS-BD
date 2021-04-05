@@ -1,0 +1,97 @@
+['alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"FILE-EXECUTABLE Ichitaro JSMISC32.dll dll-load exploit attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|83 EC 40 C7 04 24 54 4D 45 4D C7 44 24 04 4F 2E 4A 54 C7 44 24 08 44 00 00 00 8B C4 50 BB E8 C5 3F 21 FF 13 83 C4 40 E9 B2 BF FF FF|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-0707
+ classtype:attempted-user
+ sid:26071
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"FILE-EXECUTABLE Ichitaro JSMISC32.dll dll-load exploit attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|83 EC 40 C7 04 24 54 4D 45 4D C7 44 24 04 4F 2E 4A 54 C7 44 24 08 44 00 00 00 8B C4 50 BB E8 C5 3F 21 FF 13 83 C4 40 E9 B2 BF FF FF|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-0707
+ classtype:attempted-user
+ sid:26070
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"FILE-EXECUTABLE Adobe Reader AcroBroker registry value out of bounds attempt"
+ flow:to_server,established
+ file_data
+ content:"|6A 08 6A 41 8D 85 08 FF FF FF 50 E8 3D F9 FF FF 83 C4 0C 8D 85 08 FF FF FF 50 E8 00 FA FF FF 83|"
+ fast_pattern:only
+ content:"|89 85 FC FE FF FF B8 08 00 00 00 6B C0 00 8B 8D FC FE FF FF C7 44 01 10 07 00 00 00 8B F4 68 00 10 00 00 8B 85 FC FE FF FF|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-3048
+ reference:url,helpx.adobe.com/security/products/acrobat/apsb15-10.html
+ classtype:attempted-user
+ sid:34467
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"FILE-EXECUTABLE Adobe Reader AcroBroker registry value out of bounds attempt"
+ flow:to_client,established
+ file_data
+ content:"|6A 08 6A 41 8D 85 08 FF FF FF 50 E8 3D F9 FF FF 83 C4 0C 8D 85 08 FF FF FF 50 E8 00 FA FF FF 83|"
+ fast_pattern:only
+ content:"|89 85 FC FE FF FF B8 08 00 00 00 6B C0 00 8B 8D FC FE FF FF C7 44 01 10 07 00 00 00 8B F4 68 00 10 00 00 8B 85 FC FE FF FF|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-3048
+ reference:url,helpx.adobe.com/security/products/acrobat/apsb15-10.html
+ classtype:attempted-user
+ sid:34466
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"FILE-EXECUTABLE McAfee LiveSafe malformed executable denial of service attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"PE|00 00|"
+ content:"|4C 01|"
+ within:2
+ byte_jump:2,14,relative,little, post_offset 2
+ content:"."
+ distance:0
+ content:"|00 00 00 00|"
+ within:4
+ distance:7
+ byte_test:4,>,0x11e1a300,0,relative,little
+ content:!"|00 00 00 00|"
+ within:4
+ distance:8
+ content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"
+ within:16
+ distance:12
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-4535
+ classtype:attempted-dos
+ sid:39464
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"FILE-EXECUTABLE McAfee LiveSafe malformed executable denial of service attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"PE|00 00|"
+ content:"|4C 01|"
+ within:2
+ byte_jump:2,14,relative,little, post_offset 2
+ content:"."
+ distance:0
+ content:"|00 00 00 00|"
+ within:4
+ distance:7
+ byte_test:4,>,0x11e1a300,0,relative,little
+ content:!"|00 00 00 00|"
+ within:4
+ distance:8
+ content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"
+ within:16
+ distance:12
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-4535
+ classtype:attempted-dos
+ sid:39463
+ rev:2
+)\n']

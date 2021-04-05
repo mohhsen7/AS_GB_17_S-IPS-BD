@@ -1,0 +1,259 @@
+['alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE Java user-agent request to svchost.jpg"
+ flow:to_server,established
+ content:"/svchost.jpg"
+ fast_pattern:only
+ http_uri
+ content:"Java/1."
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service http
+ reference:cve,2013-1493
+ classtype:trojan-activity
+ sid:26025
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-COMPROMISE ZenCart malicious redirect attempt detected"
+ flow:to_client,established
+ content:"Set-Cookie|3A 20|USERID=shine-check|3B|"
+ fast_pattern:only
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,blog.sucuri.net/2014/02/mysterious-zencart-redirects-leverage-http-headers.html
+ classtype:trojan-activity
+ sid:30066
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-COMPROMISE ZenCart compromise attempt detected"
+ flow:to_client,established
+ content:"Set-Cookie|3A 20|USERID=twotime|3B|"
+ fast_pattern:only
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,blog.sucuri.net/2014/02/mysterious-zencart-redirects-leverage-http-headers.html
+ classtype:trojan-activity
+ sid:30065
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE suspicious test for public IP - www.dawhois.com"
+ flow:to_server,established
+ content:"Host|3A 20|www.dawhois.com|0D 0A|"
+ fast_pattern:only
+ http_header
+ content:!"Accept|3A|"
+ http_header
+ content:!"Referer|3A|"
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/C84FC7BEF4E77E1F913A4BE1A7114D255459F9D808FCC09B0F441E3761E5E4A4/analysis/
+ classtype:trojan-activity
+ sid:30230
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-COMPROMISE connection to zeus malware sinkhole"
+ flow:to_client,established
+ content:"X-Sinkhole|3A| Malware GameOverZeus sinkhole"
+ fast_pattern:only
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,en.wikipedia.org/wiki/sinkhole_server
+ classtype:trojan-activity
+ sid:31214
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-COMPROMISE Liz0ziM php shell download attempt"
+ flow:to_server,established
+ file_data
+ content:"Liz0ziM"
+ fast_pattern:only
+ content:"|24 5F|POST|5B|liz0|5D|"
+ nocase
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:url,www.virustotal.com/en/file/599a1ec19581cdcc5d268093bd8cbeaf2c6c519390d68820f2a1258297f0d783/analysis/
+ classtype:attempted-user
+ sid:31503
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE Liz0ziM php shell command and control attempt"
+ flow:to_server,established
+ content:"POST"
+ http_method
+ content:".php"
+ http_uri
+ content:"liz0="
+ fast_pattern:only
+ http_client_body
+ content:"liz0="
+ depth:5
+ http_client_body
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/599a1ec19581cdcc5d268093bd8cbeaf2c6c519390d68820f2a1258297f0d783/analysis/
+ classtype:attempted-user
+ sid:31502
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE Liz0ziM php shell command and control attempt"
+ flow:to_server,established
+ content:"POST"
+ http_method
+ content:".php"
+ http_uri
+ content:"baba="
+ fast_pattern:only
+ http_client_body
+ content:"baba="
+ depth:5
+ http_client_body
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,www.virustotal.com/en/file/599a1ec19581cdcc5d268093bd8cbeaf2c6c519390d68820f2a1258297f0d783/analysis/
+ classtype:attempted-user
+ sid:31501
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $FILE_DATA_PORTS (msg:"INDICATOR-COMPROMISE Liz0ziM php shell upload attempt"
+ flow:to_server,established
+ file_data
+ content:"Liz0ziM"
+ fast_pattern:only
+ content:"|24 5F|POST|5B|liz0|5D|"
+ nocase
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,www.virustotal.com/en/file/599a1ec19581cdcc5d268093bd8cbeaf2c6c519390d68820f2a1258297f0d783/analysis/
+ classtype:attempted-user
+ sid:31500
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-COMPROMISE Liz0ziM php shell download attempt"
+ flow:to_client,established
+ file_data
+ content:"Liz0ziM"
+ fast_pattern:only
+ content:"|24 5F|POST|5B|liz0|5D|"
+ nocase
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:url,www.virustotal.com/en/file/599a1ec19581cdcc5d268093bd8cbeaf2c6c519390d68820f2a1258297f0d783/analysis/
+ classtype:attempted-user
+ sid:31499
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE MinerDeploy monitor request attempt"
+ flow:to_server,established
+ content:"/monitor.php?"
+ fast_pattern
+ http_uri
+ content:"myid="
+ distance:0
+ http_uri
+ content:"&ip="
+ distance:0
+ http_uri
+ content:"&cgminer="
+ distance:0
+ http_uri
+ content:"&operatingsystem="
+ distance:0
+ http_uri
+ content:!"Content-Length|3A 20|"
+ http_header
+ content:!"Content-Type|3A 20|"
+ http_header
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.virustotal.com/en/file/06033b08afd30b413cce3b9a169cb8396fe34865f3bacd436c652dbb469ced62/analysis/
+ classtype:trojan-activity
+ sid:31531
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE Potential Redirect from Compromised WordPress site to Fedex - Spammed Malware Download attempt"
+ flow:to_server,established
+ urilen:1
+ content:"GET"
+ http_method
+ content:"/wp-admin/"
+ fast_pattern:only
+ http_header
+ content:"Host: www.fedex.com|0D 0A|"
+ http_header
+ pcre:"/Referer\\x3a\\x20[\\x20-\\x7E]*?\\/wp\\x2dadmin\\/[a-z\\d\\x2d]+?\\.php\\r\\n/Hi"
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,www.hybrid-analysis.com/sample/a531bc62b0460eba5b0003b535a2e9cceae0b623aecfdc6f0331743fbee77e56/
+ classtype:trojan-activity
+ sid:32888
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-COMPROMISE Windows Internet Explorer EMET check and garbage collection"
+ flow:to_server,established
+ file_data
+ content:"CollectGarbage()"
+ content:"C:|5C 5C|windows|5C 5C|AppPatch|5C 5C|EMET.DLL"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-7331
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-052
+ classtype:misc-attack
+ sid:29822
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"INDICATOR-COMPROMISE Windows Internet Explorer EMET check and garbage collection"
+ flow:to_client,established
+ file_data
+ content:"CollectGarbage()"
+ content:"C:|5C 5C|windows|5C 5C|AppPatch|5C 5C|EMET.DLL"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-7331
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-052
+ classtype:misc-attack
+ sid:29821
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET 448 -> $HOME_NET any (msg:"INDICATOR-COMPROMISE known malicious SSL certificate - Win.Trojan.Dridex"
+ flow:to_client,established
+ content:"koalabride"
+ fast_pattern:only
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:url,www.virustotal.com/en/file/5aad7720c0bb9848d540705943999d4e90908ba40a9d38e20018e53eb741dcb8/analysis/
+ classtype:trojan-activity
+ sid:35222
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE Wild Neutron potential exploit attempt"
+ flow:to_server,established
+ urilen:>25
+ content:".swf?"
+ http_uri
+ content:"styleid="
+ distance:0
+ http_uri
+ content:"&langid="
+ distance:0
+ http_uri
+ content:"&sid="
+ distance:0
+ http_uri
+ content:"&d="
+ distance:0
+ http_uri
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, ruleset community, service http
+ reference:url,securelist.com/blog/research/71275/wild-neutron-economic-espionage-threat-actor-returns-with-new-tricks/
+ classtype:trojan-activity
+ sid:35745
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"INDICATOR-COMPROMISE Win.Trojan.Bedep variant outbound connection"
+ flow:to_server,established
+ content:"/stats/eurofxref/eurofxref-hist-90d.xml"
+ http_uri
+ content:"Host|3A 20|www.ecb.europa.eu|0D 0A|"
+ fast_pattern:only
+ http_header
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ classtype:trojan-activity
+ sid:33188
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"INDICATOR-COMPROMISE Microsoft Internet Explorer setAttributeNS ASLR bypass attempt"
+ flow:to_server,established
+ file_data
+ content:"setAttributeNS"
+ content:"requiredFeatures"
+ within:100
+ pcre:"/setAttributeNS\\s*\\x28[^,]*,[^,]*requiredFeatures[^,]*,\\s*(createString|[\\x22\\x27][\\s\\r\\n]+[\\x22\\x27])/i"
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6086
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-112
+ classtype:misc-activity
+ sid:36760
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"INDICATOR-COMPROMISE Connection to malware sinkhole - CERT.PL"
+ flow:to_client,established
+ content:"Content-Length: 24|0D 0A|"
+ http_header
+ content:"Sinkholed by CERT.PL<br>"
+ fast_pattern:only
+ metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop, service http
+ reference:url,en.wikipedia.org/wiki/Sinkhole_Server
+ classtype:trojan-activity
+ sid:39851
+ rev:2
+)\n']

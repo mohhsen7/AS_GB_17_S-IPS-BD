@@ -1,0 +1,11 @@
+['alert tcp $EXTERNAL_NET any -> $HOME_NET 23 (msg:"PROTOCOL-TELNET Microsoft Telnet Server buffer overflow attempt"
+ flow:to_server,established
+ content:"|FF F6 FF F6 FF F6 FF F6 FF F6 FF F6 FF F6 FF F6 FF F6 FF F6|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service telnet
+ reference:cve,2015-0014
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-002
+ classtype:attempted-user
+ sid:33050
+ rev:1
+)\n']

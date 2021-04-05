@@ -1,0 +1,3040 @@
+['alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"OS-WINDOWS Microsoft WebDAV PROPFIND request"
+ flow:to_server,established
+ content:"PROPFIND"
+ http_method
+ content:"User-Agent: Microsoft-WebDAV"
+ fast_pattern:only
+ http_header
+ flowbits:set,ms.webdav.propfind
+ flowbits:noalert
+ metadata:service http
+ classtype:misc-activity
+ sid:24089
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows .NET CLR mutlidimensional array handling remote code execution attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|FE 01 0A 06 2D 03 00 2B 19 02 17 7D 06 00 00 04|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2013-3131
+ reference:cve,2013-3134
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS13-052
+ classtype:attempted-admin
+ sid:27139
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows .NET CLR mutlidimensional array handling remote code execution attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|FE 01 0A 06 2D 03 00 2B 19 02 17 7D 06 00 00 04|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2013-3131
+ reference:cve,2013-3134
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS13-052
+ classtype:attempted-admin
+ sid:27136
+ rev:3
+)\n', 'alert tcp any any -> $HOME_NET 88 (msg:"OS-WINDOWS Microsoft Windows Active Directory kerberos encryption type downgrade attempt"
+ flow:to_server,established
+ content:"|A1 03 02 01 05 A2 03 02 01 0A|"
+ depth:10
+ offset:12
+ content:"|A7 06 02 04|"
+ distance:0
+ content:"|A8|"
+ within:1
+ distance:4
+ content:"|30|"
+ within:1
+ distance:1
+ content:"|02 01 00 02 01 00|"
+ within:6
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service kerberos
+ reference:url,technet.microsoft.com/library/9111e6f0-fb7f-4340-b87a-ab941978efe1.aspx
+ classtype:attempted-user
+ sid:31874
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows TrueType Font parsing remote code execution attempt"
+ flow:to_server,established
+ file_data
+ content:"|00 01 00 00 00 09 CF F4 00 03 7F FF 00 00 00 00 00 00 00 0A 00 00 00 00 00 64 00 00 00 00 00 02|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-4148
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms14-058
+ classtype:attempted-user
+ sid:32191
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows TrueType Font parsing remote code execution attempt"
+ flow:to_client,established
+ file_data
+ content:"|00 01 00 00 00 09 CF F4 00 03 7F FF 00 00 00 00 00 00 00 0A 00 00 00 00 00 64 00 00 00 00 00 02|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-4148
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms14-058
+ classtype:attempted-user
+ sid:32190
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS .NET Framework BinaryServerFormatterSink-ProcessMessage IMessage corruption attempt"
+ flow:to_server,established
+ file_data
+ content:"Installer|00|FakeAsm|00|IRemoteClass|00|GetExistingRemoteClass"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2014-4149
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms14-072
+ classtype:attempted-user
+ sid:32475
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS .NET Framework BinaryServerFormatterSink-ProcessMessage IMessage corruption attempt"
+ flow:to_client,established
+ file_data
+ content:"Installer|00|FakeAsm|00|IRemoteClass|00|GetExistingRemoteClass"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2014-4149
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms14-072
+ classtype:attempted-user
+ sid:32474
+ rev:1
+)\n', 'alert udp $EXTERNAL_NET 4433 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows DTLSv1.0 hello verify request out of bounds read attempt"
+ flow:to_client
+ content:"|16 FE FF|"
+ depth:3
+ content:"|03|"
+ within:1
+ distance:10
+ byte_extract:3,8,fragment_len,relative
+ content:"|FE FF|"
+ within:2
+ byte_test:1,>,fragment_len,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32423
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET 4433 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows DTLSv1.0 handshake cookie buffer overflow attempt"
+ flow:to_client
+ content:"|16 FE FF|"
+ depth:3
+ content:"|03|"
+ within:1
+ distance:10
+ content:"|FE FF|"
+ within:2
+ distance:11
+ byte_test:1,>,32,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32422
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel ECDH key exchange heap overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|16 03 03|"
+ depth:3
+ content:"|10|"
+ within:1
+ distance:2
+ byte_extract:3,0,client_keyx_len,relative
+ byte_test:1,>,client_keyx_len,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32421
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel ECDH key exchange heap overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|16 03 02|"
+ depth:3
+ content:"|10|"
+ within:1
+ distance:2
+ byte_extract:3,0,client_keyx_len,relative
+ byte_test:1,>,client_keyx_len,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32420
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel ECDH key exchange heap overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|16 03 01|"
+ depth:3
+ content:"|10|"
+ within:1
+ distance:2
+ byte_extract:3,0,client_keyx_len,relative
+ byte_test:1,>,client_keyx_len,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32419
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01 06 05 2B 81 04 00 22|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_jump:1,0,relative
+ content:"|02|"
+ within:1
+ byte_test:1,>,0x31,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32417
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01 06 05 2B 81 04 00 22|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_test:1,>,0x31,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32416
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01 06 08 2A 86 48 CE 3D 03 01 07|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_jump:1,0,relative
+ content:"|02|"
+ within:1
+ byte_test:1,>,0x21,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32415
+ rev:4
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01 06 08 2A 86 48 CE 3D 03 01 07|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_test:1,>,0x21,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32414
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 18|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 60|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32413
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 17|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 40|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32412
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 16|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 40|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32411
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01 06 05 2B 81 04 00 23|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:2
+ byte_jump:1,0,relative
+ content:"|02|"
+ within:1
+ byte_test:1,>,0x42,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32410
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01 06 05 2B 81 04 00 23|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:2
+ byte_test:1,>,0x42,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32409
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 13|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 30|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32408
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 12|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 30|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32407
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 11|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 28|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32406
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 10|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 28|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32405
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET 443 -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ECDSA certificate validation bypass attempt"
+ flow:to_client,established
+ ssl_state:server_keyx
+ content:"|03 00 0F|"
+ byte_jump:1,0,relative,post_offset 1
+ content:"|03|"
+ within:1
+ content:"|30|"
+ within:1
+ distance:2
+ content:"|02 28|"
+ within:2
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:misc-attack
+ sid:32404
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 38 04 01|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_test:1,<,0x14,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32732
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 38 04 01|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_jump:1,0,relative
+ content:"|02|"
+ within:1
+ byte_test:1,<,0x14,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:32731
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Type one font out of bounds memory access attempt"
+ flow:to_server,established
+ file_data
+ content:"|88 79 F2 E3 79 B5 B8 DD BC 08 51 17 FC 29 1A 6C 1C CE EB 34 8D 37 68 89 9B 3F 87 83 83 9E 80 01|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-0090
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-021
+ classtype:attempted-user
+ sid:33712
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Type one font out of bounds memory access attempt"
+ flow:to_client,established
+ file_data
+ content:"|88 79 F2 E3 79 B5 B8 DD BC 08 51 17 FC 29 1A 6C 1C CE EB 34 8D 37 68 89 9B 3F 87 83 83 9E 80 01|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-0090
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-021
+ classtype:attempted-user
+ sid:33711
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"OS-WINDOWS Microsoft Windows SMB NTLM NULL session attempt"
+ flow:to_server,established
+ flowbits:isnotset,smb.null_session
+ content:"|FF|SMB|73 00 00 00 00|"
+ depth:9
+ offset:4
+ content:"|00 00|"
+ within:2
+ distance:13
+ content:"|FF|"
+ within:1
+ distance:9
+ content:"NTLMSSP|00 03 00 00 00|"
+ within:100
+ content:"|00 00 00 00 40 00 00 00|"
+ within:8
+ distance:24
+ flowbits:set,smb.null_session
+ flowbits:noalert
+ metadata:service netbios-ssn
+ reference:bugtraq,1163
+ reference:cve,2000-0347
+ classtype:attempted-recon
+ sid:33825
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_test:1,<,0x14,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:34058
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 443 (msg:"OS-WINDOWS Microsoft Windows SChannel CertificateVerify buffer overflow attempt"
+ flow:to_server,established
+ ssl_state:client_keyx
+ content:"|06 07 2A 86 48 CE 3D 02 01|"
+ fast_pattern:only
+ content:"|16 03|"
+ content:"|0F|"
+ within:1
+ distance:3
+ content:"|30|"
+ within:1
+ distance:5
+ content:"|02|"
+ within:1
+ distance:1
+ byte_jump:1,0,relative
+ content:"|02|"
+ within:1
+ byte_test:1,<,0x14,0,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ssl
+ reference:cve,2014-6321
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS14-066
+ classtype:attempted-admin
+ sid:34057
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows CreateWindowEx privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"gSharedInfo|00|u|00|s|00|e|00|r|00|3|00|2|00|.|00|d|00|l|00|l|00|"
+ fast_pattern:only
+ content:"|36 00 00 00 C7 05|"
+ content:"|2C 00 00 00 C7 05|"
+ within:6
+ distance:4
+ content:"|40 00 00 00 C7 05|"
+ within:6
+ distance:4
+ content:"|F8 00 00 00|"
+ within:4
+ distance:4
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ classtype:attempted-admin
+ sid:34179
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows CreateWindowEx privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"gSharedInfo|00|u|00|s|00|e|00|r|00|3|00|2|00|.|00|d|00|l|00|l|00|"
+ fast_pattern:only
+ content:"|36 00 00 00 C7 05|"
+ content:"|2C 00 00 00 C7 05|"
+ within:6
+ distance:4
+ content:"|40 00 00 00 C7 05|"
+ within:6
+ distance:4
+ content:"|F8 00 00 00|"
+ within:4
+ distance:4
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ classtype:attempted-admin
+ sid:34178
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Win32k TrueType Font parsing out of bounds attempt"
+ flow:to_server,established
+ file_data
+ content:"|CF F4 00 03 7F FF 00 00 00 00 00 00 00 0A 00 00 00 00 00 64 00 00 00 00 00 02|"
+ fast_pattern:only
+ content:"|B0 27 B0 15 B0 38 43 60 42 B0 01 68|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-1671
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-044
+ classtype:attempted-user
+ sid:34441
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Win32k TrueType Font parsing out of bounds attempt"
+ flow:to_client,established
+ file_data
+ content:"|CF F4 00 03 7F FF 00 00 00 00 00 00 00 0A 00 00 00 00 00 64 00 00 00 00 00 02|"
+ fast_pattern:only
+ content:"|B0 27 B0 15 B0 38 43 60 42 B0 01 68|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-1671
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-044
+ classtype:attempted-user
+ sid:34440
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Calendar object heap corruption attempt"
+ flow:to_server,established
+ file_data
+ content:"|08 1A 02 E9 9E 48 80 43 BD D9 09 28 B3 91 21 AB 00 08 B7 7A 5C 56 19 34 E0 89 03 06 12 0D 04 20 01 01 02 03|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-1673
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-048
+ classtype:attempted-user
+ sid:34402
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Calendar object heap corruption attempt"
+ flow:to_client,established
+ file_data
+ content:"|08 1A 02 E9 9E 48 80 43 BD D9 09 28 B3 91 21 AB 00 08 B7 7A 5C 56 19 34 E0 89 03 06 12 0D 04 20 01 01 02 03|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-1673
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-048
+ classtype:attempted-user
+ sid:34401
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> any [137,139] (msg:"OS-WINDOWS Microsoft Windows SMB Microsoft Windows Remote Administration Protocol usage attempt"
+ flow:to_server,established
+ content:"LANMAN"
+ flowbits:set,file.lanman
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ classtype:misc-activity
+ sid:29514
+ rev:5
+)\n', 'alert tcp $HOME_NET any -> any [137,139] (msg:"OS-WINDOWS Microsoft Windows SMB Microsoft Windows Remote Administration Protocol usage attempt"
+ flow:to_server,established
+ content:"|5C 00|P|00|I|00|P|00|E|00 5C 00|L|00|A|00|N|00|M|00|A|00|N"
+ flowbits:set,file.lanman
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ classtype:misc-activity
+ sid:28425
+ rev:5
+)\n', 'alert tcp $HOME_NET any -> any [138,139,445] (msg:"OS-WINDOWS Microsoft Windows SMB RAP API NetServerEnum2 long server name buffer overflow attempt"
+ flow:to_server,established
+ content:"|68 00|WrLehD"
+ pcre:"/^[oz]/Ri"
+ content:"|01 00|"
+ within:2
+ distance:9
+ flowbits:set,netsenum
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ reference:bugtraq,54940
+ reference:cve,2012-1853
+ reference:url,osvdb.org/show/osvdb/84601
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS12-054
+ classtype:attempted-dos
+ sid:23839
+ rev:15
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"OS-WINDOWS Microsoft Windows RemoteDesktop new session flood attempt"
+ flow:to_server,established
+ content:"|02 F0 80 7F 65|"
+ content:"|03 00|"
+ within:2
+ distance:-9
+ detection_filter:track by_src,count 10,seconds 3
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop
+ reference:cve,2012-0002
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms12-020
+ classtype:attempted-admin
+ sid:21570
+ rev:8
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft SilverLight ImageSource redefine flowbit"
+ flow:to_client,established
+ file_data
+ content:"|2E|findName|28 22|"
+ content:"|2E|ImageSource"
+ distance:0
+ pcre:"/var\\s*(?P<imagebrush>\\w+?)\\x3b.*?(?P=imagebrush)\\s*\\x3d\\s*[^\\x3b\\x2e]+\\x2efindName\\x28.*?(?P=imagebrush)\\x2eImageSource\\s*\\x3d\\s*[\\x22\\x21][^\\x2e\\x22\\x21]+?[\\x22\\x21]/smi"
+ flowbits:set,imagesource.redefine
+ metadata:policy max-detect-ips drop, service ftp-data, service http, service imap, service pop3
+ classtype:misc-activity
+ sid:17113
+ rev:16
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [135,139,445,593,1024:] (msg:"OS-WINDOWS DCERPC NCACN-IP-TCP srvsvc NetrpPathCanonicalize path canonicalization stack overflow attempt"
+ flow:to_server,established
+ dce_iface:4b324fc8-1670-01d3-1278-5a47bf6ee188
+ dce_opnum:31,32
+ dce_stub_data
+ pcre:"/^(\\x00\\x00\\x00\\x00|.{4}(\\x00\\x00\\x00\\x00|.{12}))/s"
+ byte_jump:4,-4,multiplier 2,relative,align,dce
+ pcre:"/\\x00\\.\\x00\\.\\x00[\\x2f\\x5c]/R"
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service netbios-ssn
+ reference:cve,2008-4250
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS08-067
+ classtype:attempted-admin
+ sid:14782
+ rev:21
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [135,139,445,593,1024:] (msg:"OS-WINDOWS DCERPC NCACN-IP-TCP srvsvc NetrPathCanonicalize overflow attempt"
+ flow:to_server,established
+ dce_iface:4b324fc8-1670-01d3-1278-5a47bf6ee188
+ dce_opnum:31
+ dce_stub_data
+ pcre:"/^(\\x00\\x00\\x00\\x00|.{4}(\\x00\\x00\\x00\\x00|.{12}))/s"
+ byte_jump:4,-4,multiplier 2,relative,align,dce
+ byte_test:4,>,256,0,relative,dce
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, service netbios-ssn
+ reference:bugtraq,19409
+ reference:cve,2006-3439
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS06-040
+ classtype:attempted-admin
+ sid:7209
+ rev:20
+)\n', 'alert tcp $EXTERNAL_NET $HTTP_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows LSASS domain name buffer overflow attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ content:"|5C 56 4D 57 2D 58 50 53 50 32 45 4E 5C 63 24 5C 44 6F 63 75 6D 65 6E 74 73 20 61 6E 64 20 53 65 74 74 69 6E 67 73 5C 70 6F 73 74 6F 5C 44 65 73 6B 74 6F 70 5C 50 6F 43 5C 53 65 74 75 70 52 65|"
+ content:"|74 78 74 44 6F 6D 61 69 6E 00 02 04 38 04 58 02 CF 12 1D 01 12 03 00 FF 03 22 00 00 00 08 06 00 4C 61 62 65 6C 34 00 01 01 02 00 5C 5C 00 05 78|"
+ within:48
+ distance:144
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2011-0039
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS11-014
+ classtype:attempted-user
+ sid:18405
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"OS-WINDOWS Microsoft Windows SMB COPY command oversized pathname attempt"
+ flow:to_server,established
+ content:"|FF|SMB|29|"
+ depth:5
+ offset:4
+ byte_jump:1,27,relative,multiplier 2
+ byte_test:2,>,2300,0,relative,little
+ metadata:policy balanced-ips drop, policy max-detect-ips drop, policy security-ips drop, service netbios-ssn
+ reference:cve,2010-0020
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS10-012
+ classtype:attempted-admin
+ sid:16395
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"OS-WINDOWS Microsoft Windows DCERPC NCACN-IP-TCP spoolss RpcSetPrinterDataEx attempt"
+ flow:established,to_server
+ dce_iface:12345678-1234-abcd-ef00-0123456789ab
+ dce_opnum:77
+ dce_stub_data
+ content:"M|00|o|00|d|00|u|00|l|00|e|00|"
+ nocase
+ content:".|00|d|00|l|00|l|00|"
+ distance:0
+ nocase
+ content:!"s|00|y|00|s|00|t|00|e|00|m|00|3|00|2|00 5C 00|"
+ within:66
+ distance:-70
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service netbios-ssn
+ reference:cve,2009-0230
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS09-022
+ classtype:protocol-command-decode
+ sid:15528
+ rev:6
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Media Player DataObject buffer overflow attempt"
+ flow:to_server,established
+ file_data
+ content:"wmplayer.exe"
+ nocase
+ content:"/DataObject|3A|"
+ within:100
+ nocase
+ isdataat:1024,relative
+ content:!"|20|"
+ within:1024
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-1728
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-057
+ classtype:attempted-user
+ sid:34732
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Media Player DataObject buffer overflow attempt"
+ flow:to_client,established
+ file_data
+ content:"wmplayer.exe"
+ nocase
+ content:"/DataObject|3A|"
+ within:100
+ nocase
+ isdataat:1024,relative
+ content:!"|20|"
+ within:1024
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-1728
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-057
+ classtype:attempted-user
+ sid:34731
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"OS-WINDOWS Microsoft Windows RDP server PDU length heap overflow attempt"
+ flow:to_server,established
+ content:"|FF FF FF 80 7F 65 82|"
+ depth:10
+ content:"rdpdr"
+ content:"cliprdr"
+ content:"rdpsnd"
+ metadata:policy balanced-ips drop, policy security-ips drop, service rdp
+ reference:cve,2015-2373
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-067
+ classtype:attempted-admin
+ sid:35151
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows TrueType font parsing integer underflow attempt"
+ flow:to_server,established
+ flowbits:isset,file.ttf
+ file_data
+ content:"head"
+ depth:500
+ content:!"|00 00 00 36|"
+ within:4
+ distance:8
+ byte_jump:4,4,relative,from_beginning
+ content:"|5F 0F 3C F5|"
+ within:4
+ distance:12
+ fast_pattern
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-2455
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-080
+ classtype:attempted-admin
+ sid:35526
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows TrueType font parsing integer underflow attempt"
+ flow:to_client,established
+ flowbits:isset,file.ttf
+ file_data
+ content:"head"
+ depth:500
+ content:!"|00 00 00 36|"
+ within:4
+ distance:8
+ byte_jump:4,4,relative,from_beginning
+ content:"|5F 0F 3C F5|"
+ within:4
+ distance:12
+ fast_pattern
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-2455
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-080
+ classtype:attempted-admin
+ sid:35525
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows TTF invalid system memory access attempt"
+ flow:to_server,established
+ flowbits:isset,file.ttf
+ file_data
+ content:"|6D B0 B2 2B B0 09 43 B0 0A 43 61 63 FF FF FF FF B0 00 2B 85 00 67 B4 00 00 00 00 00 44 3E 23 38|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-2464
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-080
+ classtype:attempted-admin
+ sid:35524
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows TTF invalid system memory access attempt"
+ flow:to_client,established
+ flowbits:isset,file.ttf
+ file_data
+ content:"|6D B0 B2 2B B0 09 43 B0 0A 43 61 63 FF FF FF FF B0 00 2B 85 00 67 B4 00 00 00 00 00 44 3E 23 38|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-2464
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-080
+ classtype:attempted-admin
+ sid:35523
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows ATFM.DLL malformed OTF use-after-free attempt"
+ flow:to_server,established
+ file_data
+ content:"|BC 00 00 05 00 08 02 8A 02 BC 00 00 00 8C 02 8A 02 BC 00 00 01 E0 00 31 01 02 00 00 02 00 08 03|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-2460
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-080
+ classtype:attempted-user
+ sid:35516
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ATFM.DLL malformed OTF use-after-free attempt"
+ flow:to_client,established
+ file_data
+ content:"|BC 00 00 05 00 08 02 8A 02 BC 00 00 00 8C 02 8A 02 BC 00 00 01 E0 00 31 01 02 00 00 02 00 08 03|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-2460
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-080
+ classtype:attempted-user
+ sid:35515
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows System.DirectoryServices.Protocols.Utility class memory overflow attempt"
+ flow:to_server,established
+ file_data
+ content:"|00 00 01 0B 07 16 20 FF FF FF 1F 8D 13 00 00 01 A2 07 0A 72 01 00 00 70 06 28 11 00 00 0A 26 2A|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-2504
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-101
+ classtype:attempted-user
+ sid:36015
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows System.DirectoryServices.Protocols.Utility class memory overflow attempt"
+ flow:to_client,established
+ file_data
+ content:"|00 00 01 0B 07 16 20 FF FF FF 1F 8D 13 00 00 01 A2 07 0A 72 01 00 00 70 06 28 11 00 00 0A 26 2A|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-2504
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-101
+ classtype:attempted-user
+ sid:36014
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows GDI+ denial of service attempt"
+ flow:to_server,established
+ flowbits:isset,file.xls
+ file_data
+ content:"|B6 7F ED D5 85 A3 6C 3D 41 4B A5 70 62 4C D7 8B B3 06 06 2F 9B 70 CF 6F EE 93 3D 2B 22 0F FB 45|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-2510
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-097
+ classtype:attempted-user
+ sid:35985
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows GDI+ denial of service attempt"
+ flow:to_client,established
+ flowbits:isset,file.xls
+ file_data
+ content:"|B6 7F ED D5 85 A3 6C 3D 41 4B A5 70 62 4C D7 8B B3 06 06 2F 9B 70 CF 6F EE 93 3D 2B 22 0F FB 45|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-2510
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-097
+ classtype:attempted-user
+ sid:35984
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows CDD font parsing kernel memory corruption attempt"
+ flow:to_server,established
+ flowbits:isset,file.otf
+ file_data
+ content:"OTTO"
+ depth:4
+ fast_pattern
+ content:"head"
+ byte_jump:4,4,relative,from_beginning
+ content:"|00 01|"
+ within:2
+ byte_test:2,>,16384,16,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-2506
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-097
+ reference:url,www.talosintel.com/vulnerability-reports/
+ classtype:attempted-admin
+ sid:35720
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows CDD font parsing kernel memory corruption attempt"
+ flow:to_client,established
+ flowbits:isset,file.otf
+ file_data
+ content:"OTTO"
+ depth:4
+ fast_pattern
+ content:"head"
+ byte_jump:4,4,relative,from_beginning
+ content:"|00 01|"
+ within:2
+ byte_test:2,>,16384,16,relative
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-2506
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-097
+ reference:url,www.talosintel.com/vulnerability-reports/
+ classtype:attempted-admin
+ sid:35719
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows NtSetInformationFile hard link sandbox bypass attempt"
+ flow:to_server,established
+ file_data
+ content:"|72 DF 00 00 70 73 18 00 00 0A 0B 07 6F 19 00 00 0A 17 FE 01 16 FE 01 0D 09 2D 40 00 07 1B 8D 09|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6113
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-115
+ classtype:policy-violation
+ sid:36762
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows NtSetInformationFile hard link sandbox bypass attempt"
+ flow:to_client,established
+ file_data
+ content:"|72 DF 00 00 70 73 18 00 00 0A 0B 07 6F 19 00 00 0A 17 FE 01 16 FE 01 0D 09 2D 40 00 07 1B 8D 09|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6113
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-115
+ classtype:policy-violation
+ sid:36761
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows NDIS.SYS driver buffer overflow attempt"
+ flow:to_server,established
+ file_data
+ content:"|68 38 D1 40 00 68 50 D1 40 00 FF 15 00 D0 40 00 50 FF 15 04 D0 40 00 89 85 CC FB FF FF C7 85 C8|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6098
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-117
+ classtype:attempted-admin
+ sid:36745
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows NDIS.SYS driver buffer overflow attempt"
+ flow:to_client,established
+ file_data
+ content:"|68 38 D1 40 00 68 50 D1 40 00 FF 15 00 D0 40 00 50 FF 15 04 D0 40 00 89 85 CC FB FF FF C7 85 C8|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6098
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-117
+ classtype:attempted-admin
+ sid:36744
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32k information disclosure attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|48 89 74 24 30 48 89 7C 24 38 E8 D7 00 00 00|"
+ fast_pattern:only
+ content:"|4C 8B D1 B8 76 10 00 00 0F 05 C3|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6109
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-115
+ classtype:attempted-recon
+ sid:36723
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32k information disclosure attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|48 89 74 24 30 48 89 7C 24 38 E8 D7 00 00 00|"
+ fast_pattern:only
+ content:"|4C 8B D1 B8 76 10 00 00 0F 05 C3|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6109
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-115
+ classtype:attempted-recon
+ sid:36722
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32k kernel memory information disclosure attempt"
+ flow:to_server,established
+ file_data
+ content:"|E8 59 FF FF FF BA 04 00 00 00 6B C2 00 C7 44 05 EC C8 00 00 00 B9 04 00 00 00 C1 E1 00 C7 44 0D EC 03 00 00 00 BA 04 00 00 00 D1 E2 C7 44 15 EC 2A 3D D0 3D|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6102
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-115
+ classtype:attempted-recon
+ sid:36719
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32k kernel memory information disclosure attempt"
+ flow:to_client,established
+ file_data
+ content:"|E8 59 FF FF FF BA 04 00 00 00 6B C2 00 C7 44 05 EC C8 00 00 00 B9 04 00 00 00 C1 E1 00 C7 44 0D EC 03 00 00 00 BA 04 00 00 00 D1 E2 C7 44 15 EC 2A 3D D0 3D|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6102
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-115
+ classtype:attempted-recon
+ sid:36718
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows ClickOnce information disclosure attempt"
+ flow:to_server,established
+ flowbits:isset,file.application
+ file_data
+ content:"<!ENTITY % remote SYSTEM"
+ fast_pattern:only
+ content:".dtd"
+ content:"%send|3B|"
+ within:50
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6096
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-118
+ classtype:attempted-user
+ sid:36713
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ClickOnce information disclosure attempt"
+ flow:to_client,established
+ flowbits:isset,file.application
+ file_data
+ content:"<!ENTITY % remote SYSTEM"
+ fast_pattern:only
+ content:".dtd"
+ content:"%send|3B|"
+ within:50
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6096
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-118
+ classtype:attempted-user
+ sid:36712
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows use after free kernel privilege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"LoadBitmapW"
+ nocase
+ content:"createCompatibleDC"
+ within:40
+ nocase
+ content:"CreateDCA"
+ within:30
+ nocase
+ content:"ExtFloodFill"
+ fast_pattern:only
+ content:"StartDocW"
+ nocase
+ content:"GdiFlush"
+ within:30
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6100
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-115
+ classtype:attempted-admin
+ sid:36710
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows use after free kernel privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"LoadBitmapW"
+ nocase
+ content:"createCompatibleDC"
+ within:40
+ nocase
+ content:"CreateDCA"
+ within:30
+ nocase
+ content:"ExtFloodFill"
+ fast_pattern:only
+ content:"StartDocW"
+ nocase
+ content:"GdiFlush"
+ within:30
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6100
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-115
+ classtype:attempted-admin
+ sid:36709
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows afd.sys memory corruption attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|01 00 E8 F9 19 00 00 85 C0 74 0F 45 33 C0 33 C9 41 8D 50 02 FF 15 C6 6E 01 00 33 C0 48 83 C4 20|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-2478
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-119
+ classtype:attempted-admin
+ sid:36706
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows afd.sys memory corruption attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|01 00 E8 F9 19 00 00 85 C0 74 0F 45 33 C0 33 C9 41 8D 50 02 FF 15 C6 6E 01 00 33 C0 48 83 C4 20|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-2478
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-119
+ classtype:attempted-admin
+ sid:36705
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows DeferWindowPos privilege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|6A 00 6A 00 6A 00 6A 00 6A 17 6A 32 6A 0B 68 F8 00 00 00 68 00 00 50 CC|"
+ fast_pattern:only
+ content:"|C7 45|"
+ content:"|EF BE 00 00|"
+ within:4
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6101
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-115
+ classtype:attempted-admin
+ sid:36704
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows DeferWindowPos privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|6A 00 6A 00 6A 00 6A 00 6A 17 6A 32 6A 0B 68 F8 00 00 00 68 00 00 50 CC|"
+ fast_pattern:only
+ content:"|C7 45|"
+ content:"|EF BE 00 00|"
+ within:4
+ distance:1
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6101
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-115
+ classtype:attempted-admin
+ sid:36703
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft .NET Silverlight manifest resource file information disclosure attempt"
+ flow:to_server,established
+ file_data
+ content:"|EC 2E 51 64 04 4F EC 39 D8 59 28 99 0B 2C AF 4E 96 64 6E 07 1B 0F 9C 76 8C 8E E5 5A 16 B2 3C C7|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6114
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-129
+ reference:url,www.talosintel.com/vulnerability-reports/
+ classtype:attempted-recon
+ sid:36998
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft .NET Silverlight manifest resource file information disclosure attempt"
+ flow:to_client,established
+ file_data
+ content:"|EC 2E 51 64 04 4F EC 39 D8 59 28 99 0B 2C AF 4E 96 64 6E 07 1B 0F 9C 76 8C 8E E5 5A 16 B2 3C C7|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6114
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-129
+ reference:url,www.talosintel.com/vulnerability-reports/
+ classtype:attempted-recon
+ sid:36997
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows gpuenergydrv.sys driver privilege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"gpuenergydrv"
+ fast_pattern:only
+ content:"|40 EC 22 00|"
+ content:"CreateFile"
+ nocase
+ content:"DeviceIoControl"
+ within:50
+ nocase
+ content:"KERNEL32.dll"
+ within:50
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6175
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-135
+ classtype:attempted-admin
+ sid:36990
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows gpuenergydrv.sys driver privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"gpuenergydrv"
+ fast_pattern:only
+ content:"|40 EC 22 00|"
+ content:"CreateFile"
+ nocase
+ content:"DeviceIoControl"
+ within:50
+ nocase
+ content:"KERNEL32.dll"
+ within:50
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6175
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-135
+ classtype:attempted-admin
+ sid:36989
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows thread lock desynchronization null pointer dereference attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|6A 0A 6A 00 B8 4D 11 00 00 BA 00 03 FE 7F FF 12|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6174
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-135
+ classtype:attempted-admin
+ sid:36977
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows thread lock desynchronization null pointer dereference attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|6A 0A 6A 00 B8 4D 11 00 00 BA 00 03 FE 7F FF 12|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6174
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-135
+ classtype:attempted-admin
+ sid:36976
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32k.sys palette double free attempt"
+ flow:to_server,established
+ file_data
+ content:"|B8 1F 12 00 00 BA 00 03 FE 7F FF 12 83 C4 10 5D C2 0C 00 CC CC CC CC CC CC CC CC CC CC CC CC CC|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2015-6173
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-135
+ classtype:attempted-admin
+ sid:36971
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32k.sys palette double free attempt"
+ flow:to_client,established
+ file_data
+ content:"|B8 1F 12 00 00 BA 00 03 FE 7F FF 12 83 C4 10 5D C2 0C 00 CC CC CC CC CC CC CC CC CC CC CC CC CC|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2015-6173
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS15-135
+ classtype:attempted-admin
+ sid:36970
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows devenum.dll device moniker underflow attempt"
+ flow:to_server,established
+ flowbits:isset,file.rtf
+ file_data
+ content:"37d415438c5bd011bd3b00a0c911ce86"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0015
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-007
+ classtype:attempted-admin
+ sid:37278
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows devenum.dll device moniker underflow attempt"
+ flow:to_client,established
+ flowbits:isset,file.rtf
+ file_data
+ content:"37d415438c5bd011bd3b00a0c911ce86"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0015
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-007
+ classtype:attempted-admin
+ sid:37277
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $HOME_NET [139,445] (msg:"OS-WINDOWS Microsoft Windows feclient.dll dll-load exploit attempt"
+ flow:to_server,established
+ content:"|FF|SMB|A2 00 00 00 00|"
+ content:"f|00|e|00|c|00|l|00|i|00|e|00|n|00|t|00|.|00|d|00|l|00|l|00 00 00|"
+ fast_pattern:only
+ pcre:"/(\\x1B\\x00|\\x00\\x5C)\\x00f\\x00e\\x00c\\x00l\\x00i\\x00e\\x00n\\x00t\\x00\\.\\x00d\\x00l\\x00l\\x00\\x00\\x00/i"
+ metadata:policy balanced-ips drop, policy security-ips drop, service netbios-ssn
+ reference:cve,2016-0014
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-007
+ classtype:attempted-user
+ sid:37276
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"OS-WINDOWS Microsoft Windows feclient.dll dll-load exploit attempt"
+ flow:to_server,established
+ content:"/feclient.dll"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0014
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-007
+ classtype:attempted-user
+ sid:37275
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows 10 low integrity level NTFS mount reparse point bypass attempt"
+ flow:to_server,established
+ file_data
+ content:"|AC F1 FF FF 84 DB 74 1B 56 FF 15 10 60 41 00 68 0C B8 41 00 E8 F7 F8 FF FF 83 C4 04 E8 AA 61 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0006
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-008
+ classtype:attempted-user
+ sid:37272
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows 10 low integrity level NTFS mount reparse point bypass attempt"
+ flow:to_client,established
+ file_data
+ content:"|AC F1 FF FF 84 DB 74 1B 56 FF 15 10 60 41 00 68 0C B8 41 00 E8 F7 F8 FF FF 83 C4 04 E8 AA 61 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0006
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-008
+ classtype:attempted-user
+ sid:37271
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows 10 low integrity level NTFS mount reparse point bypass attempt"
+ flow:to_server,established
+ file_data
+ content:"|E8 33 F0 FF FF C7 44 24 50 00 00 00 00 8D 4C 24 28 FF 76 08 E8 9F 00 00 00 8D 4C 24 28 E8 E6 FD|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0007
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-008
+ classtype:attempted-user
+ sid:37270
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows 10 low integrity level NTFS mount reparse point bypass attempt"
+ flow:to_client,established
+ file_data
+ content:"|E8 33 F0 FF FF C7 44 24 50 00 00 00 00 8D 4C 24 28 FF 76 08 E8 9F 00 00 00 8D 4C 24 28 E8 E6 FD|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0007
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-008
+ classtype:attempted-user
+ sid:37269
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows WebDAV mini redirector driver privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|72 FA 08 00 70 28 39 00 00 0A 72 14 09 00 70 18 20 80 00 00 00 7E 3B 00 00 0A 28 03 00 00 06 0C|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0051
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-016
+ classtype:attempted-admin
+ sid:37587
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows WebDAV mini redirector driver privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|72 FA 08 00 70 28 39 00 00 0A 72 14 09 00 70 18 20 80 00 00 00 7E 3B 00 00 0A 28 03 00 00 06 0C|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0051
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-016
+ classtype:attempted-admin
+ sid:37586
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows wind32kfull.sys out of bounds write attempt"
+ flow:to_server,established
+ file_data
+ content:"|68 AA AA AA AA 68 0F F0 00 00 68 12 01 00 00 8B 45 F8 50 FF 15 A8 90 41 00 3B F4 E8 92 F9 FF FF|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0048
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-018
+ classtype:attempted-admin
+ sid:37585
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows wind32kfull.sys out of bounds write attempt"
+ flow:to_client,established
+ file_data
+ content:"|68 AA AA AA AA 68 0F F0 00 00 68 12 01 00 00 8B 45 F8 50 FF 15 A8 90 41 00 3B F4 E8 92 F9 FF FF|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0048
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-018
+ classtype:attempted-admin
+ sid:37584
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows WmipReceiveNotifications out of bounds write attempt"
+ flow:to_server,established
+ file_data
+ content:"|C7 85 90 FE FF FF 41 41 41 41 8D 85 90 FE FF FF 50 68 00 04 00 00 8D 4D C8 E8 D1 91 FF FF 8D 4D C8 E8 6C 94 FF FF 8B F4 50 68|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0040
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-014
+ classtype:attempted-admin
+ sid:37570
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows WmipReceiveNotifications out of bounds write attempt"
+ flow:to_server,established
+ file_data
+ content:"|48 C7 84 24 48 01 00 00 41 41 41 41 4C 8D 84 24 48 01 00 00 BA 00 04 00 00 48 8D 8C 24 88 00 00 00 E8 85 E9 FF FF 48 8D 8C 24|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0040
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-014
+ classtype:attempted-admin
+ sid:37569
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows WmipReceiveNotifications out of bounds write attempt"
+ flow:to_client,established
+ file_data
+ content:"|C7 85 90 FE FF FF 41 41 41 41 8D 85 90 FE FF FF 50 68 00 04 00 00 8D 4D C8 E8 D1 91 FF FF 8D 4D C8 E8 6C 94 FF FF 8B F4 50 68|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0040
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-014
+ classtype:attempted-admin
+ sid:37568
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows WmipReceiveNotifications out of bounds write attempt"
+ flow:to_client,established
+ file_data
+ content:"|48 C7 84 24 48 01 00 00 41 41 41 41 4C 8D 84 24 48 01 00 00 BA 00 04 00 00 48 8D 8C 24 88 00 00 00 E8 85 E9 FF FF 48 8D 8C 24|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0040
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-014
+ classtype:attempted-admin
+ sid:37567
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows WebDAV mini redirector driver privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"CreateProcessWithLogonW"
+ fast_pattern:only
+ content:"STARTUPINFO"
+ content:"dwFlags"
+ content:"STARTF_USESTDHANDLES"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0099
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-032
+ classtype:attempted-admin
+ sid:38115
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows WebDAV mini redirector driver privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"CreateProcessWithLogonW"
+ fast_pattern:only
+ content:"STARTUPINFO"
+ content:"dwFlags"
+ content:"STARTF_USESTDHANDLES"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0099
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-032
+ classtype:attempted-admin
+ sid:38114
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows ObReferenceObjectByHandle function privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|8B 55 E4 8B 4A 18 D1 E9 3B C8 77 02 EB 38 8B 45 E4 8B 70 18 D1 EE 8B 4D E4 E8 03 AC FF FF 2B C6|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0087
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-031
+ classtype:attempted-user
+ sid:38093
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ObReferenceObjectByHandle function privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|8B 55 E4 8B 4A 18 D1 E9 3B C8 77 02 EB 38 8B 45 E4 8B 70 18 D1 EE 8B 4D E4 E8 03 AC FF FF 2B C6|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0087
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-031
+ classtype:attempted-user
+ sid:38092
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows GreCreateDisplayDC surface object use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|FF 15 5C 91 41 00 3B F4 E8 01 FC FF FF 89 45 F8 8B F4 8B 45 F8 50 68 58 58 41 00 FF 15 10 91 41|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0093
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-034
+ classtype:attempted-admin
+ sid:38084
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows GreCreateDisplayDC surface object use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|FF 15 5C 91 41 00 3B F4 E8 01 FC FF FF 89 45 F8 8B F4 8B 45 F8 50 68 58 58 41 00 FF 15 10 91 41|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0093
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-034
+ classtype:attempted-admin
+ sid:38083
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows ValidateParentDepth out of bounds read attempt"
+ flow:to_server,established
+ file_data
+ content:"|7D 7F 8D 85 7C FF FF FF 50 8B 4D D0 83 E9 01 51 6A 00 E8 32 F8 FF FF 83 C4 0C 89 45 94 8D 85 7C|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0096
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-034
+ classtype:attempted-admin
+ sid:38072
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows ValidateParentDepth out of bounds read attempt"
+ flow:to_client,established
+ file_data
+ content:"|7D 7F 8D 85 7C FF FF FF 50 8B 4D D0 83 E9 01 51 6A 00 E8 32 F8 FF FF 83 C4 0C 89 45 94 8D 85 7C|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0096
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-034
+ classtype:attempted-admin
+ sid:38071
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows rpdesk remote code execution attempt"
+ flow:to_server,established
+ file_data
+ content:"|C7 45 F8 00 00 00 00 C7 45 F4 00 00 00 00 C7 45 F0 00 00 00 00 8B F4 8D 45 F0 50 68 8E 6D 07 CB 6A 00 6A 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0095
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-034
+ classtype:attempted-user
+ sid:38062
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows rpdesk remote code execution attempt"
+ flow:to_client,established
+ file_data
+ content:"|C7 45 F8 00 00 00 00 C7 45 F4 00 00 00 00 C7 45 F0 00 00 00 00 8B F4 8D 45 F0 50 68 8E 6D 07 CB 6A 00 6A 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0095
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-034
+ classtype:attempted-user
+ sid:38061
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows CreatePopupMenu win32k.sys use after free attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"DestroyWindow"
+ content:"SetWindowsHookEx"
+ distance:0
+ content:"InsertMenuItemW"
+ distance:0
+ fast_pattern
+ content:"CreatePopupMenu"
+ distance:0
+ content:"CreateMenu"
+ distance:0
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0167
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-037
+ classtype:attempted-user
+ sid:38492
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows CreatePopupMenu win32k.sys use after free attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"DestroyWindow"
+ content:"SetWindowsHookEx"
+ distance:0
+ content:"InsertMenuItemW"
+ distance:0
+ fast_pattern
+ content:"CreatePopupMenu"
+ distance:0
+ content:"CreateMenu"
+ distance:0
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0167
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-037
+ classtype:attempted-user
+ sid:38491
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32k.sys PathToRegion buffer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|8B 4E 04 33 D2 83 C8 FF 53 8B 59 08 F7 F3|"
+ fast_pattern:only
+ content:"|E8 FD 01 00 00 8B 46 04 68 CC CC CC CC FF 30 B8 00 F0 00 00 E8|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0165
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-039
+ classtype:attempted-admin
+ sid:38488
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32k.sys PathToRegion buffer overflow attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|8B 4E 04 33 D2 83 C8 FF 53 8B 59 08 F7 F3|"
+ fast_pattern:only
+ content:"|E8 FD 01 00 00 8B 46 04 68 CC CC CC CC FF 30 B8 00 F0 00 00 E8|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0165
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-039
+ classtype:attempted-admin
+ sid:38487
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows anonymous user token impersonation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"ImpersonateAnonymousToken"
+ fast_pattern:only
+ content:"GetSecurityDescriptorDacl"
+ nocase
+ content:"advapi32.dll"
+ nocase
+ content:"SetTokenInformation"
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0151
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-048
+ classtype:attempted-admin
+ sid:38476
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows anonymous user token impersonation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"ImpersonateAnonymousToken"
+ fast_pattern:only
+ content:"GetSecurityDescriptorDacl"
+ nocase
+ content:"advapi32.dll"
+ nocase
+ content:"SetTokenInformation"
+ nocase
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0151
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-048
+ classtype:attempted-admin
+ sid:38475
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $HOME_NET [139,445] (msg:"OS-WINDOWS Microsoft Windows api-ms-win-appmodel-runtime dll-load exploit attempt"
+ flow:to_server,established
+ content:"|FF|SMB|A2 00 00 00 00|"
+ content:"a|00|p|00|i|00|-|00|m|00|s|00|-|00|w|00|i|00|n|00|-|00|a|00|p|00|p|00|m|00|o|00|d|00|e|00|l|00|-|00|r|00|u|00|n|00|t|00|i|00|m|00|e|00|-|00|l|00|1|00|-|00|1|00|-|00|0|00|.|00|d|00|l|00|l|00 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service netbios-ssn
+ reference:cve,2016-0148
+ reference:cve,2016-0160
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-037
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-041
+ classtype:attempted-user
+ sid:38470
+ rev:1
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"OS-WINDOWS Microsoft Windows api-ms-win-appmodel-runtime dll-load exploit attempt"
+ flow:to_server,established
+ content:"/api-ms-win-appmodel-runtime-l1-1-0.dll"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy security-ips drop, service http
+ reference:cve,2016-0148
+ reference:cve,2016-0160
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-037
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-041
+ classtype:attempted-user
+ sid:38469
+ rev:1
+)\n', 'alert tcp any [135,139,445,49154] -> any any (msg:"OS-WINDOWS DCERPC Bind auth level packet privacy downgrade attempt"
+ flow:to_client,established
+ flowbits:isset,dcerpc.privacy
+ flowbits:unset,dcerpc.privacy
+ content:"|05 00 0C|"
+ content:"NTLMSSP|00 02 00 00 00|"
+ distance:0
+ content:"|0A 02 00 00|"
+ within:4
+ distance:-20
+ metadata:policy balanced-ips drop, policy security-ips drop, service dcerpc, service netbios-ssn
+ reference:cve,2016-0128
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-047
+ classtype:attempted-recon
+ sid:38462
+ rev:1
+)\n', 'alert tcp any any -> any [135,139,445,49154] (msg:"OS-WINDOWS DCERPC Bind auth level packet privacy connection detected"
+ flow:to_server,established
+ content:"|05 00 0B|"
+ content:"NTLMSSP|00 01 00 00 00|"
+ distance:0
+ content:"|0A 06 00 00|"
+ within:4
+ distance:-20
+ flowbits:set,dcerpc.privacy
+ flowbits:noalert
+ metadata:service dcerpc, service netbios-ssn
+ reference:url,en.wikipedia.org/wiki/DCE/RPC
+ classtype:protocol-command-decode
+ sid:38461
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows DrawMenuBarTemp memory corruption attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|52 6A 69 6A 47 6A 0F 8B 45|"
+ content:"|50 FF 15 28 11 41 00 C7 45|"
+ within:9
+ distance:1
+ content:"|07 00 00 80 C7 45|"
+ within:6
+ distance:8
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0143
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-039
+ classtype:attempted-admin
+ sid:38460
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows DrawMenuBarTemp memory corruption attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|52 6A 69 6A 47 6A 0F 8B 45|"
+ content:"|50 FF 15 28 11 41 00 C7 45|"
+ within:9
+ distance:1
+ content:"|07 00 00 80 C7 45|"
+ within:6
+ distance:8
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0143
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-039
+ classtype:attempted-admin
+ sid:38459
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"OS-WINDOWS Microsoft Windows LSARPC LsapLookupSids denial of service attempt"
+ flow:to_server,established
+ dce_iface:12345778-1234-abcd-ef00-0123456789ab
+ dce_opnum:15
+ dce_stub_data
+ content:"|00 00 00 00|"
+ depth:4
+ offset:20
+ content:"|00 00 00 00|"
+ within:4
+ distance:4
+ metadata:policy balanced-ips drop, policy security-ips drop, service netbios-ssn
+ reference:cve,2016-0135
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-046
+ classtype:attempted-dos
+ sid:38458
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys device context use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|C7 44 24 20 3E 01 00 00 FF 15 9F F9 00 00 48 8B C8 FF 15 9E F9 00 00 48 8B C8 FF 15 ED F6 00 00 48 8B 0D B6 C0 01 00 48|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0173
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-admin
+ sid:38809
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys device context use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|C7 44 24 20 3E 01 00 00 FF 15 9F F9 00 00 48 8B C8 FF 15 9E F9 00 00 48 8B C8 FF 15 ED F6 00 00 48 8B 0D B6 C0 01 00 48|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0173
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-admin
+ sid:38808
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows NtGdiGetEmbUFI kernel information disclosure attempt"
+ flow:to_server,established
+ file_data
+ content:"|FF 15 F5 0A 00 00 85 C0 0F 84 C5 01 00 00 48 8D 54 24 78 48 8B CB E8 E9 09 00 00 85 C0 0F 84 B0 01|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0175
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-user
+ sid:38802
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows NtGdiGetEmbUFI kernel information disclosure attempt"
+ flow:to_client,established
+ file_data
+ content:"|FF 15 F5 0A 00 00 85 C0 0F 84 C5 01 00 00 48 8D 54 24 78 48 8B CB E8 E9 09 00 00 85 C0 0F 84 B0 01|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0175
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-user
+ sid:38801
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Device Context bitmap use after free attempt"
+ flow:to_server,established
+ file_data
+ flowbits:isset,file.exe
+ content:"|FF 15 34 F2 45 00|"
+ content:"|FF 15 30 F2 45 00|"
+ within:35
+ content:"|FF 15 38 F0 45 00|"
+ within:35
+ content:"|FF 15 34 F0 45 00|"
+ within:35
+ content:"|FF 15 30 F0 45 00|"
+ within:35
+ content:"|FF 15 40 F0 45 00|"
+ within:35
+ content:"|FF 15 3C F0 45 00|"
+ within:35
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0172
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-062
+ classtype:attempted-user
+ sid:38788
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Device Context bitmap use after free attempt"
+ flow:to_client,established
+ file_data
+ flowbits:isset,file.exe
+ content:"|FF 15 34 F2 45 00|"
+ content:"|FF 15 30 F2 45 00|"
+ within:35
+ content:"|FF 15 38 F0 45 00|"
+ within:35
+ content:"|FF 15 34 F0 45 00|"
+ within:35
+ content:"|FF 15 30 F0 45 00|"
+ within:35
+ content:"|FF 15 40 F0 45 00|"
+ within:35
+ content:"|FF 15 3C F0 45 00|"
+ within:35
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0172
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-062
+ classtype:attempted-user
+ sid:38787
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Internet Explorer VerifyFile information disclosure attempt"
+ flow:to_server,established
+ file_data
+ content:"|00|{|00|b|00|0|00|1|00|9|00|e|00|3|00|b|00|f|00|-|00|e|00|7|00|e|00|5|00|-|00|4|00|5|00|3|00|c|00|-|00|a|00|2|00|e|00|4|00|-|00|d|00|2|00|c|00|1|00|8|00|c|00|a|00|0|00|8|00|6|00|6|00|f|00|}|00|"
+ fast_pattern:only
+ content:"|00|4|00|8|00|7|00|1|00|A|00|8|00|7|00|A|00|-|00|B|00|F|00|D|00|D|00|-|00|4|00|1|00|0|00|6|00|-|00|8|00|1|00|5|00|3|00|-|00|F|00|F|00|D|00|E|00|2|00|B|00|A|00|C|00|2|00|9|00|6|00|7|00|"
+ nocase
+ content:"%username%"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0194
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-051
+ classtype:attempted-user
+ sid:38781
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Internet Explorer VerifyFile information disclosure attempt"
+ flow:to_client,established
+ file_data
+ content:"{|00|b|00|0|00|1|00|9|00|e|00|3|00|b|00|f|00|-|00|e|00|7|00|e|00|5|00|-|00|4|00|5|00|3|00|c|00|-|00|a|00|2|00|e|00|4|00|-|00|d|00|2|00|c|00|1|00|8|00|c|00|a|00|0|00|8|00|6|00|6|00|f|00|}|00|"
+ fast_pattern:only
+ content:"4|00|8|00|7|00|1|00|A|00|8|00|7|00|A|00|-|00|B|00|F|00|D|00|D|00|-|00|4|00|1|00|0|00|6|00|-|00|8|00|1|00|5|00|3|00|-|00|F|00|F|00|D|00|E|00|2|00|B|00|A|00|C|00|2|00|9|00|6|00|7|00|"
+ content:"|5C|..|5C|..|5C|..|5C|users|5C|%username%|5C|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0194
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-051
+ classtype:attempted-user
+ sid:38780
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows device content surface bitmap use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|50 E8 4D FF FF FF 8B 4D F8 51 E8 64 FF FF FF 6A 00 6A 00 68 B0 11 41 00 6A 00 FF 15 10 10 41 00 89 45 F0|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0171
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-user
+ sid:38775
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows device content surface bitmap use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|50 E8 4D FF FF FF 8B 4D F8 51 E8 64 FF FF FF 6A 00 6A 00 68 B0 11 41 00 6A 00 FF 15 10 10 41 00 89 45 F0|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0171
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-user
+ sid:38774
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys font object use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|49 8B CC FF 15 3D 0A 00 00 4C 21 7C 24 40 48 8D 4D 50 4C 21 7C 24 48 33 D2 41 B8 C0 00 00 00 E8|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0174
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-062
+ classtype:attempted-admin
+ sid:38762
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys font object use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|49 8B CC FF 15 3D 0A 00 00 4C 21 7C 24 40 48 8D 4D 50 4C 21 7C 24 48 33 D2 41 B8 C0 00 00 00 E8|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0174
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-062
+ classtype:attempted-admin
+ sid:38761
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Win32k window handle use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|49 83 C9 FF C7 44 24 28 9E 02 00 00 BA 86 00 00 00 48 89 7C 24 20 E8 E5 0B 00 00 FF 15 57 18 01 00 48 8B 0D 08 F4 01 00 8B C0|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0196
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-admin
+ sid:38760
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Win32k window handle use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|49 83 C9 FF C7 44 24 28 9E 02 00 00 BA 86 00 00 00 48 89 7C 24 20 E8 E5 0B 00 00 FF 15 57 18 01 00 48 8B 0D 08 F4 01 00 8B C0|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0196
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-062
+ classtype:attempted-admin
+ sid:38759
+ rev:2
+)\n', 'alert udp $EXTERNAL_NET 137 -> $HOME_NET 137 (msg:"OS-WINDOWS Microsoft Windows WPAD spoofing attempt"
+ flow:to_server
+ content:"|85 00|"
+ depth:2
+ offset:2
+ byte_test:2,>,0,2,relative
+ content:" FHFAEBEE"
+ distance:0
+ detection_filter:track by_dst, count 500, seconds 1
+ metadata:policy balanced-ips drop, policy security-ips drop, service netbios-ns
+ reference:cve,2016-3213
+ reference:cve,2016-3236
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-063
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-077
+ classtype:attempted-user
+ sid:39227
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys NtGdiExtFloodFill use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|6A 01 68 4B A4 EB 00 68 BC 00 00 00 68 92 00 00 00 8B 45 D4 50 FF 15 04 80 4A 00 3B F4 E8 78 E1|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3218
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-073
+ classtype:attempted-user
+ sid:39218
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys NtGdiExtFloodFill use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|6A 01 68 4B A4 EB 00 68 BC 00 00 00 68 92 00 00 00 8B 45 D4 50 FF 15 04 80 4A 00 3B F4 E8 78 E1|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3218
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-073
+ classtype:attempted-user
+ sid:39217
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows WebDAV NTLM reflection attack attempt"
+ flow:to_server,established
+ file_data
+ content:"|8B F0 85 F6 74 7A 57 6A 04 68 30 36 41 00 56 FF 15 0C F0 40 00 8B F8 85 FF 74 35 8D 45 E0 50 57|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3225
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-075
+ classtype:attempted-admin
+ sid:39216
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows WebDAV NTLM reflection attack attempt"
+ flow:to_client,established
+ file_data
+ content:"|8B F0 85 F6 74 7A 57 6A 04 68 30 36 41 00 56 FF 15 0C F0 40 00 8B F8 85 FF 74 35 8D 45 E0 50 57|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3225
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-075
+ classtype:attempted-admin
+ sid:39215
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows WebDAV NTLM reflection attack attempt"
+ flow:to_server,established
+ flowbits:isset,file.jar
+ file_data
+ content:"WebDavNtlmHandler.classPK"
+ fast_pattern:only
+ content:"QueuedNtlmContext.classPK"
+ content:"SmbRequestThread.classPK"
+ distance:0
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3225
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-075
+ classtype:attempted-admin
+ sid:39214
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows WebDAV NTLM reflection attack attempt"
+ flow:to_client,established
+ flowbits:isset,file.jar
+ file_data
+ content:"WebDavNtlmHandler.classPK"
+ fast_pattern:only
+ content:"QueuedNtlmContext.classPK"
+ content:"SmbRequestThread.classPK"
+ distance:0
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3225
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-075
+ classtype:attempted-admin
+ sid:39213
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows sandbox ProcessFontDisablePolicy check bypass attempt"
+ flow:to_server,established
+ file_data
+ content:"|33 C5 50 8D 45 F4 64 A3 00 00 00 00 C7 85 2C FF FF FF 00 00 00 00 68 70 6D 42 00 8D 85 08 FF FF FF 50 E8 64 74|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3219
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-074
+ classtype:attempted-user
+ sid:39210
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows sandbox ProcessFontDisablePolicy check bypass attempt"
+ flow:to_client,established
+ file_data
+ content:"|33 C5 50 8D 45 F4 64 A3 00 00 00 00 C7 85 2C FF FF FF 00 00 00 00 68 70 6D 42 00 8D 85 08 FF FF FF 50 E8 64 74|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3219
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-074
+ classtype:attempted-user
+ sid:39209
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Win32k.sys MakeWindowForegroundWithState null pointer dereference attempt"
+ flow:to_server,established
+ file_data
+ content:"|4D A8 51 6A 00 6A 00 6A 00 6A 00 6A 00 6A 00 6A 00 68 14 F0 45 00 FF 15 40 20 46 00 85 C0 74 21|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3221
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-073
+ classtype:attempted-admin
+ sid:39196
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Win32k.sys MakeWindowForegroundWithState null pointer dereference attempt"
+ flow:to_server,established
+ file_data
+ content:"|45 00 89 45 FC 8B 4D FC 51 FF 15 F8 F1 45 00 6A 00 6A 01 6A 06 8B 55 FC 52 FF 15 FC F1 45 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3221
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-073
+ classtype:attempted-admin
+ sid:39195
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Win32k.sys MakeWindowForegroundWithState null pointer dereference attempt"
+ flow:to_client,established
+ file_data
+ content:"|4D A8 51 6A 00 6A 00 6A 00 6A 00 6A 00 6A 00 6A 00 68 14 F0 45 00 FF 15 40 20 46 00 85 C0 74 21|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3221
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-073
+ classtype:attempted-admin
+ sid:39194
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Win32k.sys MakeWindowForegroundWithState null pointer dereference attempt"
+ flow:to_client,established
+ file_data
+ content:"|45 00 89 45 FC 8B 4D FC 51 FF 15 F8 F1 45 00 6A 00 6A 01 6A 06 8B 55 FC 52 FF 15 FC F1 45 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3221
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-073
+ classtype:attempted-admin
+ sid:39193
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys out of bounds read attempt"
+ flow:to_server,established
+ file_data
+ content:"|8B F4 68 F8 00 00 00 68 10 00 00 80 6A 05 68 01 00 00 80 8B 45 90 50 FF 15 04 B0 41 00 3B F4|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3286
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-090
+ classtype:attempted-admin
+ sid:39517
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys out of bounds read attempt"
+ flow:to_client,established
+ file_data
+ content:"|8B F4 68 F8 00 00 00 68 10 00 00 80 6A 05 68 01 00 00 80 8B 45 90 50 FF 15 04 B0 41 00 3B F4|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3286
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-090
+ classtype:attempted-admin
+ sid:39516
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows EndDeferWindowPos null page dereference attempt"
+ flow:to_server,established
+ file_data
+ content:"|6A 70 6A 05 6A 05 6A 01 6A 01 6A FF 8B 15 B0 DD 45 00 52 A1 B4 DD 45 00 50 FF 15 08 02 46 00 8B|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3254
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-090
+ classtype:attempted-admin
+ sid:39509
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows EndDeferWindowPos null page dereference attempt"
+ flow:to_client,established
+ file_data
+ content:"|6A 70 6A 05 6A 05 6A 01 6A 01 6A FF 8B 15 B0 DD 45 00 52 A1 B4 DD 45 00 50 FF 15 08 02 46 00 8B|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3254
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-090
+ classtype:attempted-admin
+ sid:39508
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32k.sys desktop switch use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|FF 15 28 50 41 00 50 68 60 12 40 00 6A 04 FF 15 28 51 41 00 A3 F4 C7 41 00 A1 F0 C7 41 00 50 FF 15 40 51 41 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3250
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-090
+ classtype:attempted-admin
+ sid:39496
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32k.sys desktop switch use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|FF 15 28 50 41 00 50 68 60 12 40 00 6A 04 FF 15 28 51 41 00 A3 F4 C7 41 00 A1 F0 C7 41 00 50 FF 15 40 51 41 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3250
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-090
+ classtype:attempted-admin
+ sid:39495
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows NtUserDraw privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|FF 75 18 FF 75 14 FF 75 10 FF 75 0C FF 75 08 6A 00 B8 7E 11 00 00 8B 15 98 EC 45 00 FF D2 83 C4|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3249
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-090
+ classtype:attempted-admin
+ sid:39483
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows NtUserDraw privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|FF 75 18 FF 75 14 FF 75 10 FF 75 0C FF 75 08 6A 00 B8 7E 11 00 00 8B 15 98 EC 45 00 FF D2 83 C4|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3249
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-090
+ classtype:attempted-admin
+ sid:39482
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows NtGdiSelectPen privilege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|B8 0F 11 00 00 BA 00 03 FE 7F FF 12 C2 08 00|"
+ fast_pattern:only
+ content:"|B8 20 11 00 00 BA 00 03 FE 7F FF 12 C2 0C 00|"
+ content:"|B8 23 11 00 00 BA 00 03 FE 7F FF 12 C2 0C 00|"
+ content:"|B8 0A 11 00 00 BA 00 03 FE 7F FF 12 C2 18 00|"
+ content:"|B8 09 11 00 00 BA 00 03 FE 7F FF 12 C2 18 00|"
+ content:"|B8 27 11 00 00 BA 00 03 FE 7F FF 12 C2 14 00|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3252
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-090
+ classtype:attempted-admin
+ sid:39479
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows NtGdiSelectPen privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|B8 0F 11 00 00 BA 00 03 FE 7F FF 12 C2 08 00|"
+ fast_pattern:only
+ content:"|B8 20 11 00 00 BA 00 03 FE 7F FF 12 C2 0C 00|"
+ content:"|B8 23 11 00 00 BA 00 03 FE 7F FF 12 C2 0C 00|"
+ content:"|B8 0A 11 00 00 BA 00 03 FE 7F FF 12 C2 18 00|"
+ content:"|B8 09 11 00 00 BA 00 03 FE 7F FF 12 C2 18 00|"
+ content:"|B8 27 11 00 00 BA 00 03 FE 7F FF 12 C2 14 00|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3252
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-090
+ classtype:attempted-admin
+ sid:39478
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows gdiplus EMF EmrText out of bounds write attempt"
+ flow:to_server,established
+ flowbits:isset,file.emf
+ file_data
+ content:"|53 00 00 00|"
+ content:"|00 00 00|"
+ within:3
+ distance:21
+ content:"|4C 00 00 00|"
+ within:4
+ distance:20
+ byte_test:4,>=,4096,-8,relative,little
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3304
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-097
+ classtype:attempted-user
+ sid:39844
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows gdiplus EMF EmrText out of bounds write attempt"
+ flow:to_client,established
+ flowbits:isset,file.emf
+ file_data
+ content:"|53 00 00 00|"
+ content:"|00 00 00|"
+ within:3
+ distance:21
+ content:"|4C 00 00 00|"
+ within:4
+ distance:20
+ byte_test:4,>=,4096,-8,relative,little
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3304
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-097
+ classtype:attempted-user
+ sid:39843
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32kbase bOutline out of bounds read attempt"
+ flow:to_server,established
+ file_data
+ content:"|50 C7 44 24 10 00 00 00 00 C7 44 24 18 5C 19 34 FC C7 44 24 1C 3C 1F 00 00 FF 15 14 60 40 00 8B F0|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3309
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-098
+ classtype:attempted-admin
+ sid:39842
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32kbase bOutline out of bounds read attempt"
+ flow:to_client,established
+ file_data
+ content:"|50 C7 44 24 10 00 00 00 00 C7 44 24 18 5C 19 34 FC C7 44 24 1C 3C 1F 00 00 FF 15 14 60 40 00 8B F0|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3309
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-098
+ classtype:attempted-admin
+ sid:39841
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows GDI emf file integer overflow attempt"
+ flow:to_server,established
+ flowbits:isset,file.emf
+ file_data
+ content:"|4F 00 00 00|"
+ content:"|28 00 00 00|"
+ within:4
+ distance:136
+ byte_test:4,>,0x00900000,0,relative,little
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3262
+ reference:cve,2016-3301
+ reference:cve,2016-3303
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-097
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-120
+ classtype:attempted-user
+ sid:39825
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows GDI emf file integer overflow attempt"
+ flow:to_client,established
+ flowbits:isset,file.emf
+ file_data
+ content:"|4F 00 00 00|"
+ content:"|28 00 00 00|"
+ within:4
+ distance:136
+ byte_test:4,>,0x00900000,0,relative,little
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3262
+ reference:cve,2016-3301
+ reference:cve,2016-3303
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-097
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-120
+ classtype:attempted-user
+ sid:39824
+ rev:3
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows operating system win32kfull heap corruption attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|FF 85 C0 74 0A B9 07 00 00 00 E8 3F A3 FF FF E8 A2 A4 FF FF E8 EB 8D FF FF 85 C0 74 0C 48 8D 0D|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3308
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-098
+ classtype:attempted-admin
+ sid:39819
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows operating system win32kfull heap corruption attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|FF 85 C0 74 0A B9 07 00 00 00 E8 3F A3 FF FF E8 A2 A4 FF FF E8 EB 8D FF FF 85 C0 74 0C 48 8D 0D|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3308
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms15-098
+ classtype:attempted-admin
+ sid:39818
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Win32kfull FloodFillWindow privilege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|07 3F 15 3F 22 3F DC 3F E9 3F F6 3F 00 F0 03 00 8C 00 00 00 01 30 34 30 62 30 94 30 C4 30 F2 30|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3311
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-098
+ classtype:attempted-admin
+ sid:39815
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Win32kfull FloodFillWindow privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|07 3F 15 3F 22 3F DC 3F E9 3F F6 3F 00 F0 03 00 8C 00 00 00 01 30 34 30 62 30 94 30 C4 30 F2 30|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3311
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-098
+ classtype:attempted-admin
+ sid:39814
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows graphics subcomponent local privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|E9 26 D0 04 00 E9 F3 89 01 00 E9 18 B4 00 00 E9 35 6D 02 00 E9 50 A2 03 00 E9 8C B2 02 00 E9 02|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3310
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-098
+ classtype:attempted-admin
+ sid:39809
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows graphics subcomponent local privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|E9 26 D0 04 00 E9 F3 89 01 00 E9 18 B4 00 00 E9 35 6D 02 00 E9 50 A2 03 00 E9 8C B2 02 00 E9 02|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3310
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-098
+ classtype:attempted-admin
+ sid:39808
+ rev:1
+)\n', 'alert tcp $HOME_NET 2049 -> $EXTERNAL_NET any (msg:"OS-WINDOWS Microsoft Windows NFS Server NULL pointer dereference denial-of-service attempt"
+ flow:to_client,established
+ flowbits:set,nfs_server_access_reply
+ content:"|00 00 00 01 00 00 00 00|"
+ depth:8
+ offset:8
+ content:"|00 00 00 00|"
+ within:4
+ distance:8
+ content:"|00 00 00 01 00 00 00 02|"
+ within:8
+ distance:4
+ content:"|00 00 00 03|"
+ within:4
+ distance:80
+ flowbits:noalert
+ reference:cve,2013-1281
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms13-014
+ classtype:attempted-dos
+ sid:40065
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 389 (msg:"OS-WINDOWS Microsoft Windows Server lsass.exe memory corruption attempt"
+ flow:to_server,established
+ content:"GSSAPI"
+ nocase
+ content:"maxbufsize="
+ nocase
+ byte_test:10,>,105,0,relative,string,dec
+ byte_test:10,<,121,0,relative,string,dec
+ metadata:policy balanced-ips drop, policy security-ips drop, service ldap
+ reference:cve,2016-3368
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-110
+ classtype:attempted-admin
+ sid:40129
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows 10 and 8.1 registry key privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|02 16 9A 28 28 00 00 0A 28 0C 00 00 06 00 00 2B 08 00 28 0E 00 00 06 00 00 00 DE 11 0B 00 07 6F|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3371
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-111
+ classtype:attempted-user
+ sid:40128
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows 10 and 8.1 registry key privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|02 16 9A 28 28 00 00 0A 28 0C 00 00 06 00 00 2B 08 00 28 0E 00 00 06 00 00 00 DE 11 0B 00 07 6F|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3371
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-111
+ classtype:attempted-user
+ sid:40127
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows 10 privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|70 16 17 28 04 00 00 06 0A 06 72 15 00 00 70 6F 0B 00 00 0A 0B 00 07 6F 0C 00 00 0A 0C 16 0D 38 98|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3373
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-111
+ classtype:attempted-admin
+ sid:40115
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows 10 privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|70 16 17 28 04 00 00 06 0A 06 72 15 00 00 70 6F 0B 00 00 0A 0B 00 07 6F 0C 00 00 0A 0C 16 0D 38 98|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3373
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-111
+ classtype:attempted-admin
+ sid:40114
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows 10 GDI privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|FA 11 00 00 85 C0 74 05 6A 02 59 CD 29 A3 20 DE 45 00 89 0D 1C DE 45 00 89 15 18 DE 45 00 89 1D|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3355
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-106
+ classtype:attempted-admin
+ sid:40113
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows 10 GDI privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|FA 11 00 00 85 C0 74 05 6A 02 59 CD 29 A3 20 DE 45 00 89 0D 1C DE 45 00 89 15 18 DE 45 00 89 1D|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3355
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-106
+ classtype:attempted-admin
+ sid:40112
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Server Ntoskrnl concurrent login attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"D|00|:|00|(|00|A|00 3B 00|O|00|I|00|C|00|I|00 3B 00|G|00|A|00|W|00|D|00 3B 00 3B 00 3B 00|S|00|-|00|1|00|-|00|1|00|-|00|0|00|)"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3305
+ reference:cve,2016-3306
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-111
+ classtype:attempted-user
+ sid:40111
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Server Ntoskrnl concurrent login attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"D|00|:|00|(|00|A|00 3B 00|O|00|I|00|C|00|I|00 3B 00|G|00|A|00|W|00|D|00 3B 00 3B 00 3B 00|S|00|-|00|1|00|-|00|1|00|-|00|0|00|)"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3305
+ reference:cve,2016-3306
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-111
+ classtype:attempted-user
+ sid:40110
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows 7 Win32k ValidateZorder privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|6A 00 68 6E 07 00 00 68 08 E2 00 00 6A 67 68 DB 00 00 00 8B 0D 34 EC 45 00 51 8B 15 38 EC 45 00 52 8B 45|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3348
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-106
+ classtype:attempted-admin
+ sid:40097
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows 7 Win32k ValidateZorder privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|6A 00 68 6E 07 00 00 68 08 E2 00 00 6A 67 68 DB 00 00 00 8B 0D 34 EC 45 00 51 8B 15 38 EC 45 00 52 8B 45|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3348
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-106
+ classtype:attempted-admin
+ sid:40096
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Win32k.sys sbit_Embolden use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|68 B4 D5 46 00 E8 A2 B1 FF FF 83 C4 08 EB 05 E9 1F 09 00 00 8B F4 8D 45 AC 50 6A 00 8B 4D B8 51 8B 55 C4 52 FF 15 10 C0 48 00 3B F4 E8 33 51 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-7182
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-120
+ classtype:attempted-admin
+ sid:40428
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Win32k.sys sbit_Embolden use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|68 B4 D5 46 00 E8 A2 B1 FF FF 83 C4 08 EB 05 E9 1F 09 00 00 8B F4 8D 45 AC 50 6A 00 8B 4D B8 51 8B 55 C4 52 FF 15 10 C0 48 00 3B F4 E8 33 51 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-7182
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-120
+ classtype:attempted-admin
+ sid:40427
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows GDI+ EMF buffer overread attempt"
+ flow:to_server,established
+ flowbits:isset,file.emf
+ file_data
+ content:"|01 00 00 00|"
+ depth:4
+ content:" EMF"
+ depth:4
+ offset:40
+ byte_jump:4,4,little,from_beginning
+ content:"|4C 00 00 00|"
+ distance:0
+ content:"|28 00 00 00|"
+ within:4
+ distance:96
+ content:"|08 00|"
+ within:2
+ distance:10
+ byte_jump:4,-112,relative,little,post_offset -8
+ content:"|0E 00 00 00|"
+ within:4
+ content:"|00 00 00 00|"
+ within:4
+ distance:4
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3263
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-120
+ classtype:attempted-user
+ sid:40426
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows GDI+ EMF buffer overread attempt"
+ flow:to_client,established
+ flowbits:isset,file.emf
+ file_data
+ content:"|01 00 00 00|"
+ depth:4
+ content:" EMF"
+ depth:4
+ offset:40
+ byte_jump:4,4,little,from_beginning
+ content:"|4C 00 00 00|"
+ distance:0
+ content:"|28 00 00 00|"
+ within:4
+ distance:96
+ content:"|08 00|"
+ within:2
+ distance:10
+ byte_jump:4,-112,relative,little,post_offset -8
+ content:"|0E 00 00 00|"
+ within:4
+ content:"|00 00 00 00|"
+ within:4
+ distance:4
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3263
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-120
+ classtype:attempted-user
+ sid:40425
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows DFS client driver privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"DangerousGetHandle"
+ fast_pattern:only
+ content:"SafeHandleZeroOrMinusOneIsInvalid"
+ content:"ReleaseHandle"
+ content:"|5C 00|D|00|e|00|v|00|i|00|c|00|e|00 5C 00|D|00|f|00|s|00|C|00|l|00|i|00|e|00|n|00|t|00|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-7185
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-123
+ classtype:attempted-user
+ sid:40419
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows DFS client driver privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"DangerousGetHandle"
+ fast_pattern:only
+ content:"SafeHandleZeroOrMinusOneIsInvalid"
+ content:"ReleaseHandle"
+ content:"|5C 00|D|00|e|00|v|00|i|00|c|00|e|00 5C 00|D|00|f|00|s|00|C|00|l|00|i|00|e|00|n|00|t|00|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-7185
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-123
+ classtype:attempted-user
+ sid:40418
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows registry hive privilege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|00 1F FE 73 10 00 00 0A 28 02 00 00 06 26 06 17 28 05 00 00 06 0B 28 03 00 00 06 26 06 28 06 00 00 06 16 FE 01 13 05 11 05 2C 0C|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0079
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40413
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows registry hive privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|00 1F FE 73 10 00 00 0A 28 02 00 00 06 26 06 17 28 05 00 00 06 0B 28 03 00 00 06 26 06 28 06 00 00 06 16 FE 01 13 05 11 05 2C 0C|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0079
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40412
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32k.sys ExtTextOut memory corruption attempt"
+ flow:to_server,established
+ file_data
+ content:"|E8 E9 A6 FF FF 8B F4 6A 00 6A 33 8B 45 CC 50 8D 4D D8 51 68 04 0C 00 00 6A 07 6A 18 8B 55 9C 52 FF 15 38 60|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3270
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-120
+ classtype:attempted-admin
+ sid:40411
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32k.sys ExtTextOut memory corruption attempt"
+ flow:to_client,established
+ file_data
+ content:"|E8 E9 A6 FF FF 8B F4 6A 00 6A 33 8B 45 CC 50 8D 4D D8 51 68 04 0C 00 00 6A 07 6A 18 8B 55 9C 52 FF 15 38 60|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3270
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-120
+ classtype:attempted-admin
+ sid:40410
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows user hive impersonation privelege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|28 1C 00 00 0A 00 00 00 00 06 20 5B 08 47 00 07 28 02 00 00 2B 0C 00 DE 16 00 09 14 FE 03 13 05 11 05 2C 09|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0073
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40403
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows user hive impersonation privelege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|28 1C 00 00 0A 00 00 00 00 06 20 5B 08 47 00 07 28 02 00 00 2B 0C 00 DE 16 00 09 14 FE 03 13 05 11 05 2C 09|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0073
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40402
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows 10 arbitrary registry key access privelege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|11 04 6F 24 00 00 0A 07 72 EE 01 00 70 28 0F 00 00 06 0A 00|"
+ fast_pattern:only
+ content:"|28 28 00 00 0A 6F 29 00 00 0A|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0075
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40401
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows 10 arbitrary registry key access privelege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"|11 04 6F 24 00 00 0A 07 72 EE 01 00 70 28 0F 00 00 06 0A 00|"
+ fast_pattern:only
+ content:"|28 28 00 00 0A 6F 29 00 00 0A|"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0075
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40400
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Diagnostics Hub dll load from stream attempt"
+ flow:to_server,established
+ file_data
+ content:"|B7 F6 8A 0D D5 EF 6D 4F A8 34 31 47 40 AB 8C AA|"
+ fast_pattern:only
+ content:"|A7 FA CB 42 A7 A4 BB 47 B4 22 BD 10 E9 D0 27 00|"
+ content:"CoCreateGuid"
+ content:"StringFromIID"
+ content:"CoCreateInstance"
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-7188
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-125
+ classtype:attempted-admin
+ sid:40399
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Diagnostics Hub dll load from stream attempt"
+ flow:to_client,established
+ file_data
+ content:"|B7 F6 8A 0D D5 EF 6D 4F A8 34 31 47 40 AB 8C AA|"
+ fast_pattern:only
+ content:"|A7 FA CB 42 A7 A4 BB 47 B4 22 BD 10 E9 D0 27 00|"
+ content:"CoCreateGuid"
+ content:"StringFromIID"
+ content:"CoCreateInstance"
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-7188
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-125
+ classtype:attempted-admin
+ sid:40398
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Edge DACL privilege escalation attempt"
+ flow:to_server,established
+ flowbits:isset,file.exe
+ file_data
+ content:"NtCreateLowBoxToken|00|"
+ content:"m|00|i|00|c|00|r|00|o|00|s|00|o|00|f|00|t|00|e|00|d|00|g|00|e|00|.|00|e|00|x|00|e|00 00|"
+ content:"S|00 3A 00 28 00|M|00|L|00 3B 00|O|00|I|00|C|00|I|00 3B 00|N|00|W|00 3B 00 3B 00 3B 00|S|00|-|00|1|00|-|00|1|00|6|00|-|00|0|00 29 00 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3388
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-118
+ classtype:attempted-admin
+ sid:40397
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Edge DACL privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.exe
+ file_data
+ content:"NtCreateLowBoxToken|00|"
+ content:"m|00|i|00|c|00|r|00|o|00|s|00|o|00|f|00|t|00|e|00|d|00|g|00|e|00|.|00|e|00|x|00|e|00 00|"
+ content:"S|00 3A 00 28 00|M|00|L|00 3B 00|O|00|I|00|C|00|I|00 3B 00|N|00|W|00 3B 00 3B 00 3B 00|S|00|-|00|1|00|-|00|1|00|6|00|-|00|0|00 29 00 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3388
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-118
+ classtype:attempted-admin
+ sid:40396
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Ntoskrnl integer overflow privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"|F0 FF FF FF 10 B4 00 00 50 B4 00 00 78 B4 00 00 F0 FF FF FF 33 00 31 00 00 00 00 00 70 41 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-0070
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40395
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Ntoskrnl integer overflow privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"|F0 FF FF FF 10 B4 00 00 50 B4 00 00 78 B4 00 00 F0 FF FF FF 33 00 31 00 00 00 00 00 70 41 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-0070
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-124
+ classtype:attempted-admin
+ sid:40394
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows Ntoskrnl privilege escalation attempt"
+ flow:to_client,established
+ flowbits:isset,file.dat
+ file_data
+ content:"sk|00 00|"
+ content:"|01 00|"
+ within:2
+ distance:16
+ byte_test:4,>,0xFFFF,2,relative,little
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3376
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-123
+ classtype:attempted-admin
+ sid:40393
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows Ntoskrnl privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"regf"
+ depth:4
+ content:"sk|00 00|"
+ content:"|01 00|"
+ within:2
+ distance:16
+ byte_test:4,>,0xFFFF,2,relative,little
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3376
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-123
+ classtype:attempted-admin
+ sid:40392
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys FBitsTouch use after free attempt"
+ flow:to_server,established
+ file_data
+ content:"|89 45 F4 E8 8A FE FF FF 53 FF 15 48 10 00 01 8B 3D 4C 10 00 01 8D 45 F0 50 FF D7 50 E8 A7 FE FF FF FF D7 50|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-7211
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-123
+ classtype:attempted-user
+ sid:40381
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows win32kfull.sys FBitsTouch use after free attempt"
+ flow:to_client,established
+ file_data
+ content:"|89 45 F4 E8 8A FE FF FF 53 FF 15 48 10 00 01 8B 3D 4C 10 00 01 8D 45 F0 50 FF D7 50 E8 A7 FE FF FF FF D7 50|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-7211
+ reference:url,technet.microsoft.com/en-us/security/bulletin/ms16-123
+ classtype:attempted-user
+ sid:40380
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $SMTP_SERVERS 25 (msg:"OS-WINDOWS Microsoft Windows insecure BoundaryDescriptor privilege escalation attempt"
+ flow:to_server,established
+ file_data
+ content:"CreatePrivateNamespace"
+ content:"_|00|M|00|i|00|c|00|r|00|o|00|s|00|o|00|f|00|t|00|E|00|d|00|g|00|e|00 00|"
+ content:"S|00 3A 00 28 00|M|00|L|00 3B 00|O|00|I|00|C|00|I|00 3B 00|N|00|W|00 3B 00 3B 00 3B 00|S|00|-|00|1|00|-|00|1|00|6|00|-|00|0|00 29 00 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service smtp
+ reference:cve,2016-3387
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-118
+ classtype:attempted-admin
+ sid:40375
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET $FILE_DATA_PORTS -> $HOME_NET any (msg:"OS-WINDOWS Microsoft Windows insecure BoundaryDescriptor privilege escalation attempt"
+ flow:to_client,established
+ file_data
+ content:"CreatePrivateNamespace"
+ content:"_|00|M|00|i|00|c|00|r|00|o|00|s|00|o|00|f|00|t|00|E|00|d|00|g|00|e|00 00|"
+ content:"S|00 3A 00 28 00|M|00|L|00 3B 00|O|00|I|00|C|00|I|00 3B 00|N|00|W|00 3B 00 3B 00 3B 00|S|00|-|00|1|00|-|00|1|00|6|00|-|00|0|00 29 00 00 00|"
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service ftp-data, service http, service imap, service pop3
+ reference:cve,2016-3387
+ reference:url,technet.microsoft.com/en-us/security/bulletin/MS16-118
+ classtype:attempted-admin
+ sid:40374
+ rev:1
+)\n']

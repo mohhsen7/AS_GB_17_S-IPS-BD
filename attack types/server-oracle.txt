@@ -1,0 +1,11 @@
+['\n', '\n', 'alert tcp $HOME_NET $ORACLE_PORTS -> $EXTERNAL_NET any (msg:"SERVER-ORACLE Oracle connection established"
+ flow:to_server, established
+ content:"(DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME="
+ fast_pattern:only
+ flowbits:set,oracle.connect
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ classtype:attempted-user
+ sid:17418
+ rev:8
+)\n']

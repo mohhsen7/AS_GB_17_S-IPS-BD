@@ -1,0 +1,67 @@
+['\n', '\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"POLICY-OTHER Adobe ColdFusion admin API access attempt"
+ flow:to_server,established
+ content:"/CFIDE/adminapi"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,57330
+ reference:cve,2013-0632
+ reference:url,www.adobe.com/support/security/advisories/apsa13-01.html
+ classtype:policy-violation
+ sid:25976
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"POLICY-OTHER Adobe ColdFusion component browser access attempt"
+ flow:to_server,established
+ content:"/CFIDE/componentutils"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,57330
+ reference:cve,2013-0632
+ reference:url,www.adobe.com/support/security/advisories/apsa13-01.html
+ classtype:policy-violation
+ sid:25977
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"POLICY-OTHER Adobe ColdFusion admin interface access attempt"
+ flow:to_server,established
+ content:"/CFIDE/administrator"
+ fast_pattern:only
+ http_uri
+ metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop, service http
+ reference:bugtraq,57330
+ reference:cve,2013-0632
+ reference:url,www.adobe.com/support/security/advisories/apsa13-01.html
+ classtype:policy-violation
+ sid:25975
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $FTP_PORTS (msg:"POLICY-OTHER QLogic Switch 5600/5800 default ftp login attempt"
+ flow:to_server,established
+ content:"USER|20|images|0D 0A|"
+ flowbits:set,qlogic_default_ftp
+ flowbits:noalert
+ metadata:ruleset community, service ftp
+ reference:url,filedownloads.qlogic.com/files/Manual/81355/UserGuide_5800V_Series_QuickTools_v80_59264-02B.pdf
+ reference:url,filedownloads.qlogic.com/files/manual/67941/QuickTools_Guide_Sb5600_Series_v74_59235-03_%5BA%5D.pdf
+ classtype:default-login-attempt
+ sid:31831
+ rev:1
+)\n', '# ah al far2 fe al flowbits\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET $FTP_PORTS (msg:"POLICY-OTHER QLogic Switch 5600/5800 default ftp login attempt"
+ flow:to_server,established
+ content:"PASS|20|images|0D 0A|"
+ flowbits:isset,qlogic_default_ftp
+ metadata:policy balanced-ips drop, policy security-ips drop, ruleset community, service ftp
+ reference:url,filedownloads.qlogic.com/files/Manual/81355/UserGuide_5800V_Series_QuickTools_v80_59264-02B.pdf
+ reference:url,filedownloads.qlogic.com/files/manual/67941/QuickTools_Guide_Sb5600_Series_v74_59235-03_%5BA%5D.pdf
+ classtype:default-login-attempt
+ sid:31830
+ rev:1
+)\n', 'alert tcp $EXTERNAL_NET 23 -> $HOME_NET any (msg:"POLICY-OTHER Cisco router Security Device Manager default banner"
+ flow:to_client,established
+ content:"the one-time use of the username |22|cisco|22| with the |0A|password |22|cisco|22|."
+ fast_pattern:only
+ metadata:policy balanced-ips drop, policy security-ips drop, service telnet
+ reference:url,www.cisco.com/c/en/us/td/docs/routers/access/iad880/hardware/installation/guide/IAD880HIG/4InitialConfigIAD880.pdf
+ classtype:policy-violation
+ sid:36282
+ rev:1
+)\n']

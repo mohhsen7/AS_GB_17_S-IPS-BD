@@ -1,0 +1,17 @@
+['alert tcp $EXTERNAL_NET [1863,3283,5060,5190,5220,5222,5269,5297,5298,5353,5678] -> $HOME_NET any (msg:"POLICY-SOCIAL multiple chat protocols link to local file attempt"
+ flow:to_client,established
+ content:"file:|2F 2F 5C 5C|"
+ fast_pattern:only
+ reference:cve,2013-6486
+ classtype:attempted-user
+ sid:28090
+ rev:2
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [1863,3283,5060,5190,5220,5222,5269,5297,5298,5353,5678] (msg:"POLICY-SOCIAL multiple chat protocols link to local file attempt"
+ flow:to_server,established
+ content:"file:|2F 2F 5C 5C|"
+ fast_pattern:only
+ reference:cve,2013-6486
+ classtype:attempted-user
+ sid:28089
+ rev:2
+)\n']

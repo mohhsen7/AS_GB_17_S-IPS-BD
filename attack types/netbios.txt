@@ -1,0 +1,408 @@
+['\n', '\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 139 (msg:"NETBIOS SMB Trans2 QUERY_FILE_INFO attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB2"
+ within:5
+ distance:3
+ pcre:"/^.{27}/R"
+ content:"|07 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3135
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"NETBIOS SMB-DS Trans2 FIND_FIRST2 attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB2"
+ within:5
+ distance:3
+ pcre:"/^.{27}/R"
+ content:"|01 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3141
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 139 (msg:"NETBIOS SMB Trans2 FIND_FIRST2 andx attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ content:"2"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|01 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3140
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 139 (msg:"NETBIOS SMB Trans2 FIND_FIRST2 attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB2"
+ within:5
+ distance:3
+ pcre:"/^.{27}/R"
+ content:"|01 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3139
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"NETBIOS SMB-DS Trans2 QUERY_FILE_INFO attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB2"
+ within:5
+ distance:3
+ pcre:"/^.{27}/R"
+ content:"|07 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3137
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"NETBIOS SMB-DS Trans2 FIND_FIRST2 andx attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ content:"2"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|01 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3142
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 139 (msg:"NETBIOS SMB Trans2 QUERY_FILE_INFO andx attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ content:"2"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|07 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3136
+ rev:9
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"NETBIOS SMB-DS Trans2 QUERY_FILE_INFO andx attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ content:"2"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|07 00|"
+ within:2
+ distance:29
+ flowbits:set,smb.trans2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, ruleset community, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:3138
+ rev:9
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET 445 (msg:"NETBIOS SMB session negotiation request"
+ flow:to_server,established
+ content:"|00|"
+ depth:1
+ content:"|FF|SMBr"
+ within:5
+ distance:3
+ flowbits:set,smb.session.negotiate
+ flowbits:noalert
+ metadata:policy max-detect-ips alert, service netbios-ssn
+ classtype:misc-activity
+ sid:16381
+ rev:7
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 138 (msg:"NETBIOS SMB /PlughNTCommand unicode create tree attempt"
+ content:"|11|"
+ depth:1
+ content:"|00|"
+ distance:13
+ content:"|00|"
+ distance:0
+ content:"|FF|SMB|A2|"
+ within:5
+ distance:3
+ byte_test:1,&,128,6,relative
+ pcre:"/^.{27}/sR"
+ content:"|5C 00|P|00|l|00|u|00|g|00|h|00|N|00|T|00|C|00|o|00|m|00|m|00|a|00|n|00|d|00 00 00|"
+ within:33
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16761
+ rev:5
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 138 (msg:"NETBIOS SMB /PlughNTCommand unicode andx create tree attempt"
+ content:"|11|"
+ depth:1
+ content:"|00|"
+ distance:13
+ content:"|00|"
+ distance:0
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ byte_test:1,&,128,6,relative
+ content:"|A2|"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|5C 00|P|00|l|00|u|00|g|00|h|00|N|00|T|00|C|00|o|00|m|00|m|00|a|00|n|00|d|00 00 00|"
+ within:33
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16760
+ rev:5
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 138 (msg:"NETBIOS SMB /PlughNTCommand create tree attempt"
+ content:"|11|"
+ depth:1
+ content:"|00|"
+ distance:13
+ content:"|00|"
+ distance:0
+ content:"|FF|SMB|A2|"
+ within:5
+ distance:3
+ byte_test:1,!&,128,6,relative
+ pcre:"/^.{27}/sR"
+ content:"|5C|PlughNTCommand|00|"
+ within:17
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16759
+ rev:5
+)\n', 'alert udp $EXTERNAL_NET any -> $HOME_NET 138 (msg:"NETBIOS SMB /PlughNTCommand andx create tree attempt"
+ content:"|11|"
+ depth:1
+ content:"|00|"
+ distance:13
+ content:"|00|"
+ distance:0
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ byte_test:1,!&,128,6,relative
+ content:"|A2|"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|5C|PlughNTCommand|00|"
+ within:17
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16758
+ rev:5
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET 445 (msg:"NETBIOS SMB TRANS2 Find_First2 request attempt"
+ flow:to_server,established
+ content:"|FF|SMB2|00 00 00 00|"
+ depth:9
+ offset:4
+ content:"|00 00|"
+ within:2
+ distance:13
+ content:"|00|"
+ within:1
+ distance:18
+ content:"|00 00|"
+ within:2
+ distance:6
+ content:"|01 00|"
+ within:2
+ distance:10
+ flowbits:set,smb.trans2.findfirst2
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:17745
+ rev:6
+)\n', 'alert tcp $HOME_NET any -> $EXTERNAL_NET 445 (msg:"NETBIOS SMB-DS Trans2 Distributed File System GET_DFS_REFERRAL request"
+ flow:established,to_server
+ content:"|00|"
+ offset:1
+ content:"|FF|SMB2"
+ depth:5
+ offset:4
+ content:"|00 00 00 00|"
+ within:4
+ content:"|10 00|"
+ depth:2
+ offset:65
+ flowbits:set,smb.trans2.get_dfs_referral
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:19190
+ rev:5
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"NETBIOS SMB negotiate protocol request - ascii strings"
+ flow:to_server,established
+ content:"|FF|SMB|72 00 00 00 00|"
+ depth:9
+ offset:4
+ byte_test:1,!&,0x40,0,relative,little
+ byte_test:2,!&,0x8000,1,relative,little
+ flowbits:set,smb.req.ascii
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ classtype:protocol-command-decode
+ sid:17151
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"NETBIOS SMB /PlughNTCommand unicode create tree attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB|A2|"
+ within:5
+ distance:3
+ byte_test:1,&,128,6,relative
+ pcre:"/^.{27}/sR"
+ content:"|5C 00|P|00|l|00|u|00|g|00|h|00|N|00|T|00|C|00|o|00|m|00|m|00|a|00|n|00|d|00 00 00|"
+ within:33
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16757
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"NETBIOS SMB /PlughNTCommand unicode andx create tree attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ byte_test:1,&,128,6,relative
+ content:"|A2|"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|5C 00|P|00|l|00|u|00|g|00|h|00|N|00|T|00|C|00|o|00|m|00|m|00|a|00|n|00|d|00 00 00|"
+ within:33
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16756
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"NETBIOS SMB /PlughNTCommand create tree attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB|A2|"
+ within:5
+ distance:3
+ byte_test:1,!&,128,6,relative
+ pcre:"/^.{27}/sR"
+ content:"|5C|PlughNTCommand|00|"
+ within:17
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16755
+ rev:7
+)\n', 'alert tcp $EXTERNAL_NET any -> $HOME_NET [139,445] (msg:"NETBIOS SMB /PlughNTCommand andx create tree attempt"
+ flow:established,to_server
+ content:"|00|"
+ depth:1
+ content:"|FF|SMB"
+ within:4
+ distance:3
+ pcre:"/^(\\x75|\\x2d|\\x2f|\\x73|\\xa2|\\x2e|\\x24|\\x74)/sR"
+ byte_test:1,!&,128,6,relative
+ content:"|A2|"
+ depth:1
+ offset:39
+ byte_jump:2,0,little,relative
+ content:"|5C|PlughNTCommand|00|"
+ within:17
+ distance:51
+ nocase
+ flowbits:set,smb.tree.create.timbuktu
+ flowbits:noalert
+ metadata:policy max-detect-ips drop, service netbios-ssn
+ reference:cve,2009-1394
+ classtype:protocol-command-decode
+ sid:16754
+ rev:7
+)\n']
